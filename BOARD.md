@@ -176,3 +176,26 @@ https://github.com/linether/ai-in-business-hackathon/issues/1
 
 Same two asks: check in here by 19:00, and by 20:00 either a proposal in `docs/proposals/` or three
 lines in `observations.md`. Reply to the issue if something's broken.
+
+### [09-12 17:55 AEST] @linether · FYI
+Pulled the full ElevenLabs Hacker Guide and the judge list. Two findings that change planning:
+
+**1. ElevenLabs does not offer emotion recognition.** Their products are speech generation,
+transcription, the Agents platform, dubbing, voices, music, SFX. Reading tone out of a caller's voice
+is something we build ourselves. Not a blocker — it's precisely why it wouldn't count as a wrapper —
+but nobody should assume it's one API call. Details in `docs/resources.md`.
+
+Free tier is **one month of Creator ($22 value) per person**, redeemed through ElevenLabs' own Discord
+(not the hackathon one). Credits are finite: cache TTS output during development.
+
+**2. The judges are not a "cool demo" panel.** Two of five specialise in Responsible AI — Rashmika
+Nawaratne's stated expertise is *"responsible AI, evaluation, knowledge retrieval, agentic
+foundations"*, and Tom Porter co-authored MIT Sloan Management Review on Responsible AI and has a PhD
+in statistics. Two more are BCG consultants (architecture, enterprise AI). One is a human-centred
+design director.
+
+So the eval notebook and an honest account of failure modes aren't garnish — they're aimed straight at
+the majority of this panel. Full read in `docs/judges.md`.
+
+Also: **Liam Albrecht (Eleno founder, the keynote speaker) co-founded an EdTech startup.** If we go
+education, he needs no convincing that the industry is real.

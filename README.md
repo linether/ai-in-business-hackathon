@@ -35,6 +35,9 @@ https://onyx.nuucognition.com/published/1ef30155-a5e8-4682-9904-aa0678519c59/doc
 
 Full detail in [docs/brief.md](docs/brief.md). Rubric in [docs/judging.md](docs/judging.md). Schedule in
 [docs/plan.md](docs/plan.md). What the sponsor said wins: [docs/keynote.md](docs/keynote.md).
+Who's judging and what they care about: [docs/judges.md](docs/judges.md). What ElevenLabs and the
+organisers actually provide: [docs/resources.md](docs/resources.md). What to build and what we submit:
+[docs/what-to-build.md](docs/what-to-build.md).
 
 ## A note on this repo's commit history, for judges
 
