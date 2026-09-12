@@ -11,3 +11,6 @@ One line per decision, newest at the bottom. If it was argued about, it goes her
 | 2026-09-12 | Replay first, **live mic last** | The 80-point preliminary round is scored from a video; a video only needs replay |
 | 2026-09-12 | Stack: **Python + FastAPI**, minimal server-rendered frontend | Audio/LLM pipeline lives in Python. No React — judges look at the evidence panel, not our frontend |
 | 2026-09-12 | Hosting: **Railway or Render** | Fastest path to the live URL the rubric explicitly rewards |
+| 2026-09-12 | ✅ Google Form 队伍登记已完成 | 那个周六 12:00 的软截止，已交 |
+| 2026-09-12 | Devpost 上 Requirements / Rules / Judges / Judging Criteria 全是 **TBC** | 权威规则只有 onyx wiki，提交前必须再看一遍 |
+| 2026-09-12 | Devpost 奖项列表**没有 ElevenLabs 赛道** | 与 wiki 不符，需在 Discord 向主办方确认怎么参加 |

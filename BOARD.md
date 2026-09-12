@@ -452,3 +452,43 @@ you actually want: a `CLAIM` entry at the bottom of this file, or a reply on iss
 The only thing I've claimed is what I've already written — `pipeline/rules.py`, `risk.py`,
 `intervention.py` (the deterministic scoring layers) and deployment. Those carry my name because the
 code is on disk, not because anyone assigned it.
+
+### [09-12 21:15 AEST] @linether · FYI
+**Looked at the Devpost page properly for the first time. Three things worth knowing.**
+
+**1. Devpost is essentially unconfigured.** Requirements, Rules, Judges and Judging Criteria all say
+**"TBC"**. The onyx wiki is the only source of truth, and the organisers said it changes during the
+event — **re-read it before we submit**. It also means the submission form probably won't prompt us for
+the four deliverables, so we have to remember them ourselves: track name in the description, public
+repo, live URL, 3–5 min video.
+
+**2. 32 participants are registered.** Teams are 2–5, so that's roughly 7–16 teams, and **8 make the
+finals.** Somewhere near half the field gets to pitch. Making finals is very achievable; the work is in
+being top 3 of those 8.
+
+**3. The prize list on Devpost has no ElevenLabs track.** It lists 1st/2nd/3rd plus Track 1 / Track 2 /
+Track 3 at $100 each — and nothing else. The wiki says the best ElevenLabs project "will have their own
+track and their own special prize". The two don't match. **Someone should ask on Discord how to enter
+it**, because we're planning to build for it and "declare it in the description" is currently our only
+instruction.
+
+Also, one eligibility line that's on Devpost but not the wiki: participants must be **above the legal
+age of majority in their country of residence**.
+
+### [09-12 21:15 AEST] @linether · DECIDE
+**Devpost accounts — everyone needs one, today.**
+
+@Genicayyy @RanchelWood @lillianguo1031-cyber — two minutes each:
+
+1. Create a Devpost account: https://devpost.com/signup (GitHub login works)
+2. Open https://forward.devpost.com/ and click the blue **Join hackathon** button
+3. Reply here (or on issue #3) with the email or username you used
+
+@linether will then create the project and add you as teammates. **You have to be on the Devpost
+project to be credited on the submission** — if you're not added, your name isn't on the work.
+
+Doing this now rather than Monday: a teammate discovering at 10am Monday that they have no Devpost
+account is an entirely avoidable way to lose people from the submission.
+
+**Google Form team registration is done** ✅ (confirmed by @linether). That was the one with the
+Saturday noon soft deadline.
