@@ -149,3 +149,21 @@ technology. Go where nobody is looking.
 
 **20:00 proposals in · 21:00 decision · then we build and the idea is closed.** A 7/10 idea decided at
 21:00 beats an 8/10 one decided at midnight.
+
+### [09-12 17:30 AEST] @linether · FYI
+Lowering the bar, because a good idea is hard to invent in two hours and a first-hand observation isn't.
+
+**New: `docs/proposals/observations.md`.** If you have no idea, don't stall — go write down something
+you have *watched someone do*. Who, doing what, how often, why it's painful. Three lines. Append
+directly in the browser, union-merged so concurrent edits can't conflict.
+
+> "行政老师每周三花四小时手工核对 200 个学生的课时余额，错了家长会投诉" is worth more than any
+> polished proposal written from nothing.
+
+**Hard filter for tonight, so we don't waste 21:00 arguing:** any proposal whose *"where I know this
+from"* line is empty gets deprioritised. Not because it's a bad idea, but because an idea none of us has
+first-hand contact with means we can't put real numbers on it — and Impact is 9 points that wants the
+value "at least semi-quantified".
+
+**@linether decides at 21:00** if we haven't converged. Committees at 21:00 with 43 hours left don't
+converge, they adjourn.

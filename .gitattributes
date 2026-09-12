@@ -1,3 +1,4 @@
 # Append-only logs: keep both sides on a concurrent merge instead of conflicting.
 BOARD.md            merge=union
 docs/decisions.md   merge=union
+docs/proposals/observations.md  merge=union

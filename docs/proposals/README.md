@@ -22,6 +22,14 @@ two people and it self-scores 0 on originality. It is in the pile to be beaten, 
 **The deadline matters more than the quality of any single proposal.** A decision at 21:00 on a
 7/10 idea beats a decision at midnight on an 8/10 one.
 
+## If you have no idea at all
+
+**Go to [observations.md](observations.md) instead and write down something you've watched someone do.**
+Not a product idea — an observation. Who, doing what, how often, why it's painful.
+
+That file is the highest-value thing anyone can contribute tonight. A proposal invented in two hours is
+usually an LLM's prior dressed up; a first-hand observation is something no other team here has.
+
 ## If you only have ten minutes
 
 Don't let the template stop you. Open a file and answer just these three, which are the sponsor's own
