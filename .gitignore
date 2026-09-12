@@ -34,3 +34,8 @@ data/raw/
 
 # venv
 .venv/
+
+# Generated audio and cached transcripts — regenerable, and they cost credits,
+# so they stay out of git rather than being re-downloaded by everyone.
+data/audio/
+data/transcripts/

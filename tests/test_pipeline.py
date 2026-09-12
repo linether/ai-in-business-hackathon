@@ -235,3 +235,34 @@ def test_labelled_stub_makes_no_llm_calls():
     a = pipeline.analyse(scenarios.load_case(CASE), extractor=LabelledExtractor())
     assert a.telemetry.llm_calls == 0
     assert a.telemetry.extractor == "labelled-stub"
+
+
+# --------------------------------------------------------- scribe word folding
+
+def test_scribe_words_fold_into_speaker_turns():
+    """Scribe returns a word stream; a turn ends when the speaker changes."""
+    from complaintguard.audio.stt import to_transcript
+
+    payload = {
+        "language_code": "en",
+        "words": [
+            {"type": "word", "text": "I", "start": 0.0, "end": 0.2, "speaker_id": "speaker_0"},
+            {"type": "word", "text": "want", "start": 0.2, "end": 0.5, "speaker_id": "speaker_0"},
+            {"type": "spacing", "text": " ", "start": 0.5, "end": 0.5},
+            {"type": "word", "text": "a", "start": 0.5, "end": 0.6, "speaker_id": "speaker_0"},
+            {"type": "word", "text": "refund", "start": 0.6, "end": 1.1, "speaker_id": "speaker_0"},
+            {"type": "word", "text": "Certainly", "start": 1.4, "end": 2.0, "speaker_id": "speaker_1"},
+        ],
+    }
+    t = to_transcript(payload)
+    assert len(t.utterances) == 2
+    assert t.utterances[0].speaker.value == "customer"
+    assert t.utterances[0].text == "I want a refund"
+    assert t.utterances[1].speaker.value == "agent"
+    assert t.utterances[1].start_s == 1.4
+
+
+def test_scribe_folding_survives_an_empty_response():
+    from complaintguard.audio.stt import to_transcript
+
+    assert to_transcript({"words": []}).utterances == []
