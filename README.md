@@ -64,6 +64,8 @@ Pick one of 1–3; the ElevenLabs special track can be entered **alongside** it 
 | Lillian | [@lillianguo1031-cyber](https://github.com/lillianguo1031-cyber) | invited 09-12 | TBD |
 
 Fill in your own Focus once you've answered the `CHECKIN` entry on [BOARD.md](BOARD.md).
+Setting up: [docs/onboarding-prompt.md](docs/onboarding-prompt.md) ·
+on an iPad with no laptop: [docs/onboarding-ipad.md](docs/onboarding-ipad.md)
 
 ## Repo layout
 

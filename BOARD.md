@@ -102,3 +102,19 @@ callback. Multilingual — an anxious Mandarin-speaking parent calling an Austra
 enters us in the ElevenLabs special track.
 
 Not locked yet. If you think it's wrong, say so on the board tonight, not on Sunday.
+
+### [09-12 17:15 AEST] @linether · FYI
+@lillianguo1031-cyber is on an **iPad**, no laptop, and her GitHub account is new as of today — which
+is also why the old email invite looked "expired": it was sent on 09-10 to an address that had no
+GitHub account attached yet. Re-invited by username, so it should work now.
+
+`docs/onboarding-ipad.md` is written for her. Short version:
+
+- **Check in with zero setup** — open `BOARD.md` on github.com, tap the ✏️ pencil, append, Commit.
+  Web-UI commits attribute correctly to her account automatically, so the `user.email` trap can't bite.
+- Needs a terminal later → **GitHub Codespaces** (browser VS Code, nothing to install on the iPad).
+- Don't assign her anything that needs a local dev server.
+
+**Do assign her the Business Value block, the demo video and the pitch.** That's 25 rubric points plus
+the artefact the entire 80-point preliminary round is judged from. iPad is a better video editing
+machine than any of our laptops, and nobody should be treating this as the leftover work.
