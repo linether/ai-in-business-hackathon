@@ -1,0 +1,7 @@
+# Replace with the DuckDNS subdomain once it is registered.
+# Caddy fetches and renews the certificate by itself over HTTP-01,
+# which is why port 80 has to be open in the Aliyun security group.
+{$SITE_DOMAIN:localhost} {
+	encode gzip
+	reverse_proxy app:8000
+}
