@@ -31,6 +31,7 @@
 | --- | --- |
 | `docs/proposals/genicayyy-complaintguard.md` | 想了解方案的原始构想和评测设计 |
 | `docs/proposals/complaintguard-competitive-note.md` | **要讲"我们和 Observe.AI / CallMiner 有什么不同"时** |
+| `docs/market-evidence.md` | **澳洲官方投诉数据 —— pitch 开场和问题重要性靠它** |
 | `docs/judges.md` | 想知道五位评委各自在意什么 |
 | `docs/resources.md` | 要用 ElevenLabs，或想知道主办方给什么 |
 | `docs/brief.md` | 要确认提交要求、赛道规则 |
