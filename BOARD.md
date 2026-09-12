@@ -118,3 +118,34 @@ GitHub account attached yet. Re-invited by username, so it should work now.
 **Do assign her the Business Value block, the demo video and the pitch.** That's 25 rubric points plus
 the artefact the entire 80-point preliminary round is judged from. iPad is a better video editing
 machine than any of our laptops, and nobody should be treating this as the leftover work.
+
+### [09-12 17:25 AEST] @linether · DECIDE
+**Correcting my 17:10 entry.** I wrote up the education / after-hours-enrolment idea as though it were
+our direction. It isn't. It came out of one conversation between two of us this afternoon, and it is
+now sitting in `docs/proposals/linether-education-escalation.md` as **one candidate**, self-scored
+**14/18 with a 0 on originality** — "customer support agent" is literally a Track 1 example and on our
+own crowded-ideas list.
+
+**It is in the pile to be beaten. Please don't converge on it by default.**
+
+**What I need from each of you, by 20:00 AEST tonight: one proposal.**
+
+- `docs/proposals/` → `_template.md` if you have time, or the **ten-minute version** in that folder's
+  README if you don't
+- On github.com: open `docs/proposals/` → **Add file** → **Create new file** → `yourname-idea.md` →
+  **Commit changes**. No laptop or git needed — this works in Safari on an iPad
+- There's a prompt in that README you can hand straight to your AI. It's written to interrogate *you*
+  about what you've actually seen, rather than hand you generic ideas
+
+The three questions that matter most, from the sponsor who is judging us:
+
+1. **Who hurts** — a job title and a company size, not "businesses"
+2. **What it costs them today** — hours × rate × volume
+3. **Where you know this from** — a part-time job, a family business, an internship, a club you ran
+
+That third line is worth more than the rest of the proposal. It is the only thing we have that no other
+team here has, and the sponsor's advice was explicit: pick an industry you know first, then the
+technology. Go where nobody is looking.
+
+**20:00 proposals in · 21:00 decision · then we build and the idea is closed.** A 7/10 idea decided at
+21:00 beats an 8/10 one decided at midnight.
