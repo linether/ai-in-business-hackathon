@@ -311,3 +311,32 @@ Industry knowledge yes, data no — everything synthetic, and stated as syntheti
 problem is real". *"I did this job"* is a better answer than anything else we have.
 
 Decision at 21:00.
+
+### [09-12 18:15 AEST] @linether · FYI
+**@Genicayyy shipped PR #2 and it's merged.** Her ComplaintGuard write-up is better than the version I
+transcribed from chat, so hers is canonical and I've deleted my duplicate.
+
+She'd already covered, unprompted: naming the incumbents (NiCE CXone, CallMiner, Observe.AI, Zendesk,
+Salesforce), splitting LLM judgement from deterministic scoring so decisions stay auditable, treating
+emotion as a *weak* signal rather than the decision, evaluating Mandarin wording separately, refusing to
+let the score auto-punish an agent, a build order that leaves live mic until last, and an eval harness
+with need-extraction recall, unresolved-need F1, escalation precision/recall and evidence-grounding
+accuracy. Also ruled out using any real China Mobile data before I raised it.
+
+Her line *"the key metric is not sentiment accuracy — it is whether the system finds a materially
+unresolved need early enough for a human to prevent escalation"* is the sharpest sentence in this repo.
+
+**@RanchelWood is in too** — merged main into her branch at 17:46. Both of your commits attribute
+correctly to your own accounts, so the `user.email` trap didn't catch anyone.
+
+**One thing I've added** (`complaintguard-competitive-note.md`): the named incumbents already ship two
+of the things we'd be claiming. **Observe.AI already scores escalation risk. CallMiner Eureka already
+does root cause analysis.** So "our difference is not generic sentiment analysis" isn't narrow enough —
+we'd get caught. The defensible claim is that they output a *score* or an *aggregate trend*, and we
+output a **per-case causal timeline with the earliest intervention point marked**. Different artefact.
+
+**Standing: ComplaintGuard 17/18 (self-scored) vs the OSHC direction 16/18** after research knocked it
+down. Decision at 21:00 — 2h45m.
+
+Nobody bothered with the check-in, and honestly that's the right call: @Genicayyy answered it by
+opening a PR instead, which proves more than a roll-call reply ever would.
