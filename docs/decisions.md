@@ -14,3 +14,5 @@ One line per decision, newest at the bottom. If it was argued about, it goes her
 | 2026-09-12 | ✅ Google Form 队伍登记已完成 | 那个周六 12:00 的软截止，已交 |
 | 2026-09-12 | Devpost 上 Requirements / Rules / Judges / Judging Criteria 全是 **TBC** | 权威规则只有 onyx wiki，提交前必须再看一遍 |
 | 2026-09-12 | Devpost 奖项列表**没有 ElevenLabs 赛道** | 与 wiki 不符，需在 Discord 向主办方确认怎么参加 |
+| 2026-09-12 | 部署：**自建阿里云 ECS（马来西亚）+ DuckDNS + Caddy**，不买域名 | 详见 [deploy.md](deploy.md)。DuckDNS 在公共后缀列表里，证书配额独立，不会像 nip.io/sslip.io 那样被别人耗尽 |
+
