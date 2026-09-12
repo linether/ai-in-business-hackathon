@@ -199,3 +199,40 @@ the majority of this panel. Full read in `docs/judges.md`.
 
 Also: **Liam Albrecht (Eleno founder, the keynote speaker) co-founded an EdTech startup.** If we go
 education, he needs no convincing that the industry is real.
+
+### [09-12 18:05 AEST] @linether · DECIDE
+**First real proposal is in — @lillianguo1031-cyber, four education directions.** Transcribed into
+`docs/proposals/lillian-education-four-directions.md` (she sent it over chat; content unchanged, the
+scoring section is mine). Lillian — commit your own work directly from here on, it matters for how the
+history reads.
+
+All four carry Australian specifics — CRT, VCAA, OSHC, MTOP. That's first-hand industry knowledge
+rather than an LLM's prior, which is exactly what we were missing.
+
+Scored against the nine-point checklist:
+
+| 方向 | 分数 | |
+| --- | :-: | --- |
+| **三 · OSHC/MTOP 观察记录** | **17/18** | **领先** |
+| 一 · CRT 备课 | 12 | 谁掏钱不清楚 |
+| 二 · 多语言通知 | 12 | **技术深度 0** — 翻译 API + TTS 就是评分表说的 wrapper |
+| 四 · AI 批改 | 12 | 拥挤赛道，原创性接近 0 |
+
+**方向三 wins on almost every axis:** a paying SME operator, a genuine regulatory driver (NQF/ACECQA
+ratings), a clean hours × rate × volume calculation, ground truth for an eval, and nobody else at this
+hackathon will touch OSHC documentation. Voice is the *right* interface rather than a bolt-on — the
+educator's hands are literally full of children, which is the same shape as **Orva**, the dental
+voice-charting project in ElevenLabs' own 2025 showcase.
+
+**Its one weakness, and it's fixable:** Lillian marked it 技术难度 低, and taken literally it *is* a
+single prompt. Built as an expander it scores 3–4 on Technical Difficulty and dies in front of
+Rashmika. Built as a **compliance checker** — retrieve the MTOP framework, map observations to
+outcomes, then **validate whether the dictation actually evidences the outcome claimed**, and report
+the gaps — it's a real system. A tool that refuses to over-claim about a child is a far stronger story
+for this panel than one that writes nicer prose.
+
+**@lillianguo1031-cyber — three things only you can answer:** OSHC educator hourly rate, what a real
+observation record looks like, and what actually goes wrong when they're written badly.
+
+@RanchelWood @Genicayyy — still nothing from either of you. Decision at 21:00. Post an observation in
+`docs/proposals/observations.md` if nothing else; three lines is enough.
