@@ -128,5 +128,9 @@ meeting notes → CRM · resume screening · "AI dashboard that explains your da
 
 | Proposal | Author | Self-score | Verdict |
 | --- | --- | --- | --- |
-| [After-hours enrolment line for education SMEs](linether-education-escalation.md) | @linether | 14/18 | candidate — weak on originality |
+| [四个教育行业方向](lillian-education-four-directions.md) — 方向三 OSHC/MTOP | @lillianguo1031-cyber | **17/18** | **领先候选** |
+| 同上 — 方向一 CRT 备课 | @lillianguo1031-cyber | 12/18 | 付费方不清晰 |
+| 同上 — 方向二 多语言通知 | @lillianguo1031-cyber | 12/18 | 技术深度 0，对这个评审团风险最高 |
+| 同上 — 方向四 AI 批改 | @lillianguo1031-cyber | 12/18 | 拥挤赛道 |
+| [After-hours enrolment line](linether-education-escalation.md) | @linether | 14/18 | 原创性 0 |
 | _yours here_ | | | |
