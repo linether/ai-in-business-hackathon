@@ -1,60 +1,75 @@
 # Forward: AI in Business Hackathon
 
-Team repo for **Forward** — a 48-hour hackathon on applying AI in a business setting, run by
-[RAID (Responsible AI Development)](https://luma.com/qmvfa2nk) and DSCubed at the University of Melbourne,
-sponsored by Eleno.
+Team repo for **Forward** — a 48-hour hackathon on applying AI in a business setting, run by DSCubed and
+RAID (Responsible AI Development) at the University of Melbourne, sponsored by **Eleno** and **ElevenLabs**.
 
-Event page: https://luma.com/qmvfa2nk
+**Organisers' doc site is the source of truth and they update it live:**
+https://onyx.nuucognition.com/published/1ef30155-a5e8-4682-9904-aa0678519c59/doc/Homepage
 
-## Timeline (all times Melbourne, AEST / UTC+10)
+## Deadlines (Melbourne, AEST)
 
-| When | What | Where |
-| --- | --- | --- |
-| **Thu 10 Sep, 6:00–7:30pm** | Opening night — Eleno keynote + team formation | Elisabeth Murdoch Building, G06 Theatre |
-| **Sat 12 Sep, 12:00pm** | Hack starts — **challenge tracks revealed** | — |
-| **Mon 14 Sep, 12:00pm** | ⛔ **Submissions close** | — |
-| **Mon 14 Sep, 4:00pm** | Finalists announced | — |
-| **Mon 14 Sep, 5:30–8:30pm** | Finalist pitches + awards | — |
+| When | What |
+| --- | --- |
+| ~~Sat 12 Sep, 12:00pm~~ | ~~Team registration form due~~ · **passed** — confirm we're registered |
+| Sat 12 Sep, 12:00pm | Coding started. Coworking at The Spot, Level 3 |
+| **Mon 14 Sep, 12:00pm** | **Devpost submission closes. Late = not considered.** |
+| Mon 14 Sep, 4:00pm | Top 8 finalists announced |
+| Mon 14 Sep, 5:30–8:30pm | Live finalist pitches + awards |
 
-That is **48 hours of build time**, Sat noon → Mon noon. See [docs/plan.md](docs/plan.md) for the working plan.
+## Links
 
-## Rules that affect us
+| What | Where |
+| --- | --- |
+| **Submit here (Devpost)** | https://forward.devpost.com/ |
+| Team registration form | https://forms.gle/tUDRz7TwGGXUzKFZ9 |
+| Hackathon Discord | https://discord.gg/KBq3tdZaF |
+| ElevenLabs credit redemption | https://discord.com/invite/VnBvbbcdEC → `#coupon-codes` |
+| Host — Nathan Luo | nathanluo13@gmail.com |
 
-- Teams of **2–5 people**; at least one member must be a current university student (any institution).
-- **In-person attendance is required** for finalists / prize eligibility.
-- 3 challenge tracks, revealed at kick-off on Saturday. We pick one.
+## What we have to hand in
 
-## Prizes
+1. Track name in the Devpost description
+2. **Public** repo — ⚠️ this repo is currently **private**, flip it before submitting
+3. Production URL — a live deployed app (localhost scores lower)
+4. 3–5 min video showing the app working end-to-end, not slides
 
-1st **$2,000** · 2nd **$500** · 3rd **$200** · each track winner **$100**.
-Plus ElevenLabs credits (Creator tier for all participants, Pro/Scale for winners) and internship/job
-conversations with Eleno.
+Full detail in [docs/brief.md](docs/brief.md). Rubric in [docs/judging.md](docs/judging.md). Schedule in
+[docs/plan.md](docs/plan.md).
+
+## Tracks
+
+Pick one of 1–3; the ElevenLabs special track can be entered **alongside** it for a second $100 shot.
+
+1. **Improve an existing business capability** — make something businesses already do dramatically better
+2. **Create a new business capability** — do something that wasn't realistically possible before
+3. **Solve a business problem** — start from the problem, not the technology
+- **Special: Built With ElevenLabs** — voice/audio as core functionality, not a bolted-on extra
+
+**Our track: TBD** → record it in [docs/decisions.md](docs/decisions.md) once chosen.
 
 ## Team
 
 | Name | GitHub | Contact | Focus |
 | --- | --- | --- | --- |
 | Yixiao | @linether | yixiao004@e.ntu.edu.sg | TBD |
-| | | yangyanyi20020603@gmail.com | TBD |
-| | | andrewsu412@gmail.com | TBD |
-| | | lillianguo1031@gmail.com | TBD |
-
-Fill in your GitHub handle and what you want to own once you accept the invite.
+| | @RanchelWood | | TBD |
+| | @Genicayyy *(invite pending)* | | TBD |
+| | *(invite pending)* | | TBD |
 
 ## Repo layout
 
 ```
-docs/          brief, plan, idea backlog, decisions
-src/           application code (stack decided after tracks drop on Saturday)
-notebooks/     scratch experiments, data exploration
-assets/        slides, demo video, screenshots
+docs/          brief, judging rubric, plan, idea backlog, decisions
+src/           application code
+notebooks/     experiments — and the eval that's worth 6 rubric points
+assets/        demo video, screenshots, pitch deck
 ```
 
 ## Working agreements
 
 - `main` stays demo-able. Branch as `yourname/what-youre-doing`, PR into `main`.
-- Secrets go in `.env` (gitignored). Never commit an API key — `.env.example` documents the keys we need.
-- Anything decided in a call goes into [docs/decisions.md](docs/decisions.md) so nobody re-litigates it at 2am.
+- Secrets go in `.env` (gitignored). Never commit a key — `.env.example` lists what we need.
+- Decisions go in [docs/decisions.md](docs/decisions.md) so nobody re-litigates them at 2am.
 
 ## Quickstart
 
