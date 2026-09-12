@@ -2,7 +2,7 @@
   "case_id": "demo-001",
   "customer_ref": "synthetic-customer-01",
   "language": "en",
-  "note": "SYNTHETIC. Written by the team, voiced with ElevenLabs TTS. No real customer data.",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. Written by the team, voiced with ElevenLabs TTS. No real customer data.",
   "ground_truth": {
     "should_escalate": true,
     "business_category": "附加包未授权",
@@ -213,7 +213,7 @@
             "start_s": 1.0,
             "end_s": 11.0,
             "speaker": "customer",
-            "text": "I'm not going to argue about it. I'll take this to the ombudsman and I'll port out to another provider."
+            "text": "I'm not going to argue about it. I'll take it to the Telecommunications Industry Ombudsman, and I'll port out to another provider."
           },
           {
             "start_s": 11.5,
