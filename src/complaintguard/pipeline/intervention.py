@@ -13,21 +13,55 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from ..models import Case, InterventionPoint, Promise
+from ..models import Case, Confidence, InterventionPoint, Promise
 
 
 def _earliest_broken_promise(case: Case) -> Optional[Promise]:
     broken = [
         p
         for p in case.all_promises()
-        if p.fulfilled is False or (p.overdue_by_hours or 0) > 0
+        if p.confidence is not Confidence.UNCERTAIN
+        and (p.fulfilled is False or (p.overdue_by_hours or 0) > 0)
     ]
     if not broken:
         return None
     return min(broken, key=lambda p: p.made_at)
 
 
+def _earliest_contradiction(case: Case):
+    """The first moment someone gave an answer that conflicted with an earlier one.
+
+    This outranks the unresolved-need fallback. In demo-003 the first contact was
+    handled correctly — the agent gave the right answer. The failure is the second
+    contact contradicting it, and that is where a human could still have stopped
+    this by pulling the earlier call instead of asking the customer to prove it.
+    """
+    by_id = {a.id: a for c in case.contacts if c.extraction for a in c.extraction.actions}
+    conflicting = [a for a in by_id.values() if a.contradicts and a.contradicts in by_id]
+    if not conflicting:
+        return None, None
+    action = min(conflicting, key=lambda a: a.taken_at)
+    return action, by_id[action.contradicts]
+
+
 def find(case: Case) -> Optional[InterventionPoint]:
+    action, earlier = _earliest_contradiction(case)
+    if action is not None:
+        contact_seq = action.evidence[0].contact_seq if action.evidence else case.contacts[0].seq
+        return InterventionPoint(
+            contact_seq=contact_seq,
+            at=action.taken_at,
+            what_should_have_happened=(
+                "Pull the earlier call and have a supervisor rule on the conflict, rather than "
+                "asking the customer to prove what they were told."
+            ),
+            why_it_was_missed=(
+                f"This contact answered the same question differently — \"{action.summary}\" "
+                f"against the earlier \"{earlier.summary}\" — and the earlier record was never checked."
+            ),
+            evidence=action.evidence + earlier.evidence,
+        )
+
     promise = _earliest_broken_promise(case)
     if promise is not None:
         contact_seq = promise.evidence[0].contact_seq if promise.evidence else case.contacts[0].seq
@@ -44,7 +78,11 @@ def find(case: Case) -> Optional[InterventionPoint]:
         )
 
     # Fall back to the first need that was raised and never closed.
-    unresolved = [n for n in case.all_needs() if n.status.value in ("unresolved", "partial")]
+    unresolved = [
+        n
+        for n in case.all_needs()
+        if n.confidence is not Confidence.UNCERTAIN and n.status.value in ("unresolved", "partial")
+    ]
     if not unresolved:
         return None
     need = min(unresolved, key=lambda n: n.raised_at)
@@ -83,6 +121,15 @@ def recommend(case: Case, point: Optional[InterventionPoint]) -> List[dict]:
             RecommendedAction(
                 label="Raise and assign a case for the outstanding request",
                 rationale="An unresolved need with no owner is what produced the repeat contact.",
+                urgency="high",
+            )
+        )
+    actions_taken = [a for c in case.contacts if c.extraction for a in c.extraction.actions]
+    if actions_taken and not any(a.assigns_owner for a in actions_taken):
+        actions.append(
+            RecommendedAction(
+                label="Raise a fault ticket and name an owner",
+                rationale="Nothing on this case has ever been assigned to a person or a queue.",
                 urgency="high",
             )
         )

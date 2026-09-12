@@ -16,12 +16,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from ..models import Case, Evidence, Signal, SignalKind
+from ..models import Case, Confidence, Evidence, Signal, SignalKind
 
 # Fixed weights. Tuned by hand, never learned, never model-generated, so that
 # any score can be explained line by line on stage.
 WEIGHTS = {
     SignalKind.REPEAT_CONTACT: 12,
+    SignalKind.NO_OWNER: 20,
+    SignalKind.CONTRADICTORY_ANSWER: 24,
     SignalKind.UNRESOLVED_NEED: 15,
     SignalKind.BROKEN_PROMISE: 22,
     SignalKind.MISSED_DEADLINE: 18,
@@ -33,12 +35,15 @@ WEIGHTS = {
 # Deliberately small and inspectable. Extend from real scenario scripts, not
 # from a model's imagination.
 REGULATOR_TERMS = [
-    "ombudsman", "tio", "regulator", "acma", "complaint to the",
+    "ombudsman", "telecommunications industry ombudsman", "regulator", "acma",
+    "complaint to the", "lodged a complaint", "escalate it externally",
     "工信部", "投诉到", "监管", "消协",
 ]
 CHURN_TERMS = [
-    "cancel my", "switch to", "port out", "leave you", "another provider",
-    "close my account", "转网", "销户", "换运营商", "不用你们了",
+    "cancel my", "switch to", "switching to", "port out", "porting", "leave you",
+    "another provider", "close my account", "out of contract",
+    "what else is out there", "what else is available", "looking elsewhere",
+    "shop around", "转网", "销户", "换运营商", "不用你们了",
 ]
 ESCALATION_TERMS = [
     "supervisor", "manager", "escalate", "someone senior",
@@ -60,6 +65,8 @@ def timing_signals(case: Case, now: datetime) -> List[Signal]:
     """
     signals: List[Signal] = []
     for promise in case.all_promises():
+        if promise.confidence is Confidence.UNCERTAIN:
+            continue  # citation did not hold up — shown in the UI, never scored
         if promise.fulfilled:
             continue
         if promise.due_at is None:
@@ -87,6 +94,8 @@ def promise_signals(case: Case) -> List[Signal]:
     """Promises explicitly known to be unfulfilled, deadline or not."""
     signals: List[Signal] = []
     for promise in case.all_promises():
+        if promise.confidence is Confidence.UNCERTAIN:
+            continue
         if promise.fulfilled is False:
             signals.append(
                 Signal(
@@ -102,6 +111,8 @@ def promise_signals(case: Case) -> List[Signal]:
 def unresolved_signals(case: Case) -> List[Signal]:
     signals: List[Signal] = []
     for need in case.all_needs():
+        if need.confidence is Confidence.UNCERTAIN:
+            continue
         if need.status.value in ("unresolved", "partial"):
             signals.append(
                 Signal(
@@ -172,11 +183,76 @@ def language_signals(case: Case) -> List[Signal]:
     return signals
 
 
+def no_owner_signals(case: Case) -> List[Signal]:
+    """An unresolved need that nobody was ever assigned to.
+
+    This is the failure in demo-004 and it is invisible to a system that only
+    watches promises: the callback was delivered exactly on time, and the problem
+    still had no owner. A promise to *ring someone* is not a promise to *fix it*.
+    """
+    unresolved = [
+        n
+        for n in case.all_needs()
+        if n.confidence is not Confidence.UNCERTAIN and n.status.value in ("unresolved", "partial")
+    ]
+    if not unresolved:
+        return []
+
+    actions = [a for c in case.contacts if c.extraction for a in c.extraction.actions]
+    if any(a.assigns_owner for a in actions):
+        return []
+    # Only meaningful once the customer has had to come back about it.
+    if len(case.contacts) < 2:
+        return []
+
+    return [
+        Signal(
+            kind=SignalKind.NO_OWNER,
+            weight=WEIGHTS[SignalKind.NO_OWNER],
+            detail=(
+                "The matter is still unresolved and no action across "
+                f"{len(case.contacts)} contacts assigned it to anyone."
+            ),
+            evidence=unresolved[0].evidence,
+        )
+    ]
+
+
+def contradiction_signals(case: Case) -> List[Signal]:
+    """The same question answered two different ways.
+
+    The TIO counts "receiving confusing information" among the drivers of
+    compensation complaints — see docs/market-evidence.md. It is also a fact
+    about the record rather than a feeling, so it belongs here in code.
+    """
+    by_id = {a.id: a for c in case.contacts if c.extraction for a in c.extraction.actions}
+    signals: List[Signal] = []
+    for action in by_id.values():
+        if not action.contradicts:
+            continue
+        earlier = by_id.get(action.contradicts)
+        if earlier is None:
+            continue
+        signals.append(
+            Signal(
+                kind=SignalKind.CONTRADICTORY_ANSWER,
+                weight=WEIGHTS[SignalKind.CONTRADICTORY_ANSWER],
+                detail=(
+                    f"\"{action.summary}\" contradicts the earlier answer: \"{earlier.summary}\"."
+                ),
+                evidence=action.evidence + earlier.evidence,
+            )
+        )
+    return signals
+
+
 def all_signals(case: Case, now: datetime) -> List[Signal]:
     return (
         promise_signals(case)
         + timing_signals(case, now)
         + unresolved_signals(case)
         + repeat_contact_signals(case)
+        + no_owner_signals(case)
+        + contradiction_signals(case)
         + language_signals(case)
     )

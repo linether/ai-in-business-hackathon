@@ -170,7 +170,8 @@
                 "speaker": "agent",
                 "quote": "It's done — reference 4471-B."
               }
-            ]
+            ],
+            "assigns_owner": true
           },
           {
             "id": "a2",
@@ -185,7 +186,8 @@
                 "speaker": "agent",
                 "quote": "I've also removed the duplicate billing entry that caused it"
               }
-            ]
+            ],
+            "assigns_owner": true
           }
         ]
       }

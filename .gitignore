@@ -31,3 +31,6 @@ pnpm-debug.log*
 data/raw/
 *.sqlite
 *.db
+
+# venv
+.venv/

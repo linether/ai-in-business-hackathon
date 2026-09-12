@@ -144,7 +144,8 @@
                 "utterance_index": 1
               }
             ],
-            "utterance_index": 1
+            "utterance_index": 1,
+            "assigns_owner": true
           }
         ]
       }

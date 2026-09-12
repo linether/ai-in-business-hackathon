@@ -25,9 +25,20 @@ from pydantic import BaseModel, Field
 
 class Evidence(BaseModel):
     contact_seq: int = Field(description="Which contact in the case this came from, 1-based")
+    utterance_index: Optional[int] = Field(
+        default=None,
+        description=(
+            "Index into that contact's utterances, 0-based. This is the anchor the evaluation "
+            "matches on — exact integer comparison, never an LLM judging whether two extractions "
+            "are 'the same'. See data/scenarios/README.md."
+        ),
+    )
     start_s: Optional[float] = Field(default=None, description="Offset into the audio, seconds")
     speaker: Optional[str] = None
     quote: str = Field(description="Verbatim line from the transcript. Never paraphrase.")
+
+    # Set by the citation check (layer 3b). None means the check has not run.
+    citation_verified: Optional[bool] = None
 
 
 # --------------------------------------------------------------------------
@@ -67,14 +78,28 @@ class NeedStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
+class Confidence(str, Enum):
+    """Third state agreed in review (docs/decisions.md, 2026-09-12).
+
+    A claim whose evidence does not hold up is marked UNCERTAIN: it is shown in
+    the UI but excluded from scoring. Saying "I am not sure" is more trustworthy
+    than guessing, and it keeps a fabricated promise from ever blaming a person.
+    """
+
+    CONFIRMED = "confirmed"
+    UNCERTAIN = "uncertain"
+
+
 class Need(BaseModel):
     """Something the customer asked to have happen."""
 
     id: str
+    utterance_index: Optional[int] = None
     summary: str
     raised_at: datetime
     status: NeedStatus = NeedStatus.UNKNOWN
     evidence: List[Evidence] = []
+    confidence: Confidence = Confidence.CONFIRMED
     # filled by layer 5
     resolution_note: Optional[str] = None
     resolution_evidence: List[Evidence] = []
@@ -84,22 +109,42 @@ class Promise(BaseModel):
     """Something the agent said would happen. The hero of the demo — see spec §3."""
 
     id: str
+    utterance_index: Optional[int] = None
     summary: str
     made_at: datetime
     due_at: Optional[datetime] = Field(default=None, description="Deadline, if the agent gave one")
     fulfilled: Optional[bool] = Field(default=None, description="None means we could not tell")
     evidence: List[Evidence] = []
+    confidence: Confidence = Confidence.CONFIRMED
     # filled by layer 6, deterministic
     overdue_by_hours: Optional[float] = None
 
 
 class Action(BaseModel):
-    """Something the agent actually did during the contact."""
+    """Something the agent actually did during the contact.
+
+    ``assigns_owner`` and ``contradicts`` exist so the model extracts a *fact*
+    and the deterministic layer decides what it *means*. "Did this action put the
+    matter in someone's queue?" is a reading-comprehension question. "Does an
+    unresolved need with no owner across three contacts warrant escalation?" is a
+    policy question, and policy belongs in code that can be audited.
+    """
 
     id: str
+    utterance_index: Optional[int] = None
     summary: str
     taken_at: datetime
     evidence: List[Evidence] = []
+    assigns_owner: Optional[bool] = Field(
+        default=None,
+        description="True if this action put the matter into someone's queue (ticket, assignment, "
+        "escalation). False for a note that nobody acts on. None if not determined.",
+    )
+    contradicts: Optional[str] = Field(
+        default=None,
+        description="Id of an earlier action this one contradicts — the same question answered "
+        "differently. Drives the 答复矛盾 signal.",
+    )
 
 
 class Extraction(BaseModel):
@@ -153,6 +198,8 @@ class Case(BaseModel):
 
 class SignalKind(str, Enum):
     REPEAT_CONTACT = "repeat_contact"
+    NO_OWNER = "no_owner"
+    CONTRADICTORY_ANSWER = "contradictory_answer"
     UNRESOLVED_NEED = "unresolved_need"
     BROKEN_PROMISE = "broken_promise"
     MISSED_DEADLINE = "missed_deadline"
@@ -204,3 +251,19 @@ class CaseAnalysis(BaseModel):
         default=True,
         description="Always true this weekend. Surfaced in the UI so nobody mistakes it for real data.",
     )
+    telemetry: "Telemetry" = Field(default_factory=lambda: Telemetry())
+
+
+class Telemetry(BaseModel):
+    """Instrumentation. Cheap, and the 2026 agent-architecture guidance is explicit
+    that every pattern's health should be measurable from day one."""
+
+    llm_calls: int = 0
+    elapsed_ms: int = 0
+    claims_extracted: int = 0
+    claims_rejected_by_citation_check: int = 0
+    claims_marked_uncertain: int = 0
+    extractor: str = "unknown"
+
+
+CaseAnalysis.model_rebuild()

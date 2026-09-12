@@ -9,9 +9,18 @@
     "root_cause": "答复矛盾",
     "earliest_intervention_contact_seq": 2,
     "earliest_intervention_action": "On contact 2, when the answer contradicted contact 1, the agent should have pulled the earlier call and escalated to a supervisor for a ruling — not asked the customer to prove what they had been told",
-    "unresolved_need_ids": ["n1"],
+    "unresolved_need_ids": [
+      "n1"
+    ],
     "broken_promise_ids": [],
-    "key_signals": ["答复矛盾", "未解决诉求", "重复联系", "监管表述", "信任变化", "转网意向"],
+    "key_signals": [
+      "答复矛盾",
+      "未解决诉求",
+      "重复联系",
+      "监管表述",
+      "信任变化",
+      "转网意向"
+    ],
     "why_this_scenario_exists": "硬样本：客户全程语气平静、礼貌、有条理，没有任何情绪爆发，但第三通平静地说明已经向 TIO（澳洲电信业投诉监察专员）提交了投诉。情绪信号接近零，真实风险极高 —— 任何依赖情绪识别的系统都会漏掉这一单。同时这是唯一主因为「答复矛盾」而非「承诺未兑现」的场景，用来测系统能否发现前后两通说法不一致。注意 TIO 是真实存在的机构，投诉到 TIO 对电信商有实际费用成本。"
   },
   "contacts": [
@@ -23,22 +32,75 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 10.0, "speaker": "customer", "text": "Hi, I've got about two months left on my plan and I'm thinking of leaving. I wanted to check what the early termination charge would be."},
-          {"start_s": 10.5, "end_s": 21.0, "speaker": "agent", "text": "Let me have a look. So you're on the twenty-four month plan and you're twenty-two months in. Where there's less than three months remaining, the early termination charge is waived."},
-          {"start_s": 21.5, "end_s": 26.0, "speaker": "customer", "text": "Waived entirely? So there'd be nothing to pay?"},
-          {"start_s": 26.5, "end_s": 34.0, "speaker": "agent", "text": "That's right, you'd qualify. When you're ready just put the request through and the system takes the charge off automatically."},
-          {"start_s": 34.5, "end_s": 38.0, "speaker": "customer", "text": "Great, thanks. I'll note that down."}
+          {
+            "start_s": 1.0,
+            "end_s": 10.0,
+            "speaker": "customer",
+            "text": "Hi, I've got about two months left on my plan and I'm thinking of leaving. I wanted to check what the early termination charge would be."
+          },
+          {
+            "start_s": 10.5,
+            "end_s": 21.0,
+            "speaker": "agent",
+            "text": "Let me have a look. So you're on the twenty-four month plan and you're twenty-two months in. Where there's less than three months remaining, the early termination charge is waived."
+          },
+          {
+            "start_s": 21.5,
+            "end_s": 26.0,
+            "speaker": "customer",
+            "text": "Waived entirely? So there'd be nothing to pay?"
+          },
+          {
+            "start_s": 26.5,
+            "end_s": 34.0,
+            "speaker": "agent",
+            "text": "That's right, you'd qualify. When you're ready just put the request through and the system takes the charge off automatically."
+          },
+          {
+            "start_s": 34.5,
+            "end_s": 38.0,
+            "speaker": "customer",
+            "text": "Great, thanks. I'll note that down."
+          }
         ]
       },
       "extraction": {
         "needs": [
-          {"id": "n1", "utterance_index": 0, "summary": "Confirm and actually apply the waiver of the early termination charge", "raised_at": "2026-09-01T11:05:00", "status": "unresolved",
-           "evidence": [{"contact_seq": 1, "utterance_index": 0, "start_s": 1.0, "speaker": "customer", "quote": "I wanted to check what the early termination charge would be."}]}
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Confirm and actually apply the waiver of the early termination charge",
+            "raised_at": "2026-09-01T11:05:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "I wanted to check what the early termination charge would be."
+              }
+            ]
+          }
         ],
         "promises": [],
         "actions": [
-          {"id": "a1", "utterance_index": 3, "summary": "Agent advised the charge is waived and qualifies automatically", "taken_at": "2026-09-01T11:07:00",
-           "evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 26.5, "speaker": "agent", "quote": "That's right, you'd qualify. When you're ready just put the request through and the system takes the charge off automatically."}]}
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "Agent advised the charge is waived and qualifies automatically",
+            "taken_at": "2026-09-01T11:07:00",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 26.5,
+                "speaker": "agent",
+                "quote": "That's right, you'd qualify. When you're ready just put the request through and the system takes the charge off automatically."
+              }
+            ],
+            "assigns_owner": false
+          }
         ]
       }
     },
@@ -50,23 +112,87 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 8.0, "speaker": "customer", "text": "Hi, I rang last week and was told the termination charge would be waived. I'd like to go ahead and cancel."},
-          {"start_s": 8.5, "end_s": 19.0, "speaker": "agent", "text": "Let me check. Sorry — on your plan the waiver only applies with less than one month remaining. You've got two months, so there's an early termination charge of three hundred and twenty dollars."},
-          {"start_s": 19.5, "end_s": 28.0, "speaker": "customer", "text": "But the person I spoke to said less than three months. I asked twice, specifically, because I wanted to be sure."},
-          {"start_s": 28.5, "end_s": 37.0, "speaker": "agent", "text": "What I've got in front of me says one month. It's possible there was a misunderstanding on the earlier call, but I can only go by what the system shows."},
-          {"start_s": 37.5, "end_s": 45.0, "speaker": "customer", "text": "Could you pull up the recording of that call? I made my plans based on being told it was waived."},
-          {"start_s": 45.5, "end_s": 54.0, "speaker": "agent", "text": "I can't access call recordings from this desk, sorry. You'd need to lodge that request separately. I can only apply the charge as the system has it."},
-          {"start_s": 54.5, "end_s": 59.0, "speaker": "customer", "text": "I see. All right. Thank you for your time."}
+          {
+            "start_s": 1.0,
+            "end_s": 8.0,
+            "speaker": "customer",
+            "text": "Hi, I rang last week and was told the termination charge would be waived. I'd like to go ahead and cancel."
+          },
+          {
+            "start_s": 8.5,
+            "end_s": 19.0,
+            "speaker": "agent",
+            "text": "Let me check. Sorry — on your plan the waiver only applies with less than one month remaining. You've got two months, so there's an early termination charge of three hundred and twenty dollars."
+          },
+          {
+            "start_s": 19.5,
+            "end_s": 28.0,
+            "speaker": "customer",
+            "text": "But the person I spoke to said less than three months. I asked twice, specifically, because I wanted to be sure."
+          },
+          {
+            "start_s": 28.5,
+            "end_s": 37.0,
+            "speaker": "agent",
+            "text": "What I've got in front of me says one month. It's possible there was a misunderstanding on the earlier call, but I can only go by what the system shows."
+          },
+          {
+            "start_s": 37.5,
+            "end_s": 45.0,
+            "speaker": "customer",
+            "text": "Could you pull up the recording of that call? I made my plans based on being told it was waived."
+          },
+          {
+            "start_s": 45.5,
+            "end_s": 54.0,
+            "speaker": "agent",
+            "text": "I can't access call recordings from this desk, sorry. You'd need to lodge that request separately. I can only apply the charge as the system has it."
+          },
+          {
+            "start_s": 54.5,
+            "end_s": 59.0,
+            "speaker": "customer",
+            "text": "I see. All right. Thank you for your time."
+          }
         ]
       },
       "extraction": {
         "needs": [],
         "promises": [],
         "actions": [
-          {"id": "a2", "utterance_index": 1, "summary": "Agent advised the charge applies — $320 — directly contradicting contact 1", "taken_at": "2026-09-04T14:32:00",
-           "evidence": [{"contact_seq": 2, "utterance_index": 1, "start_s": 8.5, "speaker": "agent", "quote": "You've got two months, so there's an early termination charge of three hundred and twenty dollars."}]},
-          {"id": "a3", "utterance_index": 5, "summary": "Agent declined to retrieve the earlier call recording and put the burden on the customer", "taken_at": "2026-09-04T14:35:00",
-           "evidence": [{"contact_seq": 2, "utterance_index": 5, "start_s": 45.5, "speaker": "agent", "quote": "I can't access call recordings from this desk, sorry. You'd need to lodge that request separately."}]}
+          {
+            "id": "a2",
+            "utterance_index": 1,
+            "summary": "Agent advised the charge applies — $320 — directly contradicting contact 1",
+            "taken_at": "2026-09-04T14:32:00",
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 1,
+                "start_s": 8.5,
+                "speaker": "agent",
+                "quote": "You've got two months, so there's an early termination charge of three hundred and twenty dollars."
+              }
+            ],
+            "assigns_owner": false,
+            "contradicts": "a1"
+          },
+          {
+            "id": "a3",
+            "utterance_index": 5,
+            "summary": "Agent declined to retrieve the earlier call recording and put the burden on the customer",
+            "taken_at": "2026-09-04T14:35:00",
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 5,
+                "start_s": 45.5,
+                "speaker": "agent",
+                "quote": "I can't access call recordings from this desk, sorry. You'd need to lodge that request separately."
+              }
+            ],
+            "assigns_owner": false
+          }
         ]
       }
     },
@@ -78,18 +204,58 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 11.0, "speaker": "customer", "text": "Morning. I'm not ringing to argue about it — I just wanted to let you know I lodged a complaint with the Ombudsman on Friday."},
-          {"start_s": 11.5, "end_s": 17.0, "speaker": "agent", "text": "Oh — right. Let me see whether there's something we can do before it gets to that."},
-          {"start_s": 17.5, "end_s": 29.0, "speaker": "customer", "text": "I'm not in a rush. I asked the same question twice and got two different answers, and the second time I was told to go and prove it myself. So this seemed like the only avenue left."},
-          {"start_s": 29.5, "end_s": 36.0, "speaker": "agent", "text": "I understand. I'll escalate this to a supervisor and ask them to review both calls."},
-          {"start_s": 36.5, "end_s": 44.0, "speaker": "customer", "text": "That's fine, thank you. I should mention I've also started the port across to another provider, so the account will be closing regardless."}
+          {
+            "start_s": 1.0,
+            "end_s": 11.0,
+            "speaker": "customer",
+            "text": "Morning. I'm not ringing to argue about it — I just wanted to let you know I lodged a complaint with the Ombudsman on Friday."
+          },
+          {
+            "start_s": 11.5,
+            "end_s": 17.0,
+            "speaker": "agent",
+            "text": "Oh — right. Let me see whether there's something we can do before it gets to that."
+          },
+          {
+            "start_s": 17.5,
+            "end_s": 29.0,
+            "speaker": "customer",
+            "text": "I'm not in a rush. I asked the same question twice and got two different answers, and the second time I was told to go and prove it myself. So this seemed like the only avenue left."
+          },
+          {
+            "start_s": 29.5,
+            "end_s": 36.0,
+            "speaker": "agent",
+            "text": "I understand. I'll escalate this to a supervisor and ask them to review both calls."
+          },
+          {
+            "start_s": 36.5,
+            "end_s": 44.0,
+            "speaker": "customer",
+            "text": "That's fine, thank you. I should mention I've also started the port across to another provider, so the account will be closing regardless."
+          }
         ]
       },
       "extraction": {
         "needs": [],
         "promises": [
-          {"id": "p1", "utterance_index": 3, "summary": "Escalate to a supervisor and have both calls reviewed", "made_at": "2026-09-08T10:15:00", "due_at": null, "fulfilled": null,
-           "evidence": [{"contact_seq": 3, "utterance_index": 3, "start_s": 29.5, "speaker": "agent", "quote": "I'll escalate this to a supervisor and ask them to review both calls."}]}
+          {
+            "id": "p1",
+            "utterance_index": 3,
+            "summary": "Escalate to a supervisor and have both calls reviewed",
+            "made_at": "2026-09-08T10:15:00",
+            "due_at": null,
+            "fulfilled": null,
+            "evidence": [
+              {
+                "contact_seq": 3,
+                "utterance_index": 3,
+                "start_s": 29.5,
+                "speaker": "agent",
+                "quote": "I'll escalate this to a supervisor and ask them to review both calls."
+              }
+            ]
+          }
         ],
         "actions": []
       }

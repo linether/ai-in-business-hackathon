@@ -9,9 +9,17 @@
     "root_cause": "无人负责",
     "earliest_intervention_contact_seq": 1,
     "earliest_intervention_action": "On contact 1 a fault ticket should have been raised and assigned so the fault existed in a queue with an owner — a note on the account is visible to nobody who can fix anything",
-    "unresolved_need_ids": ["n1"],
+    "unresolved_need_ids": [
+      "n1"
+    ],
     "broken_promise_ids": [],
-    "key_signals": ["无人负责", "未解决诉求", "重复联系", "承诺兑现但问题未解决", "转网意向"],
+    "key_signals": [
+      "无人负责",
+      "未解决诉求",
+      "重复联系",
+      "承诺兑现但问题未解决",
+      "转网意向"
+    ],
     "why_this_scenario_exists": "测一个容易被漏掉的区分：承诺**兑现了**（回电确实准时打了），但**诉求依然没解决**（回电只是说还在处理）。如果系统把「有无未兑现承诺」当作升级的唯一依据，这一单会被判低风险。真正根因是「无人负责」——没有人被指派去解决问题，只有人被指派去打电话。澳洲语境下这个失败模式特别真实：固网故障在零售电信商和网络运营商之间来回推，客户掉进接口的缝里。TIO 有一个官方投诉类别就叫「intermittent service or drop outs」。"
   },
   "contacts": [
@@ -23,25 +31,93 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 13.0, "speaker": "customer", "text": "Every night from about seven the internet drops out completely. It comes back after a few minutes and then goes again. It's been doing this for a fortnight."},
-          {"start_s": 13.5, "end_s": 21.0, "speaker": "agent", "text": "That sounds like it's on the network side rather than your modem. Let me put a note on the account."},
-          {"start_s": 21.5, "end_s": 27.0, "speaker": "customer", "text": "I work from home in the evenings, so I really do need this sorted."},
-          {"start_s": 27.5, "end_s": 37.0, "speaker": "agent", "text": "Understood. I'll have someone call you back within forty-eight hours once the network team have had a look at your area."},
-          {"start_s": 37.5, "end_s": 41.0, "speaker": "customer", "text": "Okay. Forty-eight hours. I'll wait to hear."}
+          {
+            "start_s": 1.0,
+            "end_s": 13.0,
+            "speaker": "customer",
+            "text": "Every night from about seven the internet drops out completely. It comes back after a few minutes and then goes again. It's been doing this for a fortnight."
+          },
+          {
+            "start_s": 13.5,
+            "end_s": 21.0,
+            "speaker": "agent",
+            "text": "That sounds like it's on the network side rather than your modem. Let me put a note on the account."
+          },
+          {
+            "start_s": 21.5,
+            "end_s": 27.0,
+            "speaker": "customer",
+            "text": "I work from home in the evenings, so I really do need this sorted."
+          },
+          {
+            "start_s": 27.5,
+            "end_s": 37.0,
+            "speaker": "agent",
+            "text": "Understood. I'll have someone call you back within forty-eight hours once the network team have had a look at your area."
+          },
+          {
+            "start_s": 37.5,
+            "end_s": 41.0,
+            "speaker": "customer",
+            "text": "Okay. Forty-eight hours. I'll wait to hear."
+          }
         ]
       },
       "extraction": {
         "needs": [
-          {"id": "n1", "utterance_index": 0, "summary": "Fix the nightly internet dropouts", "raised_at": "2026-09-02T09:40:00", "status": "unresolved",
-           "evidence": [{"contact_seq": 1, "utterance_index": 0, "start_s": 1.0, "speaker": "customer", "quote": "Every night from about seven the internet drops out completely."}]}
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Fix the nightly internet dropouts",
+            "raised_at": "2026-09-02T09:40:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "Every night from about seven the internet drops out completely."
+              }
+            ]
+          }
         ],
         "promises": [
-          {"id": "p1", "utterance_index": 3, "summary": "Call back within 48 hours once the network team have reviewed the area", "made_at": "2026-09-02T09:40:00", "due_at": "2026-09-04T09:40:00", "fulfilled": true,
-           "evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 27.5, "speaker": "agent", "quote": "I'll have someone call you back within forty-eight hours once the network team have had a look at your area."}]}
+          {
+            "id": "p1",
+            "utterance_index": 3,
+            "summary": "Call back within 48 hours once the network team have reviewed the area",
+            "made_at": "2026-09-02T09:40:00",
+            "due_at": "2026-09-04T09:40:00",
+            "fulfilled": true,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 27.5,
+                "speaker": "agent",
+                "quote": "I'll have someone call you back within forty-eight hours once the network team have had a look at your area."
+              }
+            ]
+          }
         ],
         "actions": [
-          {"id": "a1", "utterance_index": 1, "summary": "Added a note to the account. No fault ticket raised, nobody assigned.", "taken_at": "2026-09-02T09:42:00",
-           "evidence": [{"contact_seq": 1, "utterance_index": 1, "start_s": 13.5, "speaker": "agent", "quote": "Let me put a note on the account."}]}
+          {
+            "id": "a1",
+            "utterance_index": 1,
+            "summary": "Added a note to the account. No fault ticket raised, nobody assigned.",
+            "taken_at": "2026-09-02T09:42:00",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 1,
+                "start_s": 13.5,
+                "speaker": "agent",
+                "quote": "Let me put a note on the account."
+              }
+            ],
+            "assigns_owner": false
+          }
         ]
       }
     },
@@ -53,24 +129,92 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 10.0, "speaker": "agent", "text": "Hi, it's Meridian calling back about the evening dropouts — I said I'd come back to you within forty-eight hours."},
-          {"start_s": 10.5, "end_s": 14.0, "speaker": "customer", "text": "Yes, thanks for ringing. What did they find?"},
-          {"start_s": 14.5, "end_s": 24.0, "speaker": "agent", "text": "It's sitting with the network operator at the moment. There's no update on your area yet, but the note is on the file."},
-          {"start_s": 24.5, "end_s": 32.0, "speaker": "customer", "text": "So nothing's actually happened yet? Is there a reference number I can quote?"},
-          {"start_s": 32.5, "end_s": 42.0, "speaker": "agent", "text": "There's no reference as such — it's gone on as a note rather than a fault ticket. I can add another note saying you've chased it."},
-          {"start_s": 42.5, "end_s": 48.0, "speaker": "customer", "text": "Another note. Right. And who's actually looking at it?"},
-          {"start_s": 48.5, "end_s": 56.0, "speaker": "agent", "text": "It goes into the queue for the network team to pick up. I can't see an individual name from my end."},
-          {"start_s": 56.5, "end_s": 61.0, "speaker": "customer", "text": "Okay. Well, it's still dropping out every night."}
+          {
+            "start_s": 1.0,
+            "end_s": 10.0,
+            "speaker": "agent",
+            "text": "Hi, it's Meridian calling back about the evening dropouts — I said I'd come back to you within forty-eight hours."
+          },
+          {
+            "start_s": 10.5,
+            "end_s": 14.0,
+            "speaker": "customer",
+            "text": "Yes, thanks for ringing. What did they find?"
+          },
+          {
+            "start_s": 14.5,
+            "end_s": 24.0,
+            "speaker": "agent",
+            "text": "It's sitting with the network operator at the moment. There's no update on your area yet, but the note is on the file."
+          },
+          {
+            "start_s": 24.5,
+            "end_s": 32.0,
+            "speaker": "customer",
+            "text": "So nothing's actually happened yet? Is there a reference number I can quote?"
+          },
+          {
+            "start_s": 32.5,
+            "end_s": 42.0,
+            "speaker": "agent",
+            "text": "There's no reference as such — it's gone on as a note rather than a fault ticket. I can add another note saying you've chased it."
+          },
+          {
+            "start_s": 42.5,
+            "end_s": 48.0,
+            "speaker": "customer",
+            "text": "Another note. Right. And who's actually looking at it?"
+          },
+          {
+            "start_s": 48.5,
+            "end_s": 56.0,
+            "speaker": "agent",
+            "text": "It goes into the queue for the network team to pick up. I can't see an individual name from my end."
+          },
+          {
+            "start_s": 56.5,
+            "end_s": 61.0,
+            "speaker": "customer",
+            "text": "Okay. Well, it's still dropping out every night."
+          }
         ]
       },
       "extraction": {
         "needs": [],
         "promises": [],
         "actions": [
-          {"id": "a2", "utterance_index": 2, "summary": "Callback delivered on time, but with no outcome, no ticket and no named owner", "taken_at": "2026-09-03T16:11:00",
-           "evidence": [{"contact_seq": 2, "utterance_index": 2, "start_s": 14.5, "speaker": "agent", "quote": "It's sitting with the network operator at the moment. There's no update on your area yet"}]},
-          {"id": "a3", "utterance_index": 6, "summary": "Confirmed no fault ticket exists and no individual is assigned", "taken_at": "2026-09-03T16:13:00",
-           "evidence": [{"contact_seq": 2, "utterance_index": 6, "start_s": 48.5, "speaker": "agent", "quote": "It goes into the queue for the network team to pick up. I can't see an individual name from my end."}]}
+          {
+            "id": "a2",
+            "utterance_index": 2,
+            "summary": "Callback delivered on time, but with no outcome, no ticket and no named owner",
+            "taken_at": "2026-09-03T16:11:00",
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 2,
+                "start_s": 14.5,
+                "speaker": "agent",
+                "quote": "It's sitting with the network operator at the moment. There's no update on your area yet"
+              }
+            ],
+            "assigns_owner": false
+          },
+          {
+            "id": "a3",
+            "utterance_index": 6,
+            "summary": "Confirmed no fault ticket exists and no individual is assigned",
+            "taken_at": "2026-09-03T16:13:00",
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 6,
+                "start_s": 48.5,
+                "speaker": "agent",
+                "quote": "It goes into the queue for the network team to pick up. I can't see an individual name from my end."
+              }
+            ],
+            "assigns_owner": false
+          }
         ]
       }
     },
@@ -82,18 +226,58 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 11.0, "speaker": "customer", "text": "It's been a week since that callback and it's still dropping every night. I'm ringing off my mobile data right now, as it happens."},
-          {"start_s": 11.5, "end_s": 18.0, "speaker": "agent", "text": "I'm sorry to hear that. I can see two notes on the account from earlier this month."},
-          {"start_s": 18.5, "end_s": 27.0, "speaker": "customer", "text": "Notes. Three calls, and what exists is two notes. Has anybody actually been assigned to this?"},
-          {"start_s": 27.5, "end_s": 33.0, "speaker": "agent", "text": "I'll raise it properly this time and get a fault ticket into the system."},
-          {"start_s": 33.5, "end_s": 43.0, "speaker": "customer", "text": "Please do. I'm out of contract next month and at this point I'm looking at what else is out there."}
+          {
+            "start_s": 1.0,
+            "end_s": 11.0,
+            "speaker": "customer",
+            "text": "It's been a week since that callback and it's still dropping every night. I'm ringing off my mobile data right now, as it happens."
+          },
+          {
+            "start_s": 11.5,
+            "end_s": 18.0,
+            "speaker": "agent",
+            "text": "I'm sorry to hear that. I can see two notes on the account from earlier this month."
+          },
+          {
+            "start_s": 18.5,
+            "end_s": 27.0,
+            "speaker": "customer",
+            "text": "Notes. Three calls, and what exists is two notes. Has anybody actually been assigned to this?"
+          },
+          {
+            "start_s": 27.5,
+            "end_s": 33.0,
+            "speaker": "agent",
+            "text": "I'll raise it properly this time and get a fault ticket into the system."
+          },
+          {
+            "start_s": 33.5,
+            "end_s": 43.0,
+            "speaker": "customer",
+            "text": "Please do. I'm out of contract next month and at this point I'm looking at what else is out there."
+          }
         ]
       },
       "extraction": {
         "needs": [],
         "promises": [
-          {"id": "p2", "utterance_index": 3, "summary": "Raise a proper fault ticket this time", "made_at": "2026-09-09T19:55:00", "due_at": null, "fulfilled": null,
-           "evidence": [{"contact_seq": 3, "utterance_index": 3, "start_s": 27.5, "speaker": "agent", "quote": "I'll raise it properly this time and get a fault ticket into the system."}]}
+          {
+            "id": "p2",
+            "utterance_index": 3,
+            "summary": "Raise a proper fault ticket this time",
+            "made_at": "2026-09-09T19:55:00",
+            "due_at": null,
+            "fulfilled": null,
+            "evidence": [
+              {
+                "contact_seq": 3,
+                "utterance_index": 3,
+                "start_s": 27.5,
+                "speaker": "agent",
+                "quote": "I'll raise it properly this time and get a fault ticket into the system."
+              }
+            ]
+          }
         ],
         "actions": []
       }
