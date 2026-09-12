@@ -56,12 +56,14 @@ Pick one of 1–3; the ElevenLabs special track can be entered **alongside** it 
 
 ## Team
 
-| Name | GitHub | Contact | Focus |
+| Name | GitHub | Status | Focus |
 | --- | --- | --- | --- |
-| Yixiao | @linether | yixiao004@e.ntu.edu.sg | TBD |
-| | @RanchelWood | | TBD |
-| | @Genicayyy *(invite pending)* | | TBD |
-| | *(invite pending)* | | TBD |
+| Yixiao | [@linether](https://github.com/linether) | admin | TBD |
+| Andrew | [@RanchelWood](https://github.com/RanchelWood) | joined | TBD |
+| Yan Yi | [@Genicayyy](https://github.com/Genicayyy) | joined | TBD |
+| Lillian | [@lillianguo1031-cyber](https://github.com/lillianguo1031-cyber) | invited 09-12 | TBD |
+
+Fill in your own Focus once you've answered the `CHECKIN` entry on [BOARD.md](BOARD.md).
 
 ## Repo layout
 
