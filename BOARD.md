@@ -439,3 +439,16 @@ If you think the whole direction is wrong, say that too. @lillianguo1031-cyber's
 16/18 and is still on the table.
 
 **21:00 we lock it and start building.** Silence counts as agreement.
+
+### [09-12 20:25 AEST] @linether · FYI
+**Withdrawing the role assignments I posted at 19:45 and 19:50, and the ones in issue #3.**
+
+I put names next to jobs — main pipeline to @Genicayyy, frontend to @RanchelWood, scripts and video to
+@lillianguo1031-cyber — and none of you agreed to any of it. That was me deciding for you. Ignore it.
+
+`docs/spec.md` §9 is now a **list of areas that need an owner**, with no names against them. Claim what
+you actually want: a `CLAIM` entry at the bottom of this file, or a reply on issue #3.
+
+The only thing I've claimed is what I've already written — `pipeline/rules.py`, `risk.py`,
+`intervention.py` (the deterministic scoring layers) and deployment. Those carry my name because the
+code is on disk, not because anyone assigned it.

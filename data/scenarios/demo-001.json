@@ -1,0 +1,86 @@
+{
+  "case_id": "demo-001",
+  "customer_ref": "synthetic-customer-01",
+  "language": "en",
+  "note": "SYNTHETIC. Written by the team, voiced with ElevenLabs TTS. No real customer data.",
+  "ground_truth": {
+    "should_escalate": true,
+    "root_cause": "broken_callback",
+    "earliest_intervention_contact_seq": 1,
+    "unresolved_need_ids": ["n2"],
+    "broken_promise_ids": ["p1"]
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-03T10:12:00",
+      "channel": "call",
+      "summary": "Customer asks to cancel an add-on they did not authorise, and to be refunded two months of charges.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 2.0, "end_s": 9.5, "speaker": "customer", "text": "There's a data add-on on my bill I never signed up for. I want it cancelled and I want the last two months refunded."},
+          {"start_s": 10.0, "end_s": 16.0, "speaker": "agent", "text": "I can see the add-on. I've removed it from your plan just now, so you won't be charged again."},
+          {"start_s": 16.5, "end_s": 20.0, "speaker": "customer", "text": "And the two months I've already paid?"},
+          {"start_s": 20.5, "end_s": 29.0, "speaker": "agent", "text": "That needs a billing review. I'll have someone call you back within 24 hours to confirm the refund."},
+          {"start_s": 29.5, "end_s": 32.0, "speaker": "customer", "text": "Alright. Within 24 hours then."}
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {"id": "n1", "summary": "Cancel the unauthorised data add-on", "raised_at": "2026-09-03T10:12:00", "status": "resolved",
+           "evidence": [{"contact_seq": 1, "start_s": 2.0, "speaker": "customer", "quote": "I want it cancelled"}],
+           "resolution_note": "Agent removed the add-on during the call.",
+           "resolution_evidence": [{"contact_seq": 1, "start_s": 10.0, "speaker": "agent", "quote": "I've removed it from your plan just now"}]},
+          {"id": "n2", "summary": "Refund two months of charges", "raised_at": "2026-09-03T10:12:00", "status": "unresolved",
+           "evidence": [{"contact_seq": 1, "start_s": 16.5, "speaker": "customer", "quote": "And the two months I've already paid?"}]}
+        ],
+        "promises": [
+          {"id": "p1", "summary": "Call back within 24 hours to confirm the refund", "made_at": "2026-09-03T10:12:00", "due_at": "2026-09-04T10:12:00", "fulfilled": false,
+           "evidence": [{"contact_seq": 1, "start_s": 20.5, "speaker": "agent", "quote": "I'll have someone call you back within 24 hours to confirm the refund."}]}
+        ],
+        "actions": [
+          {"id": "a1", "summary": "Removed the add-on from the plan", "taken_at": "2026-09-03T10:14:00",
+           "evidence": [{"contact_seq": 1, "start_s": 10.0, "speaker": "agent", "quote": "I've removed it from your plan just now"}]}
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-05T09:40:00",
+      "channel": "call",
+      "summary": "Customer chases the refund. No callback was ever made.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 8.0, "speaker": "customer", "text": "Nobody called me back. I was told twenty-four hours and it's been two days."},
+          {"start_s": 8.5, "end_s": 15.0, "speaker": "agent", "text": "I'm sorry about that. I can see the note. I'll chase billing and get back to you."},
+          {"start_s": 15.5, "end_s": 19.0, "speaker": "customer", "text": "That's what the last person said."}
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [
+          {"id": "p2", "summary": "Chase billing and get back to the customer", "made_at": "2026-09-05T09:40:00", "due_at": null, "fulfilled": false,
+           "evidence": [{"contact_seq": 2, "start_s": 8.5, "speaker": "agent", "quote": "I'll chase billing and get back to you."}]}
+        ],
+        "actions": []
+      }
+    },
+    {
+      "seq": 3,
+      "occurred_at": "2026-09-07T14:05:00",
+      "channel": "call",
+      "summary": "Third contact. Customer is calm but mentions the ombudsman and switching providers.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 11.0, "speaker": "customer", "text": "I'm not going to argue about it. I'll take this to the ombudsman and I'll port out to another provider."},
+          {"start_s": 11.5, "end_s": 17.0, "speaker": "agent", "text": "Let me see what I can do before it comes to that."},
+          {"start_s": 17.5, "end_s": 22.0, "speaker": "customer", "text": "Three calls. Nobody has actually done anything about the refund."}
+        ]
+      },
+      "extraction": {"needs": [], "promises": [], "actions": []}
+    }
+  ]
+}
