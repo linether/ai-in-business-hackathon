@@ -24,8 +24,9 @@
         <span class="id">{{ c.id }}</span>
         {% if c.escalated %}<span class="pill esc">escalated</span>
         {% else %}<span class="pill ok">resolved</span>{% endif %}
-        <span class="pill">{{ c.category }}</span>
-        {% if c.root_cause and c.root_cause != '无' %}<span class="pill">{{ c.root_cause }}</span>{% endif %}
+        {% if c.category %}<span class="pill">{{ c.category }}</span>{% endif %}
+        {% if c.root_cause %}<span class="pill">{{ c.root_cause }}</span>{% endif %}
+        <span class="pill">{{ c.contacts }} contact{{ '' if c.contacts == 1 else 's' }}</span>
       </div>
       <div class="small muted">{{ c.note }}</div>
     </a>

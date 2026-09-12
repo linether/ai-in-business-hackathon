@@ -56,7 +56,10 @@
 </div>
 
 <div class="panel">
-  <h2>Escalation risk</h2>
+  <h2>Escalation risk
+    {%- if category %} &middot; <span style="text-transform:none;letter-spacing:0">{{ category }}</span>{% endif %}
+    {%- if root_cause %} &middot; <span style="text-transform:none;letter-spacing:0">{{ root_cause }}</span>{% endif %}
+  </h2>
   <div class="score">
     <span class="n {{ a.risk.band }}">{{ a.risk.score }}</span>
     {% if a.risk.prior_score is not none %}

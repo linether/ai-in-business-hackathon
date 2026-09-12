@@ -22,6 +22,29 @@ from fastapi.templating import Jinja2Templates
 
 from . import pipeline, scenarios
 
+# The scenario files use the team's working vocabulary, which is Chinese. The
+# site is read by English-speaking judges, so display labels are mapped here
+# rather than by rewriting the data — the taxonomy came from the teammate who
+# did this job and it should stay in her words in the source.
+CATEGORY_EN = {
+    "计费争议": "billing dispute",
+    "附加包未授权": "unauthorised add-on",
+    "网络质量": "service quality",
+    "套餐变更": "plan change",
+    "退费": "refund",
+    "服务态度": "conduct",
+}
+ROOT_CAUSE_EN = {
+    "回电未兑现": "callback never made",
+    "权限不足": "insufficient authority",
+    "需求被误解": "need misread",
+    "反复转接": "repeated transfers",
+    "政策空白": "policy gap",
+    "答复矛盾": "contradictory answers",
+    "无人负责": "nobody assigned",
+    "无": "",
+}
+
 BASE = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE / "templates"))
 
@@ -42,13 +65,18 @@ def index(request: Request) -> HTMLResponse:
     cards = []
     for path in scenarios.list_scenarios():
         raw = scenarios.ground_truth(path)
+        case = scenarios.load_case(path)
+        first = case.contacts[0] if case.contacts else None
         cards.append(
             {
                 "id": path.stem,
                 "escalated": raw.get("should_escalate"),
-                "category": raw.get("business_category", "—"),
-                "root_cause": raw.get("root_cause", "—"),
-                "note": raw.get("why_this_scenario_exists", ""),
+                "category": CATEGORY_EN.get(raw.get("business_category", ""), ""),
+                "root_cause": ROOT_CAUSE_EN.get(raw.get("root_cause", ""), ""),
+                "contacts": len(case.contacts),
+                # What the case is about, not why we wrote it — the internal test
+                # rationale in the scenario file is for us, not for a judge.
+                "note": first.summary if first else "",
             }
         )
     return templates.TemplateResponse("index.html", {"request": request, "cards": cards})
@@ -83,6 +111,8 @@ def case_view(request: Request, scenario_id: str) -> HTMLResponse:
             "lines": lines,
             "scenario_id": scenario_id,
             "all_ids": [p.stem for p in scenarios.list_scenarios()],
+            "category": CATEGORY_EN.get(truth.get("business_category", ""), ""),
+            "root_cause": ROOT_CAUSE_EN.get(truth.get("root_cause", ""), ""),
         },
     )
 
