@@ -5,10 +5,25 @@
   "note": "SYNTHETIC. Written by the team, voiced with ElevenLabs TTS. No real customer data.",
   "ground_truth": {
     "should_escalate": true,
-    "root_cause": "broken_callback",
+    "business_category": "附加包未授权",
+    "root_cause": "回电未兑现",
     "earliest_intervention_contact_seq": 1,
-    "unresolved_need_ids": ["n2"],
-    "broken_promise_ids": ["p1"]
+    "earliest_intervention_action": "第一通结束时应当开具退费工单并指派负责人，而不是只口头承诺 24 小时回电",
+    "unresolved_need_ids": [
+      "n2"
+    ],
+    "broken_promise_ids": [
+      "p1"
+    ],
+    "key_signals": [
+      "未履行承诺",
+      "超期未回电",
+      "未解决诉求",
+      "重复联系",
+      "监管表述",
+      "转网意向"
+    ],
+    "why_this_scenario_exists": "基准场景，也是 demo 主线。最典型的升级路径：承诺 24 小时回电 → 没回 → 客户两次重拨 → 第三通提到 ombudsman 和转网。最早阻断点清晰可指（9 月 4 日那个 24 小时截止时刻）。用来演示完整的因果时间线和干预点识别。"
   },
   "contacts": [
     {
@@ -19,29 +34,118 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 2.0, "end_s": 9.5, "speaker": "customer", "text": "There's a data add-on on my bill I never signed up for. I want it cancelled and I want the last two months refunded."},
-          {"start_s": 10.0, "end_s": 16.0, "speaker": "agent", "text": "I can see the add-on. I've removed it from your plan just now, so you won't be charged again."},
-          {"start_s": 16.5, "end_s": 20.0, "speaker": "customer", "text": "And the two months I've already paid?"},
-          {"start_s": 20.5, "end_s": 29.0, "speaker": "agent", "text": "That needs a billing review. I'll have someone call you back within 24 hours to confirm the refund."},
-          {"start_s": 29.5, "end_s": 32.0, "speaker": "customer", "text": "Alright. Within 24 hours then."}
+          {
+            "start_s": 2.0,
+            "end_s": 9.5,
+            "speaker": "customer",
+            "text": "There's a data add-on on my bill I never signed up for. I want it cancelled and I want the last two months refunded."
+          },
+          {
+            "start_s": 10.0,
+            "end_s": 16.0,
+            "speaker": "agent",
+            "text": "I can see the add-on. I've removed it from your plan just now, so you won't be charged again."
+          },
+          {
+            "start_s": 16.5,
+            "end_s": 20.0,
+            "speaker": "customer",
+            "text": "And the two months I've already paid?"
+          },
+          {
+            "start_s": 20.5,
+            "end_s": 29.0,
+            "speaker": "agent",
+            "text": "That needs a billing review. I'll have someone call you back within 24 hours to confirm the refund."
+          },
+          {
+            "start_s": 29.5,
+            "end_s": 32.0,
+            "speaker": "customer",
+            "text": "Alright. Within 24 hours then."
+          }
         ]
       },
       "extraction": {
         "needs": [
-          {"id": "n1", "summary": "Cancel the unauthorised data add-on", "raised_at": "2026-09-03T10:12:00", "status": "resolved",
-           "evidence": [{"contact_seq": 1, "start_s": 2.0, "speaker": "customer", "quote": "I want it cancelled"}],
-           "resolution_note": "Agent removed the add-on during the call.",
-           "resolution_evidence": [{"contact_seq": 1, "start_s": 10.0, "speaker": "agent", "quote": "I've removed it from your plan just now"}]},
-          {"id": "n2", "summary": "Refund two months of charges", "raised_at": "2026-09-03T10:12:00", "status": "unresolved",
-           "evidence": [{"contact_seq": 1, "start_s": 16.5, "speaker": "customer", "quote": "And the two months I've already paid?"}]}
+          {
+            "id": "n1",
+            "summary": "Cancel the unauthorised data add-on",
+            "raised_at": "2026-09-03T10:12:00",
+            "status": "resolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "start_s": 2.0,
+                "speaker": "customer",
+                "quote": "I want it cancelled",
+                "utterance_index": 0
+              }
+            ],
+            "resolution_note": "Agent removed the add-on during the call.",
+            "resolution_evidence": [
+              {
+                "contact_seq": 1,
+                "start_s": 10.0,
+                "speaker": "agent",
+                "quote": "I've removed it from your plan just now",
+                "utterance_index": 1
+              }
+            ],
+            "utterance_index": 0
+          },
+          {
+            "id": "n2",
+            "summary": "Refund two months of charges",
+            "raised_at": "2026-09-03T10:12:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "start_s": 16.5,
+                "speaker": "customer",
+                "quote": "And the two months I've already paid?",
+                "utterance_index": 2
+              }
+            ],
+            "utterance_index": 2
+          }
         ],
         "promises": [
-          {"id": "p1", "summary": "Call back within 24 hours to confirm the refund", "made_at": "2026-09-03T10:12:00", "due_at": "2026-09-04T10:12:00", "fulfilled": false,
-           "evidence": [{"contact_seq": 1, "start_s": 20.5, "speaker": "agent", "quote": "I'll have someone call you back within 24 hours to confirm the refund."}]}
+          {
+            "id": "p1",
+            "summary": "Call back within 24 hours to confirm the refund",
+            "made_at": "2026-09-03T10:12:00",
+            "due_at": "2026-09-04T10:12:00",
+            "fulfilled": false,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "start_s": 20.5,
+                "speaker": "agent",
+                "quote": "I'll have someone call you back within 24 hours to confirm the refund.",
+                "utterance_index": 3
+              }
+            ],
+            "utterance_index": 3
+          }
         ],
         "actions": [
-          {"id": "a1", "summary": "Removed the add-on from the plan", "taken_at": "2026-09-03T10:14:00",
-           "evidence": [{"contact_seq": 1, "start_s": 10.0, "speaker": "agent", "quote": "I've removed it from your plan just now"}]}
+          {
+            "id": "a1",
+            "summary": "Removed the add-on from the plan",
+            "taken_at": "2026-09-03T10:14:00",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "start_s": 10.0,
+                "speaker": "agent",
+                "quote": "I've removed it from your plan just now",
+                "utterance_index": 1
+              }
+            ],
+            "utterance_index": 1
+          }
         ]
       }
     },
@@ -53,16 +157,46 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 8.0, "speaker": "customer", "text": "Nobody called me back. I was told twenty-four hours and it's been two days."},
-          {"start_s": 8.5, "end_s": 15.0, "speaker": "agent", "text": "I'm sorry about that. I can see the note. I'll chase billing and get back to you."},
-          {"start_s": 15.5, "end_s": 19.0, "speaker": "customer", "text": "That's what the last person said."}
+          {
+            "start_s": 1.0,
+            "end_s": 8.0,
+            "speaker": "customer",
+            "text": "Nobody called me back. I was told twenty-four hours and it's been two days."
+          },
+          {
+            "start_s": 8.5,
+            "end_s": 15.0,
+            "speaker": "agent",
+            "text": "I'm sorry about that. I can see the note. I'll chase billing and get back to you."
+          },
+          {
+            "start_s": 15.5,
+            "end_s": 19.0,
+            "speaker": "customer",
+            "text": "That's what the last person said."
+          }
         ]
       },
       "extraction": {
         "needs": [],
         "promises": [
-          {"id": "p2", "summary": "Chase billing and get back to the customer", "made_at": "2026-09-05T09:40:00", "due_at": null, "fulfilled": false,
-           "evidence": [{"contact_seq": 2, "start_s": 8.5, "speaker": "agent", "quote": "I'll chase billing and get back to you."}]}
+          {
+            "id": "p2",
+            "summary": "Chase billing and get back to the customer",
+            "made_at": "2026-09-05T09:40:00",
+            "due_at": null,
+            "fulfilled": false,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "start_s": 8.5,
+                "speaker": "agent",
+                "quote": "I'll chase billing and get back to you.",
+                "utterance_index": 1
+              }
+            ],
+            "utterance_index": 1
+          }
         ],
         "actions": []
       }
@@ -75,12 +209,31 @@
       "transcript": {
         "language": "en",
         "utterances": [
-          {"start_s": 1.0, "end_s": 11.0, "speaker": "customer", "text": "I'm not going to argue about it. I'll take this to the ombudsman and I'll port out to another provider."},
-          {"start_s": 11.5, "end_s": 17.0, "speaker": "agent", "text": "Let me see what I can do before it comes to that."},
-          {"start_s": 17.5, "end_s": 22.0, "speaker": "customer", "text": "Three calls. Nobody has actually done anything about the refund."}
+          {
+            "start_s": 1.0,
+            "end_s": 11.0,
+            "speaker": "customer",
+            "text": "I'm not going to argue about it. I'll take this to the ombudsman and I'll port out to another provider."
+          },
+          {
+            "start_s": 11.5,
+            "end_s": 17.0,
+            "speaker": "agent",
+            "text": "Let me see what I can do before it comes to that."
+          },
+          {
+            "start_s": 17.5,
+            "end_s": 22.0,
+            "speaker": "customer",
+            "text": "Three calls. Nobody has actually done anything about the refund."
+          }
         ]
       },
-      "extraction": {"needs": [], "promises": [], "actions": []}
+      "extraction": {
+        "needs": [],
+        "promises": [],
+        "actions": []
+      }
     }
   ]
 }

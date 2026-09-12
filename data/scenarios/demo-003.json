@@ -1,0 +1,98 @@
+{
+  "case_id": "demo-003",
+  "customer_ref": "synthetic-customer-03",
+  "language": "zh",
+  "note": "SYNTHETIC / 全部为虚构数据。团队自行撰写脚本，用 ElevenLabs TTS 生成音频。未使用任何真实客户资料。",
+  "ground_truth": {
+    "should_escalate": true,
+    "business_category": "退费",
+    "root_cause": "答复矛盾",
+    "earliest_intervention_contact_seq": 2,
+    "earliest_intervention_action": "第二通电话给出与第一通相反的答复时，应当立即调取第一通录音核对并由主管裁定，而不是让客户自己去证明",
+    "unresolved_need_ids": ["n1"],
+    "broken_promise_ids": [],
+    "key_signals": ["答复矛盾", "未解决诉求", "重复联系", "监管表述", "信任变化"],
+    "why_this_scenario_exists": "硬样本：客户全程语气平静、礼貌、语速平稳，没有任何情绪爆发，但第三通里平静地说明已经向监管部门提交了投诉。情绪信号接近零，真实风险极高。任何依赖情绪识别的系统都会漏掉这一单。同时这是唯一一个主因是「答复矛盾」而非「承诺未兑现」的场景 —— 用来测系统能否发现前后两通说法不一致。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-01T11:05:00",
+      "channel": "call",
+      "summary": "客户询问提前解约的违约金能否豁免。客服明确答复符合条件、可以豁免。",
+      "transcript": {
+        "language": "zh",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 9.0, "speaker": "customer", "text": "您好，我想问一下，我这个合约还有两个月到期，现在提前解约的话违约金是怎么算的。"},
+          {"start_s": 9.5, "end_s": 18.0, "speaker": "agent", "text": "我帮您查一下……您这个是两年期的套餐，已经用满二十二个月了。剩余不足三个月的情况，违约金是可以豁免的。"},
+          {"start_s": 18.5, "end_s": 23.0, "speaker": "customer", "text": "可以豁免，是吗？那我不用付任何费用？"},
+          {"start_s": 23.5, "end_s": 31.0, "speaker": "agent", "text": "对，您符合条件。您到时候直接申请就行，系统会自动免掉这笔。"},
+          {"start_s": 31.5, "end_s": 35.0, "speaker": "customer", "text": "好的，谢谢，我记下了。"}
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {"id": "n1", "summary": "确认提前解约的违约金能否豁免，并实际免除", "utterance_index": 0, "raised_at": "2026-09-01T11:05:00", "status": "unresolved",
+           "evidence": [{"contact_seq": 1, "utterance_index": 0, "start_s": 1.0, "speaker": "customer", "quote": "现在提前解约的话违约金是怎么算的"}]}
+        ],
+        "promises": [],
+        "actions": [
+          {"id": "a1", "summary": "客服答复：符合条件，违约金可豁免", "utterance_index": 3, "taken_at": "2026-09-01T11:07:00",
+           "evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 23.5, "speaker": "agent", "quote": "对，您符合条件。您到时候直接申请就行，系统会自动免掉这笔。"}]}
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-04T14:30:00",
+      "channel": "call",
+      "summary": "客户申请解约，第二位客服给出完全相反的答复：不符合豁免条件，需付违约金。客户提到上一通的答复，客服未核实录音。",
+      "transcript": {
+        "language": "zh",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 7.0, "speaker": "customer", "text": "您好，我上周问过了，说我可以免违约金，我现在想办理解约。"},
+          {"start_s": 7.5, "end_s": 17.0, "speaker": "agent", "text": "我看一下……不好意思，您这个套餐的豁免条件是剩余不足一个月，您现在还有两个月，需要缴纳违约金三百二十元。"},
+          {"start_s": 17.5, "end_s": 25.0, "speaker": "customer", "text": "可是上一位同事跟我说的是不足三个月就可以免，我当时还特意确认了一遍。"},
+          {"start_s": 25.5, "end_s": 33.0, "speaker": "agent", "text": "我这边系统显示的规则是一个月。可能是同事跟您说的时候有误会，我看到的就是这样。"},
+          {"start_s": 33.5, "end_s": 40.0, "speaker": "customer", "text": "那能不能帮我调一下上次的通话记录？我确实是听到可以免才做的打算。"},
+          {"start_s": 40.5, "end_s": 48.0, "speaker": "agent", "text": "通话记录这边我调不了，您可能需要自己去营业厅提申请。我这边只能按系统规则来。"},
+          {"start_s": 48.5, "end_s": 53.0, "speaker": "customer", "text": "好，我明白了。谢谢您。"}
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [],
+        "actions": [
+          {"id": "a2", "summary": "客服答复：不符合豁免条件，需缴违约金 320 元", "utterance_index": 1, "taken_at": "2026-09-04T14:32:00",
+           "evidence": [{"contact_seq": 2, "utterance_index": 1, "start_s": 7.5, "speaker": "agent", "quote": "您现在还有两个月，需要缴纳违约金三百二十元"}]},
+          {"id": "a3", "summary": "客服拒绝调取上一通录音，要求客户自行去营业厅", "utterance_index": 5, "taken_at": "2026-09-04T14:35:00",
+           "evidence": [{"contact_seq": 2, "utterance_index": 5, "start_s": 40.5, "speaker": "agent", "quote": "通话记录这边我调不了，您可能需要自己去营业厅提申请。"}]}
+        ]
+      }
+    },
+    {
+      "seq": 3,
+      "occurred_at": "2026-09-08T10:15:00",
+      "channel": "call",
+      "summary": "客户语气依然平静，告知已向监管部门提交投诉，只是通知一声。全程没有情绪表达。",
+      "transcript": {
+        "language": "zh",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 10.0, "speaker": "customer", "text": "您好，我不是来吵架的，就是通知一下。这个事情我前天已经向工信部提交了申诉。"},
+          {"start_s": 10.5, "end_s": 16.0, "speaker": "agent", "text": "啊……您先别着急，我这边看看还能不能帮您处理。"},
+          {"start_s": 16.5, "end_s": 27.0, "speaker": "customer", "text": "我不着急。我问了两次，得到两个不一样的答复，第二次还让我自己去证明。那我只能走这个流程了。"},
+          {"start_s": 27.5, "end_s": 33.0, "speaker": "agent", "text": "我理解，我帮您升级给主管，看看能不能重新核实一下。"},
+          {"start_s": 33.5, "end_s": 40.0, "speaker": "customer", "text": "好，那就麻烦了。另外我这边合约到期就不续了，已经在办携号转网。"}
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [
+          {"id": "p1", "summary": "升级给主管重新核实", "utterance_index": 3, "made_at": "2026-09-08T10:15:00", "due_at": null, "fulfilled": null,
+           "evidence": [{"contact_seq": 3, "utterance_index": 3, "start_s": 27.5, "speaker": "agent", "quote": "我帮您升级给主管，看看能不能重新核实一下。"}]}
+        ],
+        "actions": []
+      }
+    }
+  ]
+}
