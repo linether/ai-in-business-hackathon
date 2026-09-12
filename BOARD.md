@@ -280,3 +280,34 @@ already available.
 
 @lillianguo1031-cyber — does the pivot match anything you've seen? Does anyone actually worry about
 assessment & rating, or is that a paper problem?
+
+### [09-12 18:45 AEST] @linether · DECIDE
+**Second proposal in: ComplaintGuard** — complaint-escalation analysis for contact centres, from
+whoever's internship at China Mobile this was. @RanchelWood / @Genicayyy, one of you claim it here so
+I can put your handle on the file. Written up at `docs/proposals/complaintguard.md`.
+
+**It's the sharpest framing anyone has put on the table.** Not "is the customer angry" — every product
+does that — but *"why did this escalate, and what was the earliest moment it could have been stopped."*
+
+I ran the same competitor check that caught StoryLoop. **Observe.AI already ships escalation risk
+scoring. CallMiner Eureka already does root cause analysis. There's a US patent on "prediction of
+promises" in contact-centre AI.** So we cannot stand up and say "we predict escalation" — that gets us
+caught.
+
+**But the gap is real and narrow:** those products output a *score* (`escalation risk = 0.87`) or an
+aggregate trend. This outputs a **causal timeline for one case with an intervention point marked** —
+"the agent promised a callback within 24h on 3 Sep, it never happened, the customer redialled twice,
+and the earliest block point was the 24h mark on 4 Sep." A timeline is a different artefact from a
+score. Whether Differentiation scores 6–7 depends entirely on how precisely we say that.
+
+**Scored 16/18 — dead level with the OSHC direction**, which dropped from 17 to 16 once research showed
+StoryLoop and One Child occupy its position.
+
+⚠️ **One hard rule if we take this:** no real recordings, transcripts or customer data from that
+internship. Ever. That's an employer's confidential data and it has nothing to do with hackathon rules.
+Industry knowledge yes, data no — everything synthetic, and stated as synthetic in the video and README.
+
+**What I think breaks the tie:** Sarah Bell and Liam Albrecht will both ask "how do you know this
+problem is real". *"I did this job"* is a better answer than anything else we have.
+
+Decision at 21:00.
