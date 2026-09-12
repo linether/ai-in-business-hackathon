@@ -5,18 +5,29 @@ purpose — you can't split work that hasn't been defined.
 
 ## Ownership
 
-| Area | Owner | Notes |
-| --- | --- | --- |
-| Core build — the demo path | | The thing the judges watch. Highest priority |
-| Deployment + live URL | | Get a hello-world up **today**. Explicitly scored |
-| Evaluation notebook | | 20 labelled examples + a number. 6 rubric points few teams claim |
-| README + repo hygiene | | 6 rubric points, won by structure and docs |
-| Demo video (3–5 min) | | Record **Sunday evening**, not Monday |
-| Pitch deck + the numbers | | "$X today → $Y with us". 25 points of Business Value |
-| Devpost submission | | Draft it Sunday night, submit Monday 10:00, an hour early |
+自己在 `BOARD.md` 上 `CLAIM` 认领，认领后我把它记到这里。
 
-Everyone must be able to explain the whole project — the finals Q&A gives 3–4 out of 6 when it all
-rests on one person.
+### 已认领
+
+| 领域 | 负责人 | 认领时间 |
+| --- | --- | --- |
+| **主链路 + 抽取层**（③④⑤） | **@Genicayyy** | 09-12 21:18 AEST |
+| **前端 + 证据面板**（⑨） | **@Ranchelwood** | 09-12 20:54 AEST |
+| 规则 / 评分 / 阻断点（⑥⑦⑧） | @linether | 代码已在仓库里 |
+| 部署与线上 URL | @linether | 服务器访问权限在他手上 |
+
+### 全队共同承担（不设单一负责人）
+
+经讨论决定这三块**大家一起做**，不指派给某一个人：
+
+| 领域 | 分值 | 怎么一起做 |
+| --- | --- | --- |
+| **场景脚本 + 音频生成 + 标注** | 评测和 demo 的共同地基 | 每人认领几个场景来写。写脚本时就写好标准答案 = ground truth |
+| **评测 notebook** | 数据与模型 **6 分** | 脚本齐了之后，谁先有空谁起头，其他人补指标 |
+| **Demo 视频 + Pitch + 价值数字** | **初赛 80 分全部由视频评定** + 商业价值 25 分 | 脚本全队一起对，录制集中在一个时段完成 |
+
+⚠️ **共同承担的风险是最后没人动手。** 所以每一块都要有人在 `BOARD.md` 上起个头
+（"我先写 5 个场景" / "我起个 notebook 框架"），别默认别人会开始。
 
 ## Principles for splitting
 
