@@ -408,3 +408,34 @@ the system rather than decorative, which is what the special track asks for.
 @Genicayyy's 17:36 message got eaten.
 
 Next from me: hello-world deployed to a real URL tonight.
+
+### [09-12 19:50 AEST] @linether · DECIDE
+**Correcting my 19:45 entry — I moved faster than I should have.** I wrote "calling it" and gave an
+hour to object. That's backwards: a spec nobody has read isn't a decision, it's a draft with my
+assumptions baked in.
+
+**`docs/spec.md` is now marked as a draft under review. Review is [issue #3](https://github.com/linether/ai-in-business-hackathon/issues/3), open until 21:00 AEST.**
+The issue is the channel because pushing here notifies nobody — the same reason @Genicayyy's 17:36
+message sat unread until I audited the commits.
+
+It asks **8 specific questions rather than "any thoughts?"**, because a vague ask at 8pm gets a vague
+answer. Five are for @Genicayyy alone — nobody else can answer them:
+
+1. **Mandarin or English calls?** All five judges are English speakers, but your experience is a
+   Mandarin-language operation. I lean bilingual, making it a feature — you'd know if that's honest.
+2. **The three numbers** — recordings reviewed per month, minutes each, analyst loaded rate. Order of
+   magnitude from memory only; **do not look anything up.** These three drive 9 points of Impact.
+3. **What fields does a real contact record carry?** The JSON in §5.3 is my guess.
+4. **Is the complaint taxonomy in §5.4 right?** I built it from your summary.
+5. **Is the demo climax right?** I bet on the *earliest intervention point*. The *broken promise* might
+   hit harder. You've done the job; I haven't.
+
+And for everyone: **object to the stack now if you're going to** (I picked Python/FastAPI, minimal
+server-rendered frontend, Railway/Render), say whether anything on the not-doing list is actually
+essential, and — most important — **how many hours you can genuinely put in on Sunday, and your
+timezone.** Roles get assigned on real availability, not willingness.
+
+If you think the whole direction is wrong, say that too. @lillianguo1031-cyber's OSHC direction scored
+16/18 and is still on the table.
+
+**21:00 we lock it and start building.** Silence counts as agreement.

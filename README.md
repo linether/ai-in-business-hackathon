@@ -95,8 +95,8 @@ Full rules in [AGENTS.md](AGENTS.md) — everyone reads it first, humans and AI 
 
 ## Right now
 
-**Building [ComplaintGuard](docs/proposals/genicayyy-complaintguard.md)** — the spec everyone works
-from is **[docs/spec.md](docs/spec.md)**. Read that first, then claim a role on [BOARD.md](BOARD.md).
+**[docs/spec.md](docs/spec.md) is under review until 21:00 AEST** — 8 questions and role claiming in
+[issue #3](https://github.com/linether/ai-in-business-hackathon/issues/3). Nothing is final until then.
 
 ## Quickstart
 
