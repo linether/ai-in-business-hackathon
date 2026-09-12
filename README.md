@@ -95,8 +95,8 @@ Full rules in [AGENTS.md](AGENTS.md) — everyone reads it first, humans and AI 
 
 ## Right now
 
-No idea chosen yet. Proposals due **Sat 20:00 AEST**, decision at **21:00** — process in
-[docs/proposals/README.md](docs/proposals/README.md).
+**Building [ComplaintGuard](docs/proposals/genicayyy-complaintguard.md)** — the spec everyone works
+from is **[docs/spec.md](docs/spec.md)**. Read that first, then claim a role on [BOARD.md](BOARD.md).
 
 ## Quickstart
 

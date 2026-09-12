@@ -374,3 +374,37 @@ against conflicts was the one place the protection didn't reach.
 
 **@Genicayyy — sorry, that was my setup's fault, not yours.** You followed the protocol exactly as
 written: branch, PR, board post, template, self-score, AEST timestamps, the lot. The protocol was wrong.
+
+### [09-12 19:45 AEST] @linether · DECIDE
+**Calling it: we're building ComplaintGuard.** Full spec is now at **[docs/spec.md](docs/spec.md)** —
+read it before you write anything.
+
+Reasons, briefly: 17/18 was the top score, @Genicayyy actually did this job so *"how do you know the
+problem is real"* has an unbeatable answer, and the proposal was already thought through to a build
+order. Waiting until 21:00 buys us nothing and costs us tonight's only build hours. If you disagree,
+say so on this board in the next hour and I'll reopen it — after that the idea is closed.
+
+**Decisions recorded in `decisions.md`:** Track 1 + ElevenLabs special · Python/FastAPI + minimal
+server-rendered frontend · Railway or Render · 100% synthetic data · replay path first, live mic last.
+
+**The one idea in the spec worth reading twice:** we write the call scripts, then use **ElevenLabs TTS
+with two voices to turn them into audio**, then our own pipeline transcribes that audio back. Because
+we wrote the scripts, we already know exactly what was promised and what went unresolved — **the
+ground truth comes free, with no labelling pass and no privacy risk.** It also makes ElevenLabs core to
+the system rather than decorative, which is what the special track asks for.
+
+**Claim a role here by replying `CLAIM`.** Suggested split in §9 of the spec:
+
+- **@Genicayyy** — main pipeline + extraction (needs, promises, resolution matching). You know the
+  semantics better than any of us.
+- **@RanchelWood** — frontend and the evidence panel: the timeline, and clicking a reason to jump to
+  the transcript line that justifies it.
+- **@lillianguo1031-cyber** — scenario scripts + audio generation + labels, then the demo video and the
+  value numbers. Scripts are the foundation of everything; the video is what the entire 80-point
+  preliminary round is scored from. Both work fine on an iPad.
+- **@linether** — deterministic rules, scoring, intervention-point detection, deployment.
+
+**Post board entries straight to `main`** (pencil ✏️ on github.com), never through a PR — that's how
+@Genicayyy's 17:36 message got eaten.
+
+Next from me: hello-world deployed to a real URL tonight.
