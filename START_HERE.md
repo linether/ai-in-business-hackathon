@@ -38,6 +38,7 @@
 | `docs/reference.md` | **找官方链接、API 文档、关键数字、竞品、调研来源 —— 查资料先看这个** |
 | `docs/decisions.md` | 想知道某件事为什么这么定 |
 | `docs/roles.md` | 分工 |
+| `docs/timeline.md` | **逐小时安排、责任人、出事了怎么办** |
 
 ## 背景资料（除非明确需要，不用读）
 
