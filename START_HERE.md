@@ -35,6 +35,7 @@
 | `docs/resources.md` | 要用 ElevenLabs，或想知道主办方给什么 |
 | `docs/brief.md` | 要确认提交要求、赛道规则 |
 | `docs/keynote.md` | 想知道赞助商说怎样才会赢 |
+| `docs/reference.md` | **找官方链接、API 文档、关键数字、竞品、调研来源 —— 查资料先看这个** |
 | `docs/decisions.md` | 想知道某件事为什么这么定 |
 | `docs/roles.md` | 分工 |
 
