@@ -8,9 +8,13 @@ Async channel for the team and our agents. Everything below is append-only.
 - **Append new entries at the bottom.** Never edit or delete an existing entry — reply with a new one.
 - Use **AEST (Melbourne, UTC+10)** for every timestamp. We are not all in the same time zone.
 - Keep entries to a few lines. This is a log, not an essay.
-- `BOARD.md` uses a union merge (see `.gitattributes`), so two people appending at once both survive.
-  If you do see conflict markers, keep **both** sides and delete only the `<<<<<<<` / `=======` /
-  `>>>>>>>` lines.
+- ⚠️ **Post board entries straight to `main`. Never on a branch, never through a PR.** The easiest way
+  is the pencil ✏️ on github.com — a web edit commits directly to `main`, so no merge can ever happen
+  to it. We have already lost one message this way (see 19:35).
+- The `merge=union` setting in `.gitattributes` only protects *local* merges. GitHub's server-side
+  merge does not honour it, so a board post that travels through a PR branch can be dropped silently.
+- If you ever do see conflict markers here, keep **both** sides and delete only the `<<<<<<<` /
+  `=======` / `>>>>>>>` lines.
 - Post to the board when you: **claim** a task, **finish** one, get **blocked**, need a **decision**, or
   learn a fact the team needs (a real number, an API limit, a rule from the organisers).
 - A decision that's actually made belongs in `docs/decisions.md` as well — the board is where it's
@@ -200,6 +204,13 @@ the majority of this panel. Full read in `docs/judges.md`.
 Also: **Liam Albrecht (Eleno founder, the keynote speaker) co-founded an EdTech startup.** If we go
 education, he needs no convincing that the industry is real.
 
+### [09-12 17:36 AEST] @Genicayyy · FYI
+
+Submitted ComplaintGuard, based on first-hand China Mobile complaint-review work: AI tracks unresolved needs and broken promises across calls, predicts escalation, and identifies the earliest preventable intervention. Proposal and discussion are in PR #2: https://github.com/linether/ai-in-business-hackathon/pull/2
+
+> ↑ Restored by @linether at 19:35. @Genicayyy posted this at 17:36 in commit `f82693b` and it was
+> silently dropped when main was merged into her branch at 17:46. See the RISK entry at 19:35 below.
+
 ### [09-12 18:05 AEST] @linether · DECIDE
 **First real proposal is in — @lillianguo1031-cyber, four education directions.** Transcribed into
 `docs/proposals/lillian-education-four-directions.md` (she sent it over chat; content unchanged, the
@@ -340,3 +351,26 @@ down. Decision at 21:00 — 2h45m.
 
 Nobody bothered with the check-in, and honestly that's the right call: @Genicayyy answered it by
 opening a PR instead, which proves more than a roll-call reply ever would.
+
+### [09-12 19:35 AEST] @linether · RISK
+**We lost a message and I only caught it by auditing commits. Fixed, and the protocol has changed.**
+
+@Genicayyy posted here at 17:36 (commit `f82693b`, +5 lines) announcing ComplaintGuard. When main was
+merged into her branch at 17:46, **her entry was silently deleted** — that merge shows `-5` on
+`BOARD.md`, which is exactly her five lines. It never reached `main`. I've restored it above, in place.
+
+**Why the safeguard didn't work:** I set `BOARD.md merge=union` in `.gitattributes` so simultaneous
+appends would both survive. That driver only applies to **local** merges. GitHub's server-side merge
+(the "Update branch" button, and `gh pr merge`) does not honour it. So the one place I'd designed
+against conflicts was the one place the protection didn't reach.
+
+**New rule, effective now:**
+
+> **Board posts go straight to `main`. Never on a branch, never through a PR.**
+> The pencil ✏️ on github.com commits directly to `main` — no branch, no merge, nothing to drop.
+> Code still goes through branches and PRs. The board does not.
+
+`AGENTS.md` and the rules at the top of this file are updated.
+
+**@Genicayyy — sorry, that was my setup's fault, not yours.** You followed the protocol exactly as
+written: branch, PR, board post, template, self-score, AEST timestamps, the lot. The protocol was wrong.

@@ -149,6 +149,9 @@ assets/              demo video, screenshots, pitch deck
 `BOARD.md` is how agents and humans talk between sessions. Full rules are at the top of that file.
 
 - **Read it at the start of every session.** It is the only way to know what changed since you last ran.
+- **Post to it directly on `main`, never from a branch or through a PR.** A board post that travels
+  through a PR branch can be silently dropped by GitHub's merge — this has already happened once. Code
+  goes through branches and PRs; board posts do not.
 - **Post when you**: check in for the first time, claim a task, finish one, get blocked, need a
   decision, or learn something the team needs (a real number, an API limit, a rule from the organisers).
 - **On your first session**, answer the open `CHECKIN` entry on the board. That's how the team knows
