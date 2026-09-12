@@ -1,60 +1,91 @@
-# 48-hour plan
+# 时间表
 
-Build window: **Sat 12 Sep 12:00pm → Mon 14 Sep 12:00pm.** All times Melbourne (AEST).
+**唯一硬截止：周一 14 Sep 12:00 AEST。迟交不审。**
 
-Written against the real rubric ([judging.md](judging.md)) and the real submission requirements
-([brief.md](brief.md)), not guesses.
+> 🔴 **但真正决定成绩的截止时间是「周日傍晚」**，因为 3–5 分钟视频必须从一个**稳定的系统**上录出来，
+> 而**初赛 80 分全部由那段视频 + 仓库 + 线上 URL 评定**。
+> 系统在周日傍晚就要能演示，不是周一早上。
 
-## The four things we hand in
+---
 
-Everything below exists to produce these, and the prelim score comes **only** from these:
+## 周日（唯一的完整建设日）
 
-1. Track name in the Devpost description
-2. **Public** GitHub repo
-3. **Live deployed URL** (localhost scores lower — this is explicit in the rubric)
-4. **3–5 min video** of the app working end-to-end
+| 时间 AEST | 目标 | 判定 |
+| --- | --- | --- |
+| 09:00–12:00 | 5 个场景写完 · 骨架上线拿到 URL · 抽取层在**一个**场景上出结果 | —— |
+| **12:00** | 🔵 **检查点：端到端在线上 URL 上跑通一个场景** | **做不到就当场砍范围，不讨论** |
+| 12:00–16:00 | 扩展：更多场景 · 全部风险信号 · 前端与证据面板 | —— |
+| **16:00** | 🔴 **功能冻结。此后不加任何新功能。** | **没做完的直接砍** |
+| 16:00–18:00 | **只修 bug，只打磨 demo 路径** | —— |
+| 18:00–20:00 | 跑评测出数字 · **录 3–5 分钟视频** | 视频文件在 `assets/` 里 |
+| 20:00–22:00 | **缓冲**：重录 · 提交全流程彩排 | 仓库转公开演练、Devpost 草稿填好 |
+| 22:00 | 收工 | —— |
 
-## Saturday (started 12:00pm)
+## 周一
 
-| Time | Goal |
+| 时间 AEST | 目标 |
 | --- | --- |
-| 12:00–13:00 | Pick the track. Pick the idea. Don't marry the first one. |
-| 13:00–14:00 | Write down the exact demo the judges will watch on Monday. Work backwards from it. |
-| 14:00–15:00 | Split the work. **Deploy a hello-world to the real host today** — deployment is never a Monday task. |
-| 15:00–20:00 | Build the core loop — the one thing that makes the demo land. |
-| 20:00–22:00 | First end-to-end run. Ugly is fine. It has to run. |
-| 22:00 | Stop. Sleep. Tired judgement on Sunday costs more than the hours gained. |
+| 08:00–10:00 | **只修 bug**，最终检查（转公开清单见 [reference.md §9](reference.md)） |
+| **10:00** | 🔴 **提交** |
+| 10:00–12:00 | **纯缓冲**，留给总会出现的意外 |
+| 12:00 | 截止 |
+| 16:00 | 公布决赛名单（取前 8 队，**32 人报名 ≈ 7–16 队，接近一半能进**） |
+| 17:30–20:30 | 决赛路演，**Latham Theatre，必须本人到场** |
 
-**Saturday's rule: the demo path works before anything gets polished.**
+---
 
-## Sunday
+## 为什么这样排
 
-| Time | Goal |
+### 冻结点明确定在 16:00
+
+上一版写的是"周日中午功能冻结、下午打磨"，实际只留了约 2 小时给测试和录制。
+改成 **16:00 冻结**之后，**留出 6 小时**给测试、修复、评测和录像。
+
+**提前把规则说死，到时候就不会有人舍不得砍。**
+
+### 系统从第一小时就要能端到端跑
+
+比多排测试时间更管用的是：`src/` 里每一层都有桩，**应用从一开始就跑得通全程**。
+每个真实模块是替换进一个已经在工作的整体，而不是最后拼起来。
+
+**每一块落地时立刻就被测到，不用等"集成日"。**
+典型的翻车是周日 20:00 才第一次拼装，拼不通，然后没时间了。
+
+### 时间不足时的砍单顺序
+
+已经说好了（[decisions.md](decisions.md)）：
+
+1. **主链路端到端** ← 高于一切
+2. 引文校验（字符串，零额外调用）+ 核心业务信号
+3. 语义判断的蕴含校验
+4. 声学情绪及其校验
+
+**16:00 还没做完的，按这个顺序往下砍，不讨论。**
+
+---
+
+## 今晚就能做、且不需要写代码的事
+
+**写场景脚本。** 它是整条链路的输入——**没有它，明早抽取层开工就没东西可测。**
+
+而且它不需要任何环境配置，写文字而已，任何设备都能写。
+
+> **如果明早 09:00 仓库里有 5 个场景，抽取层可以立刻开始；如果没有，上午就废了。**
+
+场景要包含的东西见 [spec.md §5.1](spec.md)。记住**必须有反例**：
+该升级的和不该升级的大致 6:4，还要有承诺兑现了的案例，
+以及两种硬样本——**情绪平静但直接找监管的**、**情绪激动但问题已解决的**。
+那两类是证明我们不是在做情绪分析的关键。
+
+---
+
+## 人力现状（决定了范围必须窄）
+
+| 人 | 周日可投入 |
 | --- | --- |
-| Morning | Fix what broke overnight. **Talk to a mentor** — they know what the judges reward. |
-| Midday | Feature freeze target. Not started by now = doesn't ship. |
-| Afternoon | Polish the demo path. Real data. Write the README properly (6 rubric points, cheapest on the board). |
-| Afternoon | **Run the eval** — 20 labelled examples in a notebook with a number. Worth 6 points and most teams skip it. |
-| Evening | **Record the 3–5 min video.** Do not leave this to Monday. Re-record until there are no visible bugs. |
-| Night | Full dry run of the submission: repo public, README, live URL, video, Devpost draft filled in. |
+| @Genicayyy | **~15 小时（AEST）** |
+| @Ranchelwood | 未知 |
+| @lillianguo1031-cyber | 未知 |
+| @linether | —— |
 
-## Monday
-
-| Time | Goal |
-| --- | --- |
-| 08:00–10:00 | Bug fixes only. No new features. |
-| 10:00–11:00 | **Flip the repo to public. Submit on Devpost.** |
-| 11:00–12:00 | Buffer for the thing that always goes wrong. |
-| **12:00** | **Submissions close — late is not considered.** |
-| 16:00 | Top 8 announced. |
-| 17:30–20:30 | If we're in: **live** demo + pitch, 3–5 min. Pre-recorded video not accepted here. |
-
-## Cheap points we should not leave on the table
-
-- **Deploy it** — a live URL, not localhost.
-- **Not a wrapper** — RAG, agentic multi-step reasoning, model chaining or an eval harness, and be able
-  to explain *why* that architecture.
-- **A number for the value** — "saves ~6 hrs/week, ~$18k/yr" beats "improves efficiency".
-- **Name the competitors** — 7 points, and 0–2 if we act like none exist.
-- **Everyone can pitch it** — Q&A rewards more than one person knowing the project.
-- **ElevenLabs special track** — if voice can be *core* to the idea, we get a second $100 shot for free.
+乐观估计 30–40 人时。**这点人力唯一能换来测试时间的办法，就是提前砍范围。**
