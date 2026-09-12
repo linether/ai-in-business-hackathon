@@ -45,6 +45,20 @@
   .line .who { display:inline-block; min-width:74px; color:var(--muted); font-size:12px }
   .line.cust .who { color:#8a5a2f }
   .line:target { background:#fff3c4; border-radius:3px }
+  .line.flash { animation:flash 1.4s ease-out }
+  @keyframes flash { 0%,35% { background:#ffe89a } 100% { background:transparent } }
+
+  @media (max-width: 640px) {
+    .score .n { font-size:36px }
+    .score { flex-wrap:wrap; gap:8px }
+    .quote { margin-left:0; font-size:13px }
+    .sig .h { flex-wrap:wrap }
+    .tl { padding-left:14px }
+    .tl .c:before { left:-21px }
+    .line .who { min-width:62px }
+    .nav a { display:inline-block; margin:0 10px 6px 0 }
+    .t td:first-child { white-space:normal }
+  }
   .nav { margin-bottom:18px; font-size:13px }
   .nav a { margin-right:12px }
 </style>
