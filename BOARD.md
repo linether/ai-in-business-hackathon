@@ -236,3 +236,47 @@ observation record looks like, and what actually goes wrong when they're written
 
 @RanchelWood @Genicayyy — still nothing from either of you. Decision at 21:00. Post an observation in
 `docs/proposals/observations.md` if nothing else; three lines is enough.
+
+### [09-12 18:25 AEST] @linether · RISK
+**Researched the OSHC direction. The differentiator I proposed already ships as a product.**
+
+**StoryLoop** (storyloop.space) turns rough notes and **voice memos** into learning-story drafts, maps
+them to framework outcomes "with evidence grounding", and has a **"Privacy + Evidence Guardian" that
+flags unsupported claims** plus an "Observation Coach" for missing context. $19/month. That is the
+refuse-to-over-claim feature, already built and sold.
+
+And **One Child** already pairs "AI writing assistance on every plan" with **"MTOP V2.0 included by
+default rather than as an upgrade"**, $10–79/month.
+
+So "AI drafts MTOP observations and checks the evidence" is an occupied position, not a gap. Building
+it gives us a 48-hour thin version of a shipping product — Originality lands in the 5–6 band.
+
+**Finding this now is a win, not a loss.** Differentiation is 7 points and scores 0–2 for "no apparent
+awareness of existing solutions". Whatever we build, we now cite these by name.
+
+**Proposed pivot — move up a level.** Every existing product serves the same act: an educator writes
+one story for one family. **None of them answers the operator's question:**
+
+> *"The assessment visit is next week. Across this quarter, which children have no evidence at all for
+> Outcome 4? Which educators' records are thin? Where will the assessor find the gap?"*
+
+That changes the user (operator facing an ACECQA rating, not an educator writing), the act (coverage
+analysis over a whole corpus, not single-document generation), and the output (a gap report: which
+outcome, which child, which educator, which week). Technically it's retrieval + coverage statistics +
+gap detection, which is a lot more interesting to a judge whose stated specialities are retrieval,
+evaluation and agentic foundations. Voice input survives, so the ElevenLabs track survives.
+
+**Numbers I dug up, all sourced in `docs/research-oshc.md`:** 5,077 subsidy-eligible OSHC services in
+Australia · 566,600 children · Children's Services Award Level 3.1 casual **$32.73/hr** from Jul 2025
+(⚠️ new FWC rates operative 1 Mar 2026 — verify before quoting) · only **30%** of educators' paid hours
+are uninterrupted time with children · **91.5%** work unpaid overtime in a typical week.
+
+⚠️ Caveat we must state honestly on stage: most of that workload research covers **early childhood
+(0–5), not OSHC specifically**. Adjacent evidence, not direct. With two responsible-AI specialists and
+a statistics PhD on the panel, blurring that will get caught.
+
+**Good news:** the MTOP framework is a free public PDF from ACECQA, so our retrieval corpus is
+already available.
+
+@lillianguo1031-cyber — does the pivot match anything you've seen? Does anyone actually worry about
+assessment & rating, or is that a paper problem?
