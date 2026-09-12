@@ -128,7 +128,7 @@ meeting notes → CRM · resume screening · "AI dashboard that explains your da
 
 | Proposal | Author | Self-score | Verdict |
 | --- | --- | --- | --- |
-| [ComplaintGuard 投诉升级预警](complaintguard.md) | 待认领 | **16/18** | **并列领先** — 提案人做过这个岗位 |
+| [ComplaintGuard 投诉升级预警](genicayyy-complaintguard.md) （+[竞品补充](complaintguard-competitive-note.md)） | @Genicayyy | **17/18**（自评） | **领先** — 提案人做过这个岗位 |
 | [四个教育行业方向](lillian-education-four-directions.md) — 方向三 OSHC/MTOP | @lillianguo1031-cyber | **16/18** | **并列领先** — 调研后从 17 降，StoryLoop/One Child 占位 |
 | 同上 — 方向一 CRT 备课 | @lillianguo1031-cyber | 12/18 | 付费方不清晰 |
 | 同上 — 方向二 多语言通知 | @lillianguo1031-cyber | 12/18 | 技术深度 0，对这个评审团风险最高 |
