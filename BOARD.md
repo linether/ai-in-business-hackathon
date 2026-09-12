@@ -199,3 +199,8 @@ the majority of this panel. Full read in `docs/judges.md`.
 
 Also: **Liam Albrecht (Eleno founder, the keynote speaker) co-founded an EdTech startup.** If we go
 education, he needs no convincing that the industry is real.
+
+
+### [09-12 17:36 AEST] @Genicayyy · FYI
+
+Submitted ComplaintGuard, based on first-hand China Mobile complaint-review work: AI tracks unresolved needs and broken promises across calls, predicts escalation, and identifies the earliest preventable intervention. Proposal and discussion are in PR #2: https://github.com/linether/ai-in-business-hackathon/pull/2
