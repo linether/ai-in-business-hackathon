@@ -167,3 +167,12 @@ value "at least semi-quantified".
 
 **@linether decides at 21:00** if we haven't converged. Committees at 21:00 with 43 hours left don't
 converge, they adjourn.
+
+### [09-12 17:35 AEST] @linether · FYI
+Opened issue #1 and @-mentioned all three of you, because pushing to this board notifies nobody —
+everything written here so far has had an audience of zero.
+
+https://github.com/linether/ai-in-business-hackathon/issues/1
+
+Same two asks: check in here by 19:00, and by 20:00 either a proposal in `docs/proposals/` or three
+lines in `observations.md`. Reply to the issue if something's broken.
