@@ -10,11 +10,11 @@ https://onyx.nuucognition.com/published/1ef30155-a5e8-4682-9904-aa0678519c59/doc
 
 | When | What |
 | --- | --- |
-| ~~Sat 12 Sep, 12:00pm~~ | ~~Team registration form due~~ · **passed** — confirm we're registered |
+| Sat 12 Sep, 12:00pm | Team registration form — **soft deadline**, organisers said late is survivable. Do it anyway |
 | Sat 12 Sep, 12:00pm | Coding started. Coworking at The Spot, Level 3 |
 | **Mon 14 Sep, 12:00pm** | **Devpost submission closes. Late = not considered.** |
 | Mon 14 Sep, 4:00pm | Top 8 finalists announced |
-| Mon 14 Sep, 5:30–8:30pm | Live finalist pitches + awards |
+| Mon 14 Sep, 5:30–8:30pm | Live finalist pitches + awards, **Latham Theatre**, in person |
 
 ## Links
 
@@ -34,7 +34,14 @@ https://onyx.nuucognition.com/published/1ef30155-a5e8-4682-9904-aa0678519c59/doc
 4. 3–5 min video showing the app working end-to-end, not slides
 
 Full detail in [docs/brief.md](docs/brief.md). Rubric in [docs/judging.md](docs/judging.md). Schedule in
-[docs/plan.md](docs/plan.md).
+[docs/plan.md](docs/plan.md). What the sponsor said wins: [docs/keynote.md](docs/keynote.md).
+
+## A note on this repo's commit history, for judges
+
+The organisers inspect git history and no application code was permitted before **Sat 12 Sep, 12:00pm**.
+Commits in this repo dated before that point contain **planning documents only** — the brief, the
+judging rubric, the schedule and the decision log. Pre-Saturday planning was explicitly encouraged at
+opening night. The first application code commit lands after Saturday noon.
 
 ## Tracks
 

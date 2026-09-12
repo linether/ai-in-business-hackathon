@@ -10,7 +10,7 @@ Pulled 12 Sep 2026, 14:35 AEST. Re-check the site before submitting — they say
 | What | Where |
 | --- | --- |
 | **Submissions (Devpost)** | https://forward.devpost.com/ |
-| **Team registration** (was due 12pm Sat) | https://forms.gle/tUDRz7TwGGXUzKFZ9 |
+| **Team registration** (soft deadline, do it now) | https://forms.gle/tUDRz7TwGGXUzKFZ9 |
 | Hackathon Discord | https://discord.gg/KBq3tdZaF |
 | ElevenLabs credits Discord | https://discord.com/invite/VnBvbbcdEC |
 | ElevenLabs hacker guide | https://docs.google.com/document/d/1mCh5MtOzBw0aJpurQVUmIVFfPMAHW3MjNemE-LNiMto/edit |
@@ -25,7 +25,7 @@ Pulled 12 Sep 2026, 14:35 AEST. Re-check the site before submitting — they say
   Saturday and Sunday.
 - **Mon 14 Sep, 12:00pm** — **Submissions close. Late submissions are not considered.**
 - **Mon 14 Sep, 4:00pm** — **Top 8 teams** announced as finalists.
-- **Mon 14 Sep, 5:30–8:30pm** — Closing night, live finalist pitches, $3,000 in prizes.
+- **Mon 14 Sep, 5:30–8:30pm** — Closing night, **Latham Theatre**. Live finalist pitches, $3,000 in prizes.
 
 ## The four tracks
 
@@ -80,6 +80,9 @@ demonstration of the working product — **a pre-recorded video is not accepted*
 
 ## Rules
 
+- **Git history is submitted and inspected for cheating.** No application code before Sat 12:00pm; a
+  first commit containing a whole codebase is treated as cheating. Planning before Saturday was
+  explicitly encouraged. See [keynote.md](keynote.md).
 - Teams of **2–5**, at least one current university student (any institution).
 - Teams must attend in person for finalists to receive prizes. You are *not* required to stay on campus
   during the event.
@@ -88,8 +91,10 @@ demonstration of the working product — **a pre-recorded video is not accepted*
 
 ## Prizes
 
-1st $2,000 · 2nd $500 · 3rd $200 · track winners $100 each. Plus ElevenLabs access, and internship /
-job opportunities at Eleno.
+1st $2,000 · 2nd $500 · 3rd $200 · track winners $100 each. Plus internship / job opportunities at Eleno.
+
+ElevenLabs: everyone gets 1 month Creator; the **overall winner also gets 3 months Pro**; the best
+ElevenLabs project takes the special-track prize.
 
 Claim ElevenLabs credits: join https://discord.com/invite/VnBvbbcdEC → `#coupon-codes` channel →
 "Start Redemption" → pick the event, use your registration email → bot DMs a coupon code.
