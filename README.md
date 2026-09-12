@@ -1,5 +1,7 @@
 # Forward: AI in Business Hackathon
 
+> **新来的人和 AI 从 [START_HERE.md](START_HERE.md) 开始** —— 阅读顺序 + 硬规则，5 分钟。
+
 Team repo for **Forward** — a 48-hour hackathon on applying AI in a business setting, run by DSCubed and
 RAID (Responsible AI Development) at the University of Melbourne, sponsored by **Eleno** and **ElevenLabs**.
 

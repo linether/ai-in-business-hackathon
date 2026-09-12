@@ -22,6 +22,8 @@ sponsored by Eleno and ElevenLabs).
 **All times in this repo are Melbourne time (AEST, UTC+10).** Say "AEST" when you write a time.
 Team members are in different time zones — never write a bare local time.
 
+**新会话从 [`START_HERE.md`](START_HERE.md) 开始** —— 它是阅读顺序索引，省得你在 26 个文档里乱翻。
+
 Required reading before you do anything substantive, in this order:
 
 1. `docs/brief.md` — tracks, rules, submission requirements
