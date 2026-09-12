@@ -23,7 +23,8 @@ cd ai-in-business-hackathon
 
 然后在这个目录里打开你的 AI 工具，把下面「开场提示词」贴进去。
 
-> 没装过 git / 没配过 GitHub？把 `docs/onboarding-prompt.md` 贴给 AI，它会带你走完。
+> **没装过 git / 没配过 GitHub？看 [setup-cli.md](setup-cli.md)** —— 15 分钟，
+> `gh auth login` 一条命令解决认证，不用配 SSH key 也不用管 token。
 
 ---
 
