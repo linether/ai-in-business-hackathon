@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}{{ scenario_id }} — ComplaintGuard{% endblock %}
+{% block body %}
+<style>
+  .score { display:flex; align-items:baseline; gap:14px; margin-bottom:4px }
+  .score .n { font-size:44px; font-weight:600; letter-spacing:-.03em; line-height:1 }
+  .score .n.high { color:var(--high) } .score .n.medium { color:var(--med) } .score .n.low { color:var(--low) }
+  .score .from { font-size:16px; color:var(--muted) }
+  .bar { height:7px; background:#ececeа; background:#ececea; border-radius:4px; overflow:hidden; margin:12px 0 4px }
+  .bar > i { display:block; height:100%; background:var(--high) }
+  .bar.low > i { background:var(--low) } .bar.medium > i { background:var(--med) }
+
+  .sig { border-top:1px solid var(--line); padding:11px 0 }
+  .sig:first-of-type { border-top:0 }
+  .sig .h { display:flex; gap:9px; align-items:baseline }
+  .sig .w { font-variant-numeric:tabular-nums; color:var(--muted); font-size:13px; min-width:34px }
+  .sig .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em }
+  .quote { border-left:2px solid var(--line); margin:7px 0 0 43px; padding:2px 0 2px 11px;
+           font-size:13.5px; color:#3d3d39 }
+  .quote .who { color:var(--muted); font-size:12px; margin-right:6px }
+  .quote a { text-decoration:none; border-bottom:1px dotted var(--accent) }
+
+  .intervene { border:1px solid #e8c4c0; background:#fdf5f4; border-radius:9px; padding:18px 20px; margin-bottom:18px }
+  .intervene h2 { color:var(--high) }
+  .intervene .what { font-size:16px; font-weight:500; margin-bottom:8px }
+
+  .tl { border-left:2px solid var(--line); margin-left:7px; padding-left:18px }
+  .tl .c { position:relative; padding-bottom:20px }
+  .tl .c:before { content:""; position:absolute; left:-25px; top:5px; width:10px; height:10px;
+                  border-radius:50%; background:#fff; border:2px solid var(--line) }
+  .tl .c.hot:before { border-color:var(--high); background:var(--high) }
+  .tl .when { font-size:12.5px; color:var(--muted) }
+  .tl .sum { margin:2px 0 6px }
+  .chip { display:inline-block; font-size:12px; padding:2px 8px; border-radius:4px;
+          border:1px solid var(--line); margin:2px 5px 2px 0; background:#fff }
+  .chip.bad { color:var(--high); border-color:#e8c4c0; background:#fdf4f3 }
+  .chip.good { color:var(--low); border-color:#c3ddcd; background:#f4faf6 }
+  .chip.unsure { color:var(--med); border-color:#e8d9a8; background:#fff8e6 }
+
+  .t { width:100%; border-collapse:collapse; font-size:13px }
+  .t td { padding:4px 10px 4px 0; vertical-align:top }
+  .t td:first-child { color:var(--muted); white-space:nowrap }
+  details.tx summary { cursor:pointer; font-size:13px; color:var(--accent) }
+  .line { padding:2px 0; font-size:13.5px }
+  .line .who { display:inline-block; min-width:74px; color:var(--muted); font-size:12px }
+  .line.cust .who { color:#8a5a2f }
+  .line:target { background:#fff3c4; border-radius:3px }
+  .nav { margin-bottom:18px; font-size:13px }
+  .nav a { margin-right:12px }
+</style>
+
+<div class="nav">
+  <a href="/">&larr; all cases</a>
+  {% for i in all_ids %}{% if i != scenario_id %}<a href="/case/{{ i }}">{{ i }}</a>{% endif %}{% endfor %}
+  <a href="/api/case/{{ scenario_id }}">JSON</a>
+</div>
+
+<div class="panel">
+  <h2>Escalation risk</h2>
+  <div class="score">
+    <span class="n {{ a.risk.band }}">{{ a.risk.score }}</span>
+    {% if a.risk.prior_score is not none %}
+      <span class="from">from {{ a.risk.prior_score }} before the latest contact</span>
+    {% endif %}
+  </div>
+  <div class="bar {{ a.risk.band }}"><i style="width:{{ a.risk.score }}%"></i></div>
+  <div class="small muted">
+    Score is a capped sum of fixed weights. No model sets it, nothing is learned, the same case always
+    gives the same number &mdash; and every point below traces to a line someone actually said.
+  </div>
+</div>
+
+{% if a.earliest_intervention %}
+<div class="intervene">
+  <h2>Earliest point this could have been stopped</h2>
+  <div class="what">{{ a.earliest_intervention.what_should_have_happened }}</div>
+  <div class="small muted" style="margin-bottom:10px">
+    Contact {{ a.earliest_intervention.contact_seq }} &middot;
+    {{ a.earliest_intervention.at.strftime('%-d %b %Y, %H:%M') }}
+  </div>
+  <div class="small">{{ a.earliest_intervention.why_it_was_missed }}</div>
+  {% for e in a.earliest_intervention.evidence %}
+    <div class="quote"><span class="who">{{ e.speaker }}</span>
+      <a href="#c{{ e.contact_seq }}u{{ e.utterance_index }}">&ldquo;{{ e.quote }}&rdquo;</a></div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="panel">
+  <h2>Why &mdash; {{ a.risk.signals|length }} signal{{ '' if a.risk.signals|length == 1 else 's' }}</h2>
+  {% if not a.risk.signals %}
+    <div class="small muted">Nothing outstanding. Every need raised was resolved and every commitment was met.</div>
+  {% endif %}
+  {% for s in a.risk.signals %}
+  <div class="sig">
+    <div class="h">
+      <span class="w">+{{ s.weight }}</span>
+      <div><span class="k">{{ s.kind.value.replace('_',' ') }}</span><div>{{ s.detail }}</div></div>
+    </div>
+    {% for e in s.evidence %}
+      <div class="quote"><span class="who">{{ e.speaker or '—' }}</span>
+        <a href="#c{{ e.contact_seq }}u{{ e.utterance_index }}">&ldquo;{{ e.quote }}&rdquo;</a></div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+
+<div class="panel">
+  <h2>What happened</h2>
+  <div class="tl">
+    {% for c in a.case.contacts %}
+    <div class="c {% if a.earliest_intervention and c.seq == a.earliest_intervention.contact_seq %}hot{% endif %}">
+      <div class="when">Contact {{ c.seq }} &middot; {{ c.occurred_at.strftime('%-d %b, %H:%M') }} &middot; {{ c.channel.value }}</div>
+      <div class="sum">{{ c.summary }}</div>
+      {% if c.extraction %}
+        {% for n in c.extraction.needs %}
+          <span class="chip {% if n.confidence.value == 'uncertain' %}unsure{% elif n.status.value == 'resolved' %}good{% else %}bad{% endif %}">
+            {% if n.confidence.value == 'uncertain' %}uncertain{% else %}{{ n.status.value }}{% endif %}: {{ n.summary }}
+          </span>
+        {% endfor %}
+        {% for p in c.extraction.promises %}
+          <span class="chip {% if p.confidence.value == 'uncertain' %}unsure{% elif p.fulfilled %}good{% else %}bad{% endif %}">
+            promise{% if p.fulfilled %} kept{% elif p.fulfilled is false %} broken{% else %} open{% endif %}: {{ p.summary }}
+            {%- if p.overdue_by_hours %} &middot; {{ p.overdue_by_hours|round|int }}h overdue{% endif %}
+          </span>
+        {% endfor %}
+        {% for act in c.extraction.actions %}
+          {% if act.assigns_owner is false %}<span class="chip">no owner assigned: {{ act.summary }}</span>{% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if c.transcript %}
+      <details class="tx"><summary>transcript</summary>
+        {% for u in c.transcript.utterances %}
+          <div class="line {{ 'cust' if u.speaker.value == 'customer' else '' }}" id="c{{ c.seq }}u{{ loop.index0 }}">
+            <span class="who">{{ u.speaker.value }}</span>{{ u.text }}
+          </div>
+        {% endfor %}
+      </details>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if a.recommended_actions %}
+<div class="panel">
+  <h2>Suggested next steps</h2>
+  <div class="small muted" style="margin-top:-8px;margin-bottom:10px">
+    Suggestions only. This system never issues a refund, changes a plan or opens a ticket, and a score
+    is never used on its own to judge an agent.
+  </div>
+  {% for r in a.recommended_actions %}
+    <div class="sig"><div class="h"><span class="w">{{ r.urgency }}</span>
+      <div><strong>{{ r.label }}</strong><div class="small muted">{{ r.rationale }}</div></div></div></div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="panel">
+  <h2>Run</h2>
+  <table class="t">
+    <tr><td>extractor</td><td><code>{{ a.telemetry.extractor }}</code></td></tr>
+    <tr><td>claims checked</td><td>{{ a.telemetry.claims_extracted }}</td></tr>
+    <tr><td>citations rejected</td><td>{{ a.telemetry.claims_rejected_by_citation_check }}</td></tr>
+    <tr><td>marked uncertain</td><td>{{ a.telemetry.claims_marked_uncertain }}
+      <span class="muted small">&mdash; shown above, excluded from the score</span></td></tr>
+    <tr><td>llm calls</td><td>{{ a.telemetry.llm_calls }}</td></tr>
+    <tr><td>elapsed</td><td>{{ a.telemetry.elapsed_ms }} ms</td></tr>
+  </table>
+</div>
+{% endblock %}

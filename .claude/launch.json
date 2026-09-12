@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "complaintguard",
+      "runtimeExecutable": ".venv/bin/uvicorn",
+      "runtimeArgs": ["complaintguard.app:app", "--app-dir", "src", "--port", "8000", "--reload"],
+      "port": 8000
+    }
+  ]
+}

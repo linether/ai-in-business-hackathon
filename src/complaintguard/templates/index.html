@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="panel">
+  <h2>Pick a case</h2>
+  <p class="small muted" style="margin-top:-6px">
+    Each case is a customer who contacted a telco more than once. The system reads the calls,
+    tracks what was asked for and what was promised, and reconstructs how it ended up escalating.
+  </p>
+  <style>
+    .case-list { display:grid; gap:12px }
+    .case { display:block; text-decoration:none; color:inherit; border:1px solid var(--line);
+            border-radius:8px; padding:14px 16px; background:#fff }
+    .case:hover { border-color:var(--accent) }
+    .case .top { display:flex; align-items:center; gap:10px; margin-bottom:5px }
+    .case .id { font-weight:600; font-size:14.5px }
+    .pill { font-size:11.5px; padding:2px 9px; border-radius:20px; border:1px solid var(--line) }
+    .pill.esc { color:var(--high); border-color:#e8c4c0; background:#fdf4f3 }
+    .pill.ok  { color:var(--low);  border-color:#c3ddcd; background:#f4faf6 }
+  </style>
+  <div class="case-list">
+    {% for c in cards %}
+    <a class="case" href="/case/{{ c.id }}">
+      <div class="top">
+        <span class="id">{{ c.id }}</span>
+        {% if c.escalated %}<span class="pill esc">escalated</span>
+        {% else %}<span class="pill ok">resolved</span>{% endif %}
+        <span class="pill">{{ c.category }}</span>
+        {% if c.root_cause and c.root_cause != '无' %}<span class="pill">{{ c.root_cause }}</span>{% endif %}
+      </div>
+      <div class="small muted">{{ c.note }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
