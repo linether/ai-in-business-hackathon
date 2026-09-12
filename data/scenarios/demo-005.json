@@ -1,0 +1,74 @@
+{
+  "case_id": "demo-005",
+  "customer_ref": "synthetic-customer-05",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": false,
+    "business_category": "套餐变更",
+    "root_cause": "无",
+    "earliest_intervention_contact_seq": null,
+    "earliest_intervention_action": null,
+    "unresolved_need_ids": [],
+    "broken_promise_ids": [],
+    "key_signals": ["承诺兑现", "诉求已解决", "两次联系但均已解决"],
+    "why_this_scenario_exists": "反例：客服做出了承诺（两个工作日内确认套餐变更），而且**真的兑现了** —— 第二通就是那通确认电话，并且当场把事情办完。用来测系统不会因为「存在一条承诺」或「客户联系了两次」就报警。没有这类样本，评测只能测召回测不了精确率。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-05T13:20:00",
+      "channel": "call",
+      "summary": "Customer asks to move to a cheaper plan. Agent submits the change and promises written confirmation within two business days.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 10.0, "speaker": "customer", "text": "Hi, I'm on the eighty dollar plan and I barely use the data. Is there something smaller I could move to?"},
+          {"start_s": 10.5, "end_s": 20.0, "speaker": "agent", "text": "There's a fifty dollar plan with thirty gigabytes — looking at your usage, that would cover you comfortably."},
+          {"start_s": 20.5, "end_s": 24.0, "speaker": "customer", "text": "That sounds better. Can we do that?"},
+          {"start_s": 24.5, "end_s": 34.0, "speaker": "agent", "text": "I've put the change through now. It starts from your next billing cycle, and I'll confirm it in writing within two business days."},
+          {"start_s": 34.5, "end_s": 38.0, "speaker": "customer", "text": "Great, thanks very much."}
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {"id": "n1", "utterance_index": 0, "summary": "Move to a cheaper plan that suits actual usage", "raised_at": "2026-09-05T13:20:00", "status": "resolved",
+           "evidence": [{"contact_seq": 1, "utterance_index": 0, "start_s": 1.0, "speaker": "customer", "quote": "Is there something smaller I could move to?"}],
+           "resolution_note": "Agent submitted the plan change during the call.",
+           "resolution_evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 24.5, "speaker": "agent", "quote": "I've put the change through now."}]}
+        ],
+        "promises": [
+          {"id": "p1", "utterance_index": 3, "summary": "Confirm the plan change in writing within two business days", "made_at": "2026-09-05T13:20:00", "due_at": "2026-09-09T13:20:00", "fulfilled": true,
+           "evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 24.5, "speaker": "agent", "quote": "I'll confirm it in writing within two business days."}]}
+        ],
+        "actions": [
+          {"id": "a1", "utterance_index": 3, "summary": "Submitted the plan change, effective next billing cycle", "taken_at": "2026-09-05T13:22:00", "assigns_owner": true,
+           "evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 24.5, "speaker": "agent", "quote": "I've put the change through now."}]}
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-08T10:05:00",
+      "channel": "call",
+      "summary": "The promised confirmation call, made a day early. Everything is in order.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 9.0, "speaker": "agent", "text": "Morning, it's Meridian ringing to confirm the plan change we discussed on Friday."},
+          {"start_s": 9.5, "end_s": 13.0, "speaker": "customer", "text": "Oh good, yes. Is it all gone through?"},
+          {"start_s": 13.5, "end_s": 23.0, "speaker": "agent", "text": "It has. You're on the fifty dollar plan from the first of next month, and the confirmation email went out this morning."},
+          {"start_s": 23.5, "end_s": 28.0, "speaker": "customer", "text": "Lovely. I'll keep an eye out for it. Thanks for ringing."}
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [],
+        "actions": [
+          {"id": "a2", "utterance_index": 2, "summary": "Confirmed the change and sent written confirmation, a day ahead of the commitment", "taken_at": "2026-09-08T10:07:00", "assigns_owner": true,
+           "evidence": [{"contact_seq": 2, "utterance_index": 2, "start_s": 13.5, "speaker": "agent", "quote": "the confirmation email went out this morning"}]}
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "case_id": "demo-006",
+  "customer_ref": "synthetic-customer-06",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": false,
+    "business_category": "网络质量",
+    "root_cause": "无",
+    "earliest_intervention_contact_seq": null,
+    "earliest_intervention_action": null,
+    "unresolved_need_ids": [],
+    "broken_promise_ids": [],
+    "key_signals": ["两次联系但主题不同", "均已解决"],
+    "why_this_scenario_exists": "反例，专测「重复联系」这个信号会不会误报：客户确实联系了两次，但两次是**不同的事**，而且**都当场解决了**。真正的风险信号是「就同一件未解决的事反复来电」，不是「来过两次」。没有这个样本，系统可能把任何多次联系的客户都判成高风险。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-04T11:30:00",
+      "channel": "call",
+      "summary": "Customer can't get mobile data working after changing handsets. Agent walks them through the APN settings and it works before the call ends.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 10.0, "speaker": "customer", "text": "I've just swapped to a new phone and I've got calls and texts but no mobile data at all."},
+          {"start_s": 10.5, "end_s": 18.0, "speaker": "agent", "text": "That's usually the APN settings not carrying across. Can you open settings and go to mobile network for me?"},
+          {"start_s": 18.5, "end_s": 22.0, "speaker": "customer", "text": "Yep, I'm there."},
+          {"start_s": 22.5, "end_s": 31.0, "speaker": "agent", "text": "Right — set the access point name to internet, all lowercase, then toggle flight mode on and off."},
+          {"start_s": 31.5, "end_s": 38.0, "speaker": "customer", "text": "Hang on… yep, there we go. It's connected. That was easy."},
+          {"start_s": 38.5, "end_s": 43.0, "speaker": "agent", "text": "Glad that sorted it. Anything else while I'm here?"},
+          {"start_s": 43.5, "end_s": 46.0, "speaker": "customer", "text": "No, that's the one. Thanks."}
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {"id": "n1", "utterance_index": 0, "summary": "Get mobile data working on the new handset", "raised_at": "2026-09-04T11:30:00", "status": "resolved",
+           "evidence": [{"contact_seq": 1, "utterance_index": 0, "start_s": 1.0, "speaker": "customer", "quote": "I've got calls and texts but no mobile data at all"}],
+           "resolution_note": "Resolved during the call — APN corrected and data connected.",
+           "resolution_evidence": [{"contact_seq": 1, "utterance_index": 4, "start_s": 31.5, "speaker": "customer", "quote": "It's connected. That was easy."}]}
+        ],
+        "promises": [],
+        "actions": [
+          {"id": "a1", "utterance_index": 3, "summary": "Talked the customer through correcting the APN; data restored on the call", "taken_at": "2026-09-04T11:34:00", "assigns_owner": true,
+           "evidence": [{"contact_seq": 1, "utterance_index": 3, "start_s": 22.5, "speaker": "agent", "quote": "set the access point name to internet, all lowercase"}]}
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-11T15:45:00",
+      "channel": "call",
+      "summary": "A week later, an unrelated question about international roaming. Answered and a pack added on the call.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {"start_s": 1.0, "end_s": 9.0, "speaker": "customer", "text": "Different thing this time — I'm off to New Zealand next week and wanted to sort out roaming."},
+          {"start_s": 9.5, "end_s": 19.0, "speaker": "agent", "text": "There's a five dollar a day pack that covers calls and data over there. I can add it and set it to start on the day you fly."},
+          {"start_s": 19.5, "end_s": 24.0, "speaker": "customer", "text": "Perfect, the fourteenth. Can you do that now?"},
+          {"start_s": 24.5, "end_s": 32.0, "speaker": "agent", "text": "Added, starting the fourteenth and it stops charging the day you land back. Nothing else for you to do."},
+          {"start_s": 32.5, "end_s": 36.0, "speaker": "customer", "text": "Brilliant, thank you."}
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {"id": "n2", "utterance_index": 0, "summary": "Arrange international roaming for a trip to New Zealand", "raised_at": "2026-09-11T15:45:00", "status": "resolved",
+           "evidence": [{"contact_seq": 2, "utterance_index": 0, "start_s": 1.0, "speaker": "customer", "quote": "I'm off to New Zealand next week and wanted to sort out roaming"}],
+           "resolution_note": "Roaming pack added during the call, scheduled to start on the travel date.",
+           "resolution_evidence": [{"contact_seq": 2, "utterance_index": 3, "start_s": 24.5, "speaker": "agent", "quote": "Added, starting the fourteenth"}]}
+        ],
+        "promises": [],
+        "actions": [
+          {"id": "a2", "utterance_index": 3, "summary": "Added the roaming pack, scheduled for the travel date", "taken_at": "2026-09-11T15:47:00", "assigns_owner": true,
+           "evidence": [{"contact_seq": 2, "utterance_index": 3, "start_s": 24.5, "speaker": "agent", "quote": "Added, starting the fourteenth"}]}
+        ]
+      }
+    }
+  ]
+}

@@ -126,21 +126,37 @@ def unresolved_signals(case: Case) -> List[Signal]:
 
 
 def repeat_contact_signals(case: Case) -> List[Signal]:
-    """Contacting three times about the same thing is a fact, not a feeling.
+    """Contacting repeatedly about something *still unresolved* is a fact, not a feeling.
 
-    Note this is counted from the case history, not inferred from tone. A calm
-    customer on their third call is higher risk than an angry one on their
-    first — see docs/proposals/genicayyy-complaintguard.md, "Hardest part".
+    Counted from the case history, never inferred from tone. A calm customer on
+    their third call is higher risk than an angry one on their first — see
+    docs/proposals/genicayyy-complaintguard.md, "Hardest part".
+
+    The unresolved condition is load-bearing. Without it this fires on any
+    customer who rings twice, including one whose second call *was* the callback
+    the agent promised — which is a success, not a warning. demo-005 and
+    demo-006 exist to hold that line.
     """
     count = len(case.contacts)
     if count < 2:
         return []
+
+    outstanding = [
+        n
+        for n in case.all_needs()
+        if n.confidence is not Confidence.UNCERTAIN and n.status.value in ("unresolved", "partial")
+    ]
+    if not outstanding:
+        return []
+
     return [
         Signal(
             kind=SignalKind.REPEAT_CONTACT,
             weight=WEIGHTS[SignalKind.REPEAT_CONTACT] * (count - 1),
-            detail=f"{count} contacts about the same unresolved matter.",
-            evidence=[],
+            detail=(
+                f"{count} contacts and \"{outstanding[0].summary}\" is still outstanding."
+            ),
+            evidence=outstanding[0].evidence,
         )
     ]
 
