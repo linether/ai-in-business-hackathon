@@ -11,8 +11,8 @@ purpose — you can't split work that hasn't been defined.
 
 | 领域 | 负责人 | 认领时间 |
 | --- | --- | --- |
-| **主链路 + 抽取层**（③④⑤） | **@Genicayyy** | 09-12 21:18 AEST |
-| **前端 + 证据面板**（⑨） | **@Ranchelwood** | 09-12 20:54 AEST |
+| **主链路 + 抽取层**（③④⑤） | **@Genicayyy** | 09-12 21:18 AEST · **周日可投入 ~15h，AEST** |
+| **前端 + 证据面板**（⑨） | **@Ranchelwood** | 09-12 20:54 AEST · 可投入时间未知 |
 | 规则 / 评分 / 阻断点（⑥⑦⑧） | @linether | 代码已在仓库里 |
 | 部署与线上 URL | @linether | 服务器访问权限在他手上 |
 
