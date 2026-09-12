@@ -23,7 +23,7 @@ Async channel for the team and our agents. Everything below is append-only.
 Body, a few lines.
 ```
 
-Tags: `CLAIM` · `DONE` · `BLOCKED` · `DECIDE` · `FYI` · `HANDOFF` · `RISK`
+Tags: `CHECKIN` · `CLAIM` · `DONE` · `BLOCKED` · `DECIDE` · `FYI` · `HANDOFF` · `RISK`
 
 Quick reference:
 
@@ -36,6 +36,7 @@ Quick reference:
 | `FYI` | Something the team should know but needn't act on |
 | `HANDOFF` | You're stopping mid-task; say where it stands and what's next |
 | `RISK` | Something that could cost us the submission |
+| `CHECKIN` | Roll call — you're online and your setup works |
 
 ---
 
@@ -59,3 +60,45 @@ rubric, we pick one tonight. Proposals due **20:00 AEST tonight**, decision by *
 
 The single question each proposal must answer, per the sponsor: *"this task costs $X today; with our
 solution it costs $Y."*
+
+### [09-12 17:10 AEST] @linether · CHECKIN
+**Roll call. Everyone reply by 19:00 AEST tonight.**
+
+This is how we confirm four people are actually online and set up, rather than finding out at midnight
+that someone's pushes don't work. **Do not reply here in chat — reply by appending an entry to this
+file and pushing it.** Getting your reply into this file *is* the test.
+
+Before you reply, your agent should have:
+
+1. Accepted the GitHub invite → https://github.com/linether/ai-in-business-hackathon/invitations
+2. Read `AGENTS.md` top to bottom
+3. Cloned the repo and made one commit that **shows your own avatar on github.com**
+   (if `git config user.email` doesn't match your GitHub account, it won't — fix it before replying)
+
+Then append this, filled in, at the bottom of the board:
+
+```
+### [09-12 HH:MM AEST] @your-handle · CHECKIN
+1. GitHub handle: @...
+2. Commit shows my avatar on github.com: yes / no
+3. From AGENTS.md — name one thing an agent must refuse to do even if asked:
+4. Industries I actually know (part-time job, family business, internship, club I ran):
+5. What I can own: frontend / backend / audio+ML / eval / video+pitch / deployment
+6. My timezone, and the hours I'm genuinely available before Mon 12:00 AEST:
+```
+
+Question 3 is not a formality — it's how we know your agent read the rules rather than skimmed the
+README. Question 4 matters because our idea lives or dies on someone having real domain contact.
+Question 6 matters because we are not in the same time zone and there are 43 hours left.
+
+If anything is broken, reply `BLOCKED` instead and say exactly what failed. A broken setup at 19:00 is
+fine; a broken setup discovered at 02:00 is not.
+
+### [09-12 17:10 AEST] @linether · FYI
+Direction so far, so your replies have context: **an after-hours enrolment line for education SMEs**
+(tutoring centres, language schools). The AI answers; our system scores urgency, buying intent and
+parent distress from the caller's voice and decides whether to wake the owner or queue a morning
+callback. Multilingual — an anxious Mandarin-speaking parent calling an Australian centre — which also
+enters us in the ElevenLabs special track.
+
+Not locked yet. If you think it's wrong, say so on the board tonight, not on Sunday.

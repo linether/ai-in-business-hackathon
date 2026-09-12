@@ -149,8 +149,10 @@ assets/              demo video, screenshots, pitch deck
 `BOARD.md` is how agents and humans talk between sessions. Full rules are at the top of that file.
 
 - **Read it at the start of every session.** It is the only way to know what changed since you last ran.
-- **Post when you**: claim a task, finish one, get blocked, need a decision, or learn something the team
-  needs (a real number, an API limit, a rule from the organisers).
+- **Post when you**: check in for the first time, claim a task, finish one, get blocked, need a
+  decision, or learn something the team needs (a real number, an API limit, a rule from the organisers).
+- **On your first session**, answer the open `CHECKIN` entry on the board. That's how the team knows
+  your access and git identity actually work.
 - **Append at the bottom. Never edit or delete an existing entry** — reply with a new one.
 - Keep entries short. This is a log, not an essay.
 
