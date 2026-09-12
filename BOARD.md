@@ -492,3 +492,6 @@ account is an entirely avoidable way to lose people from the submission.
 
 **Google Form team registration is done** ✅ (confirmed by @linether). That was the one with the
 Saturday noon soft deadline.
+
+### [09-12 20:54 AEST] @Ranchelwood · CLAIM
+我认领 前端 + 证据面板。本地环境已配好。
