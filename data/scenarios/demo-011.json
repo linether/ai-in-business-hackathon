@@ -1,0 +1,136 @@
+{
+  "case_id": "demo-011",
+  "customer_ref": "synthetic-customer-11",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": false,
+    "business_category": "服务态度",
+    "root_cause": "无",
+    "earliest_intervention_contact_seq": null,
+    "earliest_intervention_action": null,
+    "unresolved_need_ids": [],
+    "broken_promise_ids": [],
+    "key_signals": [
+      "投诉已受理并解决",
+      "承诺兑现"
+    ],
+    "why_this_scenario_exists": "反例，而且是最难的一种：客户明确说了'我要投诉'——一个天真的关键词系统会立刻报警。但投诉被当场受理、道歉、补偿，并在承诺时限内以书面确认结案。用来测系统不会把'投诉'这个词本身当作升级信号。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-07T09:10:00",
+      "channel": "call",
+      "summary": "Customer lodges a complaint about being spoken to rudely. Agent takes it, apologises, credits a month, and commits to written confirmation within two days.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 9.0,
+            "speaker": "customer",
+            "text": "I want to make a complaint. The person I spoke to on Friday was quite rude to me."
+          },
+          {
+            "start_s": 9.5,
+            "end_s": 16.0,
+            "speaker": "agent",
+            "text": "I'm sorry that happened. I'd like to take the details and log it properly."
+          },
+          {
+            "start_s": 16.5,
+            "end_s": 22.0,
+            "speaker": "customer",
+            "text": "It was about eleven in the morning, about my bill."
+          },
+          {
+            "start_s": 22.5,
+            "end_s": 35.0,
+            "speaker": "agent",
+            "text": "I've logged it as a formal complaint, reference C-2291, and it'll be reviewed by that team leader. I've also credited a month's access as an apology."
+          },
+          {
+            "start_s": 35.5,
+            "end_s": 39.0,
+            "speaker": "customer",
+            "text": "That's more than I expected, thank you."
+          },
+          {
+            "start_s": 39.5,
+            "end_s": 44.0,
+            "speaker": "agent",
+            "text": "You'll get it in writing within two business days."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Have a complaint about agent conduct formally recorded",
+            "raised_at": "2026-09-07T09:10:00",
+            "status": "resolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "I want to make a complaint."
+              }
+            ],
+            "resolution_note": "Logged as formal complaint C-2291, routed to the team leader, with a month credited.",
+            "resolution_evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 22.5,
+                "speaker": "agent",
+                "quote": "I've logged it as a formal complaint, reference C-2291"
+              }
+            ]
+          }
+        ],
+        "promises": [
+          {
+            "id": "p1",
+            "utterance_index": 5,
+            "summary": "Written confirmation within two business days",
+            "made_at": "2026-09-07T09:10:00",
+            "due_at": "2026-09-09T09:10:00",
+            "fulfilled": true,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 5,
+                "start_s": 39.5,
+                "speaker": "agent",
+                "quote": "You'll get it in writing within two business days."
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "Logged formal complaint C-2291, assigned to the team leader, credited one month",
+            "taken_at": "2026-09-07T09:14:00",
+            "assigns_owner": true,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 22.5,
+                "speaker": "agent",
+                "quote": "I've logged it as a formal complaint, reference C-2291"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "case_id": "demo-012",
+  "customer_ref": "synthetic-customer-12",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": false,
+    "business_category": "套餐变更",
+    "root_cause": "无",
+    "earliest_intervention_contact_seq": null,
+    "earliest_intervention_action": null,
+    "unresolved_need_ids": [],
+    "broken_promise_ids": [],
+    "key_signals": [
+      "提到转网但已挽回",
+      "诉求已解决"
+    ],
+    "why_this_scenario_exists": "反例，测的是另一个天真关键词：客户明确说了在看别家、要转网——churn_intent 会触发。但客服当场给出更好的方案，客户当场接受并明说不走了。用来证明系统看的是'诉求有没有被解决'，不是'客户说了什么吓人的词'。这一条和 demo-002 一起，覆盖了两个最容易误报的关键词类别。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-08T16:00:00",
+      "channel": "call",
+      "summary": "Customer is shopping around and says so. Agent matches the competing offer on the call; customer stays.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 12.0,
+            "speaker": "customer",
+            "text": "I'll be honest, I'm looking at what else is out there. There's a plan elsewhere for twenty dollars less with the same data."
+          },
+          {
+            "start_s": 12.5,
+            "end_s": 19.0,
+            "speaker": "agent",
+            "text": "Let me see what I can do before you go anywhere. What's the offer you've been quoted?"
+          },
+          {
+            "start_s": 19.5,
+            "end_s": 24.0,
+            "speaker": "customer",
+            "text": "Fifty-five a month, forty gigabytes."
+          },
+          {
+            "start_s": 24.5,
+            "end_s": 34.0,
+            "speaker": "agent",
+            "text": "I can put you on fifty-five with fifty gigabytes, effective this cycle, no new contract. I've applied it now."
+          },
+          {
+            "start_s": 34.5,
+            "end_s": 42.0,
+            "speaker": "customer",
+            "text": "Right now? Well — that settles it, I'll stay. Thanks for sorting that out."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Match or beat a competitor's cheaper plan",
+            "raised_at": "2026-09-08T16:00:00",
+            "status": "resolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "There's a plan elsewhere for twenty dollars less with the same data."
+              }
+            ],
+            "resolution_note": "Agent applied a better plan during the call; customer confirmed they would stay.",
+            "resolution_evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 24.5,
+                "speaker": "agent",
+                "quote": "I can put you on fifty-five with fifty gigabytes, effective this cycle"
+              }
+            ]
+          }
+        ],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "Applied a better plan immediately, no new contract",
+            "taken_at": "2026-09-08T16:04:00",
+            "assigns_owner": true,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 24.5,
+                "speaker": "agent",
+                "quote": "I've applied it now."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

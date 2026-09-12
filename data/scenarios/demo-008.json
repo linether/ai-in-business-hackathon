@@ -1,0 +1,171 @@
+{
+  "case_id": "demo-008",
+  "customer_ref": "synthetic-customer-08",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": true,
+    "business_category": "套餐变更",
+    "root_cause": "需求被误解",
+    "earliest_intervention_contact_seq": 1,
+    "earliest_intervention_action": "On contact 1 the agent should have confirmed which service the customer meant before cancelling anything — the customer asked to cancel the tablet plan and the mobile was cancelled instead",
+    "unresolved_need_ids": [
+      "n1"
+    ],
+    "broken_promise_ids": [],
+    "key_signals": [
+      "需求被误解",
+      "未解决诉求",
+      "重复联系",
+      "问题影响",
+      "服务中断"
+    ],
+    "why_this_scenario_exists": "根因是「需求被误解」：客服执行得很快、很热情，但把客户的诉求听错了——客户要停平板的套餐，结果手机号被停了。承诺没有违背，动作也做了，但做错了。用来测系统能否区分「做了动作」和「做对了动作」。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-05T10:00:00",
+      "channel": "call",
+      "summary": "Customer asks to cancel the tablet data plan. Agent cancels the mobile service instead.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 13.0,
+            "speaker": "customer",
+            "text": "I've got two services with you — my mobile and a data plan for my tablet. I'd like to cancel the tablet one, I never use it."
+          },
+          {
+            "start_s": 13.5,
+            "end_s": 18.0,
+            "speaker": "agent",
+            "text": "No problem at all, I can sort that out for you right now."
+          },
+          {
+            "start_s": 18.5,
+            "end_s": 20.0,
+            "speaker": "customer",
+            "text": "Great, thanks."
+          },
+          {
+            "start_s": 20.5,
+            "end_s": 27.0,
+            "speaker": "agent",
+            "text": "That's cancelled and confirmed. You'll see it drop off the next bill."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Cancel the tablet data plan, keep the mobile",
+            "raised_at": "2026-09-05T10:00:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "I'd like to cancel the tablet one, I never use it"
+              }
+            ],
+            "service_affected": true
+          }
+        ],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "Cancelled a service without confirming which one the customer meant",
+            "taken_at": "2026-09-05T10:03:00",
+            "assigns_owner": true,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 20.5,
+                "speaker": "agent",
+                "quote": "That's cancelled and confirmed."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-06T08:15:00",
+      "channel": "call",
+      "summary": "Customer's mobile is dead. The wrong service was cancelled. Restoring it needs a new order.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 10.0,
+            "speaker": "customer",
+            "text": "My mobile stopped working overnight. I rang yesterday to cancel the tablet plan, not my phone."
+          },
+          {
+            "start_s": 10.5,
+            "end_s": 18.0,
+            "speaker": "agent",
+            "text": "Oh — I can see it. The mobile service was the one closed off. I'm very sorry."
+          },
+          {
+            "start_s": 18.5,
+            "end_s": 25.0,
+            "speaker": "customer",
+            "text": "I've missed calls all morning. I run my business off this number."
+          },
+          {
+            "start_s": 25.5,
+            "end_s": 33.0,
+            "speaker": "agent",
+            "text": "Reconnecting means raising a new order, it isn't something I can just switch back on."
+          },
+          {
+            "start_s": 33.5,
+            "end_s": 37.0,
+            "speaker": "customer",
+            "text": "And the tablet plan I actually asked about?"
+          },
+          {
+            "start_s": 37.5,
+            "end_s": 40.0,
+            "speaker": "agent",
+            "text": "That's still active."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a2",
+            "utterance_index": 1,
+            "summary": "Confirmed the wrong service had been cancelled",
+            "taken_at": "2026-09-06T08:18:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 1,
+                "start_s": 10.5,
+                "speaker": "agent",
+                "quote": "The mobile service was the one closed off."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

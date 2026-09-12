@@ -1,0 +1,170 @@
+{
+  "case_id": "demo-010",
+  "customer_ref": "synthetic-customer-10",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": true,
+    "business_category": "计费争议",
+    "root_cause": "政策空白",
+    "earliest_intervention_contact_seq": 1,
+    "earliest_intervention_action": "On contact 1, with no policy covering a deceased account holder's final bill, the case should have been escalated to someone who could make a decision rather than left to a script that has no answer",
+    "unresolved_need_ids": [
+      "n1"
+    ],
+    "broken_promise_ids": [],
+    "key_signals": [
+      "政策空白",
+      "未解决诉求",
+      "重复联系",
+      "问题影响",
+      "信任变化"
+    ],
+    "why_this_scenario_exists": "根因是「政策空白」：没有人做错任何事，但系统里没有处理这种情况的规则，于是每个客服都只能说'我这边没有这个选项'。这类失败最容易被漏掉，因为它不指向任何个人。用来测系统能否识别'反复给出同一个无用答复'本身就是升级信号。敏感题材，脚本刻意克制。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-04T13:40:00",
+      "channel": "call",
+      "summary": "Caller is settling their late mother's affairs and asks to close the account and stop billing. No process exists on the agent's screen.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 10.0,
+            "speaker": "customer",
+            "text": "My mother passed away last month. I'm trying to close her account and stop the direct debit."
+          },
+          {
+            "start_s": 10.5,
+            "end_s": 16.0,
+            "speaker": "agent",
+            "text": "I'm sorry for your loss. Let me see what I can find here."
+          },
+          {
+            "start_s": 16.5,
+            "end_s": 21.0,
+            "speaker": "customer",
+            "text": "I've got the certificate and I'm the executor."
+          },
+          {
+            "start_s": 21.5,
+            "end_s": 32.0,
+            "speaker": "agent",
+            "text": "The system's only letting me do this if you're the account holder or an authorised contact, and there isn't an option for what you're describing."
+          },
+          {
+            "start_s": 32.5,
+            "end_s": 35.0,
+            "speaker": "customer",
+            "text": "So what should I do?"
+          },
+          {
+            "start_s": 35.5,
+            "end_s": 42.0,
+            "speaker": "agent",
+            "text": "I'd try calling back — someone else may have more options than I do."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Close a deceased account holder's account and stop the direct debit",
+            "raised_at": "2026-09-04T13:40:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "I'm trying to close her account and stop the direct debit"
+              }
+            ]
+          }
+        ],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "No process available; customer advised to call back and try another agent",
+            "taken_at": "2026-09-04T13:45:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 21.5,
+                "speaker": "agent",
+                "quote": "there isn't an option for what you're describing"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-10T10:30:00",
+      "channel": "call",
+      "summary": "Second attempt, same answer, and the debit has gone through again.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 9.0,
+            "speaker": "customer",
+            "text": "I rang last week about my mother's account. Another payment came out on the eighth."
+          },
+          {
+            "start_s": 9.5,
+            "end_s": 17.0,
+            "speaker": "agent",
+            "text": "I can see the note. I'm afraid I've got the same options as my colleague did."
+          },
+          {
+            "start_s": 17.5,
+            "end_s": 25.0,
+            "speaker": "customer",
+            "text": "I've been asked for the certificate twice and it hasn't gone anywhere either time."
+          },
+          {
+            "start_s": 25.5,
+            "end_s": 32.0,
+            "speaker": "agent",
+            "text": "I understand. I don't have a way to action it from here."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a2",
+            "utterance_index": 1,
+            "summary": "Second agent gave the same answer; still no route to resolution",
+            "taken_at": "2026-09-10T10:33:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 1,
+                "start_s": 9.5,
+                "speaker": "agent",
+                "quote": "I've got the same options as my colleague did."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

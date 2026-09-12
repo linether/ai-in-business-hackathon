@@ -100,6 +100,12 @@ class Need(BaseModel):
     status: NeedStatus = NeedStatus.UNKNOWN
     evidence: List[Evidence] = []
     confidence: Confidence = Confidence.CONFIRMED
+    service_affected: Optional[bool] = Field(
+        default=None,
+        description="True when the customer is currently without a service they pay for. "
+        "Concrete and checkable, unlike a general notion of severity — and the "
+        "fastest-growing complaint category at the Australian ombudsman.",
+    )
     # filled by layer 5
     resolution_note: Optional[str] = None
     resolution_evidence: List[Evidence] = []
@@ -199,6 +205,7 @@ class Case(BaseModel):
 class SignalKind(str, Enum):
     REPEAT_CONTACT = "repeat_contact"
     NO_OWNER = "no_owner"
+    SERVICE_LOSS = "service_loss"
     CONTRADICTORY_ANSWER = "contradictory_answer"
     UNRESOLVED_NEED = "unresolved_need"
     BROKEN_PROMISE = "broken_promise"

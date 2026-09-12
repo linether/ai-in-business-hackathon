@@ -1,0 +1,181 @@
+{
+  "case_id": "demo-009",
+  "customer_ref": "synthetic-customer-09",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": true,
+    "business_category": "网络质量",
+    "root_cause": "反复转接",
+    "earliest_intervention_contact_seq": 1,
+    "earliest_intervention_action": "On contact 1 the customer had already said a previous transfer had bounced them back. An agent hearing that should have raised a fault and owned it, not transferred again.",
+    "unresolved_need_ids": [
+      "n1"
+    ],
+    "broken_promise_ids": [],
+    "key_signals": [
+      "反复转接",
+      "未解决诉求",
+      "重复联系",
+      "无人负责",
+      "服务中断"
+    ],
+    "why_this_scenario_exists": "根因是「反复转接」：每一位客服都很客气，也都做了他们认为对的事——转给更合适的部门。没有人失约，没有人说错话，但客户被踢了四次皮球，问题原地不动。用来测系统在没有任何明显失误的情况下能否识别流程性失败。 ⚠️ 标注修正（09-13）：原先标的阻断点是第 2 通，理由是转接模式要到第二次才看得出来。但重读脚本，第 1 通客户就明说了「我周一转过去，他们又把我推回来」——客服听到这句还继续转，所以第 1 通就是最早的可阻断点。**是标注错了，不是系统判错了**，改标注不改代码。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-03T11:00:00",
+      "channel": "call",
+      "summary": "Reports the landline has no dial tone. Transferred to faults, then to provisioning, then the call drops.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 8.0,
+            "speaker": "customer",
+            "text": "There's no dial tone on the landline at all. It's been dead since Monday."
+          },
+          {
+            "start_s": 8.5,
+            "end_s": 14.0,
+            "speaker": "agent",
+            "text": "I'll put you through to our faults team, they handle line issues."
+          },
+          {
+            "start_s": 14.5,
+            "end_s": 21.0,
+            "speaker": "customer",
+            "text": "I was put through to them on Monday and they sent me back here."
+          },
+          {
+            "start_s": 21.5,
+            "end_s": 29.0,
+            "speaker": "agent",
+            "text": "I'm sorry about that. Provisioning might be the right team actually — let me transfer you."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Restore dial tone on the landline",
+            "raised_at": "2026-09-03T11:00:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "There's no dial tone on the landline at all."
+              }
+            ],
+            "service_affected": true
+          }
+        ],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "Transferred to a third team without raising a fault",
+            "taken_at": "2026-09-03T11:04:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 21.5,
+                "speaker": "agent",
+                "quote": "Provisioning might be the right team actually — let me transfer you."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-06T15:30:00",
+      "channel": "call",
+      "summary": "Fourth handoff. Still no fault ticket exists.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 9.0,
+            "speaker": "customer",
+            "text": "This is the fourth person I've spoken to. Is there a reference for any of this?"
+          },
+          {
+            "start_s": 9.5,
+            "end_s": 17.0,
+            "speaker": "agent",
+            "text": "I can't see a fault logged, no. There are notes from the transfers."
+          },
+          {
+            "start_s": 17.5,
+            "end_s": 24.0,
+            "speaker": "customer",
+            "text": "So nobody has actually written down that my line is dead."
+          },
+          {
+            "start_s": 24.5,
+            "end_s": 29.0,
+            "speaker": "agent",
+            "text": "Let me get you across to the right team."
+          },
+          {
+            "start_s": 29.5,
+            "end_s": 33.0,
+            "speaker": "customer",
+            "text": "Please don't transfer me again."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [],
+        "actions": [
+          {
+            "id": "a2",
+            "utterance_index": 1,
+            "summary": "Confirmed no fault ticket exists after four handoffs",
+            "taken_at": "2026-09-06T15:33:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 1,
+                "start_s": 9.5,
+                "speaker": "agent",
+                "quote": "I can't see a fault logged, no."
+              }
+            ]
+          },
+          {
+            "id": "a3",
+            "utterance_index": 3,
+            "summary": "Attempted a further transfer rather than owning the case",
+            "taken_at": "2026-09-06T15:36:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 3,
+                "start_s": 24.5,
+                "speaker": "agent",
+                "quote": "Let me get you across to the right team."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

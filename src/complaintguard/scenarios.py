@@ -45,6 +45,7 @@ def _load_extraction(raw: Optional[dict], seq: int) -> Optional[Extraction]:
             evidence=_evidence(n.get("evidence")),
             resolution_note=n.get("resolution_note"),
             resolution_evidence=_evidence(n.get("resolution_evidence")),
+            service_affected=n.get("service_affected"),
         )
         for n in raw.get("needs", [])
     ]

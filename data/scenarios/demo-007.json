@@ -1,0 +1,213 @@
+{
+  "case_id": "demo-007",
+  "customer_ref": "synthetic-customer-07",
+  "language": "en",
+  "note": "SYNTHETIC. Fictional telco 'Meridian Mobile' — not a real company. No real customer data.",
+  "ground_truth": {
+    "should_escalate": true,
+    "business_category": "退费",
+    "root_cause": "权限不足",
+    "earliest_intervention_contact_seq": 1,
+    "earliest_intervention_action": "On contact 1 the agent hit their approval ceiling and should have handed the case to someone who could approve it, instead of promising to 'see what I can do' and leaving it with themselves",
+    "unresolved_need_ids": [
+      "n1"
+    ],
+    "broken_promise_ids": [
+      "p1"
+    ],
+    "key_signals": [
+      "未履行承诺",
+      "权限不足",
+      "未解决诉求",
+      "重复联系"
+    ],
+    "why_this_scenario_exists": "根因是「权限不足」：客服本人认同应该退，但金额超过他的审批额度，而他没有上报，只是承诺'我看看能不能办'。三通电话后依然卡在同一个人手里。用来测系统能否识别「同一个人反复承诺但无权兑现」这种模式——它和「无人负责」不同，这里有人负责，只是那个人办不了。"
+  },
+  "contacts": [
+    {
+      "seq": 1,
+      "occurred_at": "2026-09-02T14:10:00",
+      "channel": "call",
+      "summary": "Customer disputes $410 of excess data charges after a plan change went through late. Agent agrees it looks wrong but the amount exceeds what they can approve.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 12.0,
+            "speaker": "customer",
+            "text": "I changed to the bigger plan on the second, but the excess data charges from before that are still on here. Four hundred and ten dollars."
+          },
+          {
+            "start_s": 12.5,
+            "end_s": 20.0,
+            "speaker": "agent",
+            "text": "Looking at it, I'd agree with you — the plan change should have taken effect before that billing period closed."
+          },
+          {
+            "start_s": 20.5,
+            "end_s": 23.0,
+            "speaker": "customer",
+            "text": "So you can take it off?"
+          },
+          {
+            "start_s": 23.5,
+            "end_s": 31.0,
+            "speaker": "agent",
+            "text": "Anything over two hundred I can't action myself. Let me see what I can do and come back to you."
+          },
+          {
+            "start_s": 31.5,
+            "end_s": 34.0,
+            "speaker": "customer",
+            "text": "How long does that usually take?"
+          },
+          {
+            "start_s": 34.5,
+            "end_s": 39.0,
+            "speaker": "agent",
+            "text": "I'll come back to you within three working days."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [
+          {
+            "id": "n1",
+            "utterance_index": 0,
+            "summary": "Reverse $410 of excess data charges after a late plan change",
+            "raised_at": "2026-09-02T14:10:00",
+            "status": "unresolved",
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 0,
+                "start_s": 1.0,
+                "speaker": "customer",
+                "quote": "the excess data charges from before that are still on here"
+              }
+            ]
+          }
+        ],
+        "promises": [
+          {
+            "id": "p1",
+            "utterance_index": 5,
+            "summary": "Come back within three working days on the $410 credit",
+            "made_at": "2026-09-02T14:10:00",
+            "due_at": "2026-09-07T14:10:00",
+            "fulfilled": false,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 5,
+                "start_s": 34.5,
+                "speaker": "agent",
+                "quote": "I'll come back to you within three working days."
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "a1",
+            "utterance_index": 3,
+            "summary": "Acknowledged the charge was wrong but could not approve it — over the $200 ceiling",
+            "taken_at": "2026-09-02T14:12:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 1,
+                "utterance_index": 3,
+                "start_s": 23.5,
+                "speaker": "agent",
+                "quote": "Anything over two hundred I can't action myself."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seq": 2,
+      "occurred_at": "2026-09-09T09:20:00",
+      "channel": "call",
+      "summary": "A week later, still nothing. Same agent, same ceiling, another promise to try.",
+      "transcript": {
+        "language": "en",
+        "utterances": [
+          {
+            "start_s": 1.0,
+            "end_s": 7.0,
+            "speaker": "customer",
+            "text": "It's been a week. Nobody's come back about the four hundred and ten."
+          },
+          {
+            "start_s": 7.5,
+            "end_s": 15.0,
+            "speaker": "agent",
+            "text": "I'm sorry, I've been chasing it. It's still sitting with me because of the approval limit."
+          },
+          {
+            "start_s": 15.5,
+            "end_s": 19.0,
+            "speaker": "customer",
+            "text": "Is there someone who can just approve it?"
+          },
+          {
+            "start_s": 19.5,
+            "end_s": 24.0,
+            "speaker": "agent",
+            "text": "I'll try to get it looked at this week."
+          },
+          {
+            "start_s": 24.5,
+            "end_s": 28.0,
+            "speaker": "customer",
+            "text": "That's what I was told last time."
+          }
+        ]
+      },
+      "extraction": {
+        "needs": [],
+        "promises": [
+          {
+            "id": "p2",
+            "utterance_index": 3,
+            "summary": "Get the credit looked at this week",
+            "made_at": "2026-09-09T09:20:00",
+            "due_at": null,
+            "fulfilled": null,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 3,
+                "start_s": 19.5,
+                "speaker": "agent",
+                "quote": "I'll try to get it looked at this week."
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "a2",
+            "utterance_index": 1,
+            "summary": "Case still held by the same agent who cannot approve it",
+            "taken_at": "2026-09-09T09:22:00",
+            "assigns_owner": false,
+            "evidence": [
+              {
+                "contact_seq": 2,
+                "utterance_index": 1,
+                "start_s": 7.5,
+                "speaker": "agent",
+                "quote": "It's still sitting with me because of the approval limit."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

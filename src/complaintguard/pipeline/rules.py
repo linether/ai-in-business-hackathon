@@ -23,6 +23,7 @@ from ..models import Case, Confidence, Evidence, Signal, SignalKind
 WEIGHTS = {
     SignalKind.REPEAT_CONTACT: 12,
     SignalKind.NO_OWNER: 20,
+    SignalKind.SERVICE_LOSS: 18,
     SignalKind.CONTRADICTORY_ANSWER: 24,
     SignalKind.UNRESOLVED_NEED: 15,
     SignalKind.BROKEN_PROMISE: 22,
@@ -199,6 +200,35 @@ def language_signals(case: Case) -> List[Signal]:
     return signals
 
 
+def service_loss_signals(case: Case) -> List[Signal]:
+    """The customer is paying for a service they currently cannot use.
+
+    This is the impact dimension @Genicayyy asked for, narrowed to something a
+    machine can check rather than a general severity score. It also tracks what
+    the regulator sees: complaints about having no phone or internet service rose
+    41.6% in a quarter at the Australian ombudsman — docs/market-evidence.md.
+
+    A dead line outranks a billing dispute of the same age, and it should.
+    """
+    affected = [
+        n
+        for n in case.all_needs()
+        if n.service_affected
+        and n.confidence is not Confidence.UNCERTAIN
+        and n.status.value in ("unresolved", "partial")
+    ]
+    if not affected:
+        return []
+    return [
+        Signal(
+            kind=SignalKind.SERVICE_LOSS,
+            weight=WEIGHTS[SignalKind.SERVICE_LOSS],
+            detail="Customer is without a service they pay for: " + affected[0].summary + ".",
+            evidence=affected[0].evidence,
+        )
+    ]
+
+
 def no_owner_signals(case: Case) -> List[Signal]:
     """An unresolved need that nobody was ever assigned to.
 
@@ -269,6 +299,7 @@ def all_signals(case: Case, now: datetime) -> List[Signal]:
         + unresolved_signals(case)
         + repeat_contact_signals(case)
         + no_owner_signals(case)
+        + service_loss_signals(case)
         + contradiction_signals(case)
         + language_signals(case)
     )

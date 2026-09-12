@@ -18,7 +18,8 @@
       "未解决诉求",
       "重复联系",
       "承诺兑现但问题未解决",
-      "转网意向"
+      "转网意向",
+      "服务中断"
     ],
     "why_this_scenario_exists": "测一个容易被漏掉的区分：承诺**兑现了**（回电确实准时打了），但**诉求依然没解决**（回电只是说还在处理）。如果系统把「有无未兑现承诺」当作升级的唯一依据，这一单会被判低风险。真正根因是「无人负责」——没有人被指派去解决问题，只有人被指派去打电话。澳洲语境下这个失败模式特别真实：固网故障在零售电信商和网络运营商之间来回推，客户掉进接口的缝里。TIO 有一个官方投诉类别就叫「intermittent service or drop outs」。"
   },
@@ -79,7 +80,8 @@
                 "speaker": "customer",
                 "quote": "Every night from about seven the internet drops out completely."
               }
-            ]
+            ],
+            "service_affected": true
           }
         ],
         "promises": [
