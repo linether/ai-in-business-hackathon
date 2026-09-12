@@ -66,7 +66,11 @@ Pick one of 1–3; the ElevenLabs special track can be entered **alongside** it 
 ## Repo layout
 
 ```
-docs/          brief, judging rubric, plan, idea backlog, decisions
+AGENTS.md      rules for everyone (and every AI agent) working here — read first
+BOARD.md       async message board — read on start, post on finish
+docs/          brief, judging rubric, keynote, track analysis, plan, decisions
+docs/proposals/  one file per candidate idea
+docs/roles.md    who owns what
 src/           application code
 notebooks/     experiments — and the eval that's worth 6 rubric points
 assets/        demo video, screenshots, pitch deck
@@ -74,9 +78,18 @@ assets/        demo video, screenshots, pitch deck
 
 ## Working agreements
 
+Full rules in [AGENTS.md](AGENTS.md) — everyone reads it first, humans and AI agents alike.
+
 - `main` stays demo-able. Branch as `yourname/what-youre-doing`, PR into `main`.
 - Secrets go in `.env` (gitignored). Never commit a key — `.env.example` lists what we need.
+- Never rewrite git history. The organisers inspect it.
+- Read [BOARD.md](BOARD.md) when you start, post to it when you finish.
 - Decisions go in [docs/decisions.md](docs/decisions.md) so nobody re-litigates them at 2am.
+
+## Right now
+
+No idea chosen yet. Proposals due **Sat 20:00 AEST**, decision at **21:00** — process in
+[docs/proposals/README.md](docs/proposals/README.md).
 
 ## Quickstart
 
