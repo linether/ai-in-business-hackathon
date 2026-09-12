@@ -23,8 +23,9 @@ import time
 from datetime import datetime
 from typing import Optional
 
+from ..llm import LLMClient
 from ..models import Case, CaseAnalysis, Telemetry
-from . import citation, intervention, risk
+from . import citation, intervention, resolution, risk
 from .extract import Extractor, LabelledExtractor
 
 # The scenarios are dated early September; scoring "now" against the real clock
@@ -37,16 +38,35 @@ def analyse(
     case: Case,
     extractor: Optional[Extractor] = None,
     now: Optional[datetime] = None,
+    resolver: Optional[LLMClient] = None,
 ) -> CaseAnalysis:
+    """Run the whole pipeline over one case.
+
+    ``extractor`` defaults to the labelled stub, which reads the scenario's own
+    answers — fine for developing and demoing the deterministic layers, useless
+    for measuring anything. Pass ``LLMExtractor()`` for a real run.
+
+    ``resolver`` is only used when the extractor is a real one. The labelled
+    scenarios already carry statuses, and asking a model to re-derive what we
+    wrote ourselves would cost money and lose information.
+    """
     started = time.time()
     extractor = extractor or LabelledExtractor()
     now = now or DEMO_NOW
+    llm_calls = 0
 
     # 3 — extraction
     for contact in case.contacts:
         extracted = extractor.extract(case, contact.seq)
         if extracted is not None:
             contact.extraction = extracted
+            if extractor.name != "labelled-stub":
+                llm_calls += 1
+
+    # 5 — resolution matching across contacts. The extractor works one contact at
+    # a time and cannot know a Monday request was settled on Thursday.
+    if extractor.name != "labelled-stub":
+        llm_calls += resolution.resolve(case, resolver)
 
     # 3b — citation check, deterministic
     checked, rejected, uncertain = citation.verify(case)
@@ -65,7 +85,7 @@ def analyse(
         recommended_actions=actions,
         synthetic=True,
         telemetry=Telemetry(
-            llm_calls=0 if extractor.name == "labelled-stub" else len(case.contacts),
+            llm_calls=llm_calls,
             elapsed_ms=int((time.time() - started) * 1000),
             claims_extracted=checked,
             claims_rejected_by_citation_check=rejected,
