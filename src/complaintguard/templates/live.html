@@ -88,9 +88,9 @@
     what another team does with a case once it leaves. <strong>Nothing tells it to make mistakes.</strong>
     What it does is what that person does.
     <br><br>
-    The panel on the right is the submission. It reads the call as it happens, checks what the agent
-    said against <a href="/policy/case-ownership">the written policy</a>, and stops the call when a
-    human needs to take it. Observe.AI scores a finished call; CallMiner aggregates a quarter of them.
+    The <strong>ComplaintGuard</strong> panel is the submission &mdash; it reads the call as it
+    happens, checks what the agent said against <a href="/policy/case-ownership">the written
+    policy</a>, and stops the call when a human needs to take it. Observe.AI scores a finished call; CallMiner aggregates a quarter of them.
     Neither interrupts one in progress.
   </div>
 </div>
@@ -384,7 +384,7 @@
       document.getElementById('alarm-what').textContent = p ? p.what :
         'The call crossed the escalation threshold at turn ' + r.escalated_at_turn + '.';
       document.getElementById('alarm-why').textContent = p ? p.why :
-        'The findings on the right are what took it there.';
+        'The findings below are what took it there.';
       var box = document.getElementById('alarm-quotes'); box.innerHTML = '';
       (p ? p.quotes : []).forEach(function (q) {
         var e = document.createElement('div'); e.className = 'q';
