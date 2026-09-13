@@ -1183,3 +1183,70 @@ https://bizalchemists.duckdns.org/try
 @lillianguo1031-cyber 收到请回一条，说一下你能什么时候开始录。
 如果你起不来或者赶不及，请直接说，我这边用 `/live` 重录一版兜底，
 **但你的真人版一定比我的好，所以优先等你。**
+
+---
+
+## 🔴 04:20 周一 · 录制稿已更新，请看新版 · @lillianguo1031-cyber
+
+**先说最重要的：你录好的那一版不要删。** 存成 `assets/demo-lillian-v1.mp4`，它是我们唯一确定能交的东西。
+
+### 为什么要改
+
+你录的时候站点只有 12 个预置案例。之后加了两个页面：
+
+- **`/live`** —— **可以按住麦克风真的打一通电话**。Scribe 转写你说的话，AI 客服用 ElevenLabs
+  的声音回你，ComplaintGuard 实时读这通电话、对照公司政策检查客服，**判断到需要人工介入时把电话叫停**
+- **`/try`** —— 粘贴任意通话记录，真的跑模型
+
+### 🔴 旧稿有三句话现在会让我们掉分
+
+不是小瑕疵，是**主动认领一个我们已经不再有的短板**：
+
+| 旧稿的话 | 现在的事实 |
+| --- | --- |
+| "no upload route yet, and no live microphone" | **两个都有了** |
+| 「绝对不能说站点实时调用 LLM」 | **`/live` 和 `/try` 都真调用** |
+| 「绝对不能说评委可以自己输入」 | **现在可以** |
+
+**而且旧稿的评测数字全部作废** —— 我 04:10 重跑了真实模型评测，数字变了。
+
+### 新稿在这里
+
+👉 [`docs/demo-video-recording-script.md`](docs/demo-video-recording-script.md)
+
+里面给了**两个选择**：
+
+- **A. 只补 100 秒**（约 20 分钟）—— 录一段 `/live` 剪进你现有那版最前面，把结尾那句
+  "no upload route, no live microphone" 剪掉
+- **B. 整篇重录**（约 40 分钟）—— 叙事重心对：从"看着它被叫停"开头，比从"我们分析了 12 个案例"强得多
+
+**你定。时间还有 5.5 小时，不逼你。**
+
+### 一句必须说出口的话
+
+> **The agent is the demo. What we built is the thing watching it.**
+
+评分表 Originality 10 分明写「克隆知名产品给 0–4 分」，Differentiation 7 分明写「说不出竞品给 0–2 分」。
+会说话的客服机器人 Observe.AI / NiCE / Salesforce 全都有；**在通话进行中把电话叫停的没有人做**。
+视频如果看起来像「我们做了个客服机器人」，**这 17 分直接没了**。
+
+### 能稳定触发警报的两句（亲测，线上）
+
+第一句（正常对话，分数开始爬）：
+```
+I rang last week about a charge I never signed up for, and nobody called me back.
+```
+第二句（**一句话立刻触发**，红色警报弹出、客服被停掉）：
+```
+This is the third time I've rung about this. I want to speak to your boss.
+```
+
+### 注意额度
+
+`/live` 每通 8 轮、**每人每小时 6 通**、全站每天 25 通。彩排加正式录，一小时内别超 6 通。
+
+### 录完
+
+1. YouTube 传 **Unlisted（不公开列出）**，🔴 **不要传 Private —— 评委点进去是空白，等于没交**
+2. 确认时长 **3–5 分钟**（硬要求）
+3. 链接贴这里，我填 Devpost
