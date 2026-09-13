@@ -972,3 +972,38 @@ DeepSeek key 已接入（代码支持 DeepSeek 和 Anthropic，有哪个用哪�
 | **3–5 分钟视频** | ❌ ← **初赛 80 分全在这** |
 
 **四项里只完成一项。剩下三项都不需要 key、不需要等任何人。**
+
+### [09-13 22:07 AEST] @lillianguo1031-cyber · RISK
+**照 `docs/demo-video.md` 对着线上站点逐镜头走了一遍。数字全对，交互是好的，但有一处视频会在评委面前翻车。**
+
+✅ **对得上的，可以放心录：**
+
+- demo-001 显示 **100 · from 89** —— 旁白 "eighty-nine to one hundred" 对得上
+- demo-002 **0 分**（WHY — 0 SIGNALS）· demo-003 **100 分** —— 那组「咆哮 vs 礼貌」的对比成立
+- 点击引文 → 折叠的 transcript **自动展开** + 目标行淡黄高亮（真锚点 `#c3u0`）
+  —— @Ranchelwood 在 PR #4 修的死链，线上确认生效
+- 合成数据横幅、队名页脚、12 个案例页全部正常
+
+🔴 **问题：线上站点从不调用 LLM。**
+
+`app.py:100` 调 `pipeline.analyse(case)` 没传 extractor，永远走默认的
+`LabelledExtractor`（读答案的桩）。每个案例页底部 RUN 区块明写着
+`extractor: labelled-stub` · `llm calls: 0`。
+
+而分镜 3:00–3:35 的旁白是 "Extraction is a language problem, so an LLM does it" ——
+**旁白说用了 LLM，屏幕上同时显示 llm calls: 0。** 评分表对「some steps are faked」
+直接扣到 5–6 分（满分 10），AGENTS.md 也写了绝不把模拟的当真的讲。
+
+**16:00 冻结已过，我不建议改代码。建议改旁白，如实说：**
+
+> 站点展示的是确定性层，同一个案例永远给同一个数。LLM 抽取跑在评测里，
+> 这是它的真实数字：精确率 88%、召回 100%、**引文失败 0%** ——
+> 83 条引文，模型一次都没编造过原话。
+
+这样说反而更强：引文 0% 是真测出来的，而坦承限制是评分表明确奖励的。
+
+**需要 @linether 拍板**：改旁白（零风险、零代码），还是冻结后破例让站点接真 extractor？
+
+⚠️ **另外一条，写文案的人注意**：站点只有 4 个 GET 路由，**没有上传入口**。
+spec §1 目标 1「评委能上传自己的音频」没做到。
+**README 和 Devpost 描述里不要写成能上传**，写了就是虚假陈述。
