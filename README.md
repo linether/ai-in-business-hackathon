@@ -2,6 +2,8 @@
 
 **Why a complaint escalated — and the earliest point it could have been stopped.**
 
+### 🟢 Live: **https://bizalchemists.duckdns.org**
+
 By **BizAlchemists** · built for [Forward: AI in Business Hackathon](https://forward.devpost.com/) ·
 DSCubed × RAID, University of Melbourne · September 2026
 **Track 1 — Improve an Existing Business Capability** · also entered in **Built With ElevenLabs**
@@ -136,7 +138,9 @@ PYTHONPATH=src .venv/bin/uvicorn complaintguard.app:app --reload
 
 Then open http://localhost:8000. No API key is needed to run the prepared cases.
 
-Deployment (Docker + Caddy + automatic HTTPS): [`docs/deploy.md`](docs/deploy.md)
+**Deployed at https://bizalchemists.duckdns.org** — Docker + Caddy with automatic HTTPS on our own server.
+Redeploy with `SITE_DOMAIN=bizalchemists.duckdns.org ./deploy.sh`.
+Details: [`docs/deploy.md`](docs/deploy.md)
 
 ## Layout
 

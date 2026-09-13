@@ -2,7 +2,10 @@
 
 **决定**：用自己的阿里云服务器（马来西亚），**不买域名**，用 DuckDNS 免费子域名 + Caddy 自动 HTTPS。
 
-最终 URL 长这样：`https://complaintguard.duckdns.org`
+## 🟢 已上线：**https://bizalchemists.duckdns.org**
+
+Let's Encrypt 证书，TLS 1.3，http 自动跳 https。
+重新部署：`SITE_DOMAIN=bizalchemists.duckdns.org ./deploy.sh`
 
 ---
 
