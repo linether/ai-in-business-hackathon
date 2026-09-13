@@ -1,49 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ scenario_id }} — ComplaintGuard
-<script>
-// Audio playback. The calls are synthetic — we wrote the scripts and ElevenLabs
-// voiced them — so letting a judge hear one costs nothing and proves more than
-// a transcript does. Hearing demo-002 shout while scoring zero, next to
-// demo-003 staying perfectly calm while scoring a hundred, is the argument.
-(function () {
-  var player = new Audio();
-  var queue = [], current = null;
-
-  function clear() {
-    if (current) current.classList.remove('playing');
-    current = null;
-  }
-  function playLine(el) {
-    clear();
-    current = el;
-    el.classList.add('playing');
-    player.src = el.dataset.audio;
-    player.play().catch(function () { clear(); });   // autoplay blocked, fail quietly
-  }
-  function next() {
-    if (!queue.length) { clear(); return; }
-    playLine(queue.shift());
-  }
-  player.addEventListener('ended', next);
-
-  document.addEventListener('click', function (e) {
-    var one = e.target.closest('[data-play]');
-    if (one) {
-      queue = [];
-      playLine(one.closest('.line'));
-      return;
-    }
-    var whole = e.target.closest('[data-play-call]');
-    if (whole) {
-      var seq = whole.dataset.playCall;
-      queue = Array.prototype.slice.call(
-        document.querySelectorAll('.line[id^="c' + seq + 'u"][data-audio]'));
-      next();
-    }
-  });
-})();
-</script>
-{% endblock %}
+{% block title %}{{ scenario_id }} — ComplaintGuard{% endblock %}
 {% block body %}
 <style>
   .score { display:flex; align-items:baseline; gap:14px; margin-bottom:4px }
