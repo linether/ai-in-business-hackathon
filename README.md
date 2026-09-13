@@ -28,8 +28,8 @@ during an internship at a large telecommunications contact centre.
 
 ## What it does
 
-Upload a call — or pick a prepared case — and ComplaintGuard reads it alongside the customer's earlier
-contacts and reconstructs the failure chain:
+Pick a case and ComplaintGuard reads it alongside the customer's earlier contacts and reconstructs
+the failure chain:
 
 ```
 customer need → agent response → unresolved item → service promise
@@ -70,7 +70,7 @@ Control flow is defined in code, not by a model. If the steps can be listed in a
 beats an agent — predictable, testable, cost-bounded.
 
 ```
-1   audio ingest             upload, 2–3s chunks (replay path; live mic deferred)
+1   audio ingest             replay of voiced scripts; no upload route yet, live mic deferred
 2   transcribe + diarize     ElevenLabs Scribe, word-level timestamps
 3   structured extraction    needs · promises · deadlines · actions        ← LLM
 3b  citation check           verbatim string match                        ← deterministic
@@ -137,6 +137,13 @@ PYTHONPATH=src .venv/bin/uvicorn complaintguard.app:app --reload
 ```
 
 Then open http://localhost:8000. **No API key is needed** to run the prepared cases.
+
+⚠️ **What the deployed site does and does not do.** It serves twelve prepared cases and plays the
+audio for three of them. It runs the deterministic layers only — scoring, timing, signal detection,
+the intervention point — so a case always yields the same result and no page view spends a token.
+**It does not call a model, and there is no upload route.** The LLM extraction runs in the evaluation
+harness; its real numbers are below. Every case page reports `extractor` and `llm calls` in its Run
+panel, so what you see is what actually happened.
 
 For a real extraction run, put one LLM key in `.env` — either `DEEPSEEK_API_KEY` or
 `ANTHROPIC_API_KEY`; the first one present is used. The pipeline talks to an
