@@ -67,7 +67,7 @@ def _case_digest(case: Case) -> str:
     parts: List[str] = []
     for contact in sorted(case.contacts, key=lambda c: c.seq):
         parts.append(
-            "--- Contact {} · {:%-d %b %H:%M} ---".format(contact.seq, contact.occurred_at)
+            "--- Contact {} · {:%d %b %H:%M} ---".format(contact.seq, contact.occurred_at)
         )
         ex = contact.extraction
         if not ex:
@@ -76,7 +76,7 @@ def _case_digest(case: Case) -> str:
         for n in ex.needs:
             parts.append('NEED {}: {}'.format(n.id, n.summary))
         for p in ex.promises:
-            due = " (due {:%-d %b %H:%M})".format(p.due_at) if p.due_at else ""
+            due = " (due {:%d %b %H:%M})".format(p.due_at) if p.due_at else ""
             parts.append('PROMISE {}: {}{}'.format(p.id, p.summary, due))
         for a in ex.actions:
             owner = "" if a.assigns_owner is None else (

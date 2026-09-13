@@ -65,7 +65,7 @@ def find(case: Case) -> Optional[InterventionPoint]:
     promise = _earliest_broken_promise(case)
     if promise is not None:
         contact_seq = promise.evidence[0].contact_seq if promise.evidence else case.contacts[0].seq
-        due = f" by {promise.due_at:%-d %b %H:%M}" if promise.due_at else ""
+        due = f" by {promise.due_at:%d %b %H:%M}" if promise.due_at else ""
         return InterventionPoint(
             contact_seq=contact_seq,
             at=promise.made_at,
@@ -112,7 +112,7 @@ def recommend(case: Case, point: Optional[InterventionPoint]) -> List[dict]:
         actions.append(
             RecommendedAction(
                 label="Call the customer back within 2 hours",
-                rationale=f"Owed since {point.at:%-d %b %H:%M} and still outstanding.",
+                rationale=f"Owed since {point.at:%d %b %H:%M} and still outstanding.",
                 urgency="high",
             )
         )
