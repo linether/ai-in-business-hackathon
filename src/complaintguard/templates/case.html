@@ -93,7 +93,7 @@
   <div class="what">{{ a.earliest_intervention.what_should_have_happened }}</div>
   <div class="small muted" style="margin-bottom:10px">
     Contact {{ a.earliest_intervention.contact_seq }} &middot;
-    {{ a.earliest_intervention.at.strftime('%-d %b %Y, %H:%M') }}
+    {{ a.earliest_intervention.at.strftime('%d %b %Y, %H:%M') }}
   </div>
   <div class="small">{{ a.earliest_intervention.why_it_was_missed }}</div>
   {% for e in a.earliest_intervention.evidence %}
@@ -127,7 +127,7 @@
   <div class="tl">
     {% for c in a.case.contacts %}
     <div class="c {% if a.earliest_intervention and c.seq == a.earliest_intervention.contact_seq %}hot{% endif %}">
-      <div class="when">Contact {{ c.seq }} &middot; {{ c.occurred_at.strftime('%-d %b, %H:%M') }} &middot; {{ c.channel.value }}</div>
+      <div class="when">Contact {{ c.seq }} &middot; {{ c.occurred_at.strftime('%d %b, %H:%M') }} &middot; {{ c.channel.value }}</div>
       <div class="sum">{{ c.summary }}</div>
       {% if c.extraction %}
         {% for n in c.extraction.needs %}

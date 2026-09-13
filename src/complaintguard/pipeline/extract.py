@@ -91,7 +91,7 @@ def _user_prompt(contact) -> str:
         "{}. [{}] {}".format(i, u.speaker.value, u.text)
         for i, u in enumerate(contact.transcript.utterances)
     ]
-    return "Contact {} on {:%-d %b %Y at %H:%M}.\n\n{}".format(
+    return "Contact {} on {:%d %b %Y at %H:%M}.\n\n{}".format(
         contact.seq, contact.occurred_at, "\n".join(lines)
     )
 

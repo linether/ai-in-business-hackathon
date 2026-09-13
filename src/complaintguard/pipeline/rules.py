@@ -83,7 +83,7 @@ def timing_signals(case: Case, now: datetime) -> List[Signal]:
                 weight=WEIGHTS[SignalKind.MISSED_DEADLINE],
                 detail=(
                     f"Promise \"{promise.summary}\" was due "
-                    f"{promise.due_at:%-d %b %H:%M} and is {overdue:.0f}h overdue."
+                    f"{promise.due_at:%d %b %H:%M} and is {overdue:.0f}h overdue."
                 ),
                 evidence=promise.evidence,
             )
@@ -177,7 +177,7 @@ def language_signals(case: Case) -> List[Signal]:
     for contact in case.contacts:
         if contact.transcript is None:
             continue
-        for utterance in contact.transcript.utterances:
+        for utterance_index, utterance in enumerate(contact.transcript.utterances):
             if utterance.speaker.value != "customer":
                 continue
             for kind, terms, detail in checks:
@@ -190,6 +190,7 @@ def language_signals(case: Case) -> List[Signal]:
                             evidence=[
                                 Evidence(
                                     contact_seq=contact.seq,
+                                    utterance_index=utterance_index,
                                     start_s=utterance.start_s,
                                     speaker=utterance.speaker.value,
                                     quote=utterance.text,

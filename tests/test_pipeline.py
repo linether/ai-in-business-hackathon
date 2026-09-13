@@ -190,6 +190,18 @@ def test_calm_plus_regulator_does_escalate():
     assert any(s.kind.value == "regulator_mention" for s in a.risk.signals)
 
 
+def test_every_signal_evidence_links_to_a_real_transcript_line():
+    """The evidence panel must never render a dead ``#cXuNone`` link."""
+    for path in scenarios.list_scenarios():
+        case = scenarios.load_case(path)
+        analysis = pipeline.analyse(case)
+
+        for signal in analysis.risk.signals:
+            for evidence in signal.evidence:
+                assert evidence.utterance_index is not None, (path.stem, signal.kind)
+                assert citation.check_evidence(case, evidence) is True, (path.stem, signal.kind)
+
+
 # ------------------------------------------------------------------- resolution
 
 def test_resolution_applies_statuses():
