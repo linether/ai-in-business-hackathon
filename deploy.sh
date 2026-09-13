@@ -24,7 +24,13 @@ rsync -az --delete \
 
 # .env is never in the repo — it lives on the server only.
 ssh "$HOST" "test -f ${DIR}/.env || cp ${DIR}/.env.example ${DIR}/.env"
-ssh "$HOST" "grep -q '^SITE_DOMAIN=' ${DIR}/.env || echo 'SITE_DOMAIN=${DOMAIN}' >> ${DIR}/.env"
+
+# Set SITE_DOMAIN, replacing any existing line. .env.example ships an empty
+# SITE_DOMAIN=, so "append if absent" silently leaves it empty — and an empty
+# value makes the Caddyfile's site address collapse to a bare "{", which Caddy
+# reads as the global options block and refuses to start.
+ssh "$HOST" "sed -i '/^SITE_DOMAIN=/d' ${DIR}/.env && echo 'SITE_DOMAIN=${DOMAIN}' >> ${DIR}/.env"
+ssh "$HOST" "grep '^SITE_DOMAIN=' ${DIR}/.env"
 
 ssh "$HOST" "cd ${DIR} && SITE_DOMAIN=${DOMAIN} docker compose up -d --build"
 
