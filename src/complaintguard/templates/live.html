@@ -146,6 +146,12 @@
         &middot; {{ max_turns }} turns each</span>
     </div>
     <div class="status" id="status"></div>
+    <div class="small muted" style="margin-top:6px">
+      <a href="#" id="micdiag" style="font-size:12px">Microphone not working?</a>
+    </div>
+    <pre id="diag" hidden style="font-size:11.5px;line-height:1.5;background:#f6f5f1;
+         border:1px solid var(--line);border-radius:7px;padding:10px 12px;margin-top:8px;
+         white-space:pre-wrap;word-break:break-word"></pre>
   </div>
 
   <div class="panel sup">
@@ -251,6 +257,7 @@
     }
     if (e.target.closest('#begin')) { e.preventDefault(); start(); return; }
     if (e.target.closest('#send'))  { e.preventDefault(); turn(); return; }
+    if (e.target.closest('#micdiag')) { e.preventDefault(); diagnose(); return; }
     if (e.target.closest('#mic')) {
       e.preventDefault();
       if (rec && rec.state === 'recording') endRecording();
@@ -324,37 +331,28 @@
   function beginRecording() {
     if (!sid || busy) return;
     cancelled = false;
+    status.textContent = 'asking for the microphone\u2026';
+
+    // getUserMedia is called SYNCHRONOUSLY inside the click handler, and this
+    // matters more than it looks. Safari only honours a microphone request that
+    // is still inside the user gesture that started it — put it behind a promise,
+    // even one that resolves immediately, and the request is refused without ever
+    // showing the prompt. An earlier version of this function probed
+    // enumerateDevices first and then asked, which broke exactly that way, and
+    // broke it twice over: Safari also reports no input devices until permission
+    // has been granted, so the probe answered "there is no microphone" about a
+    // microphone that was sitting right there.
+    //
+    // So: ask first, explain afterwards. mic.disabled is not touched before the
+    // call either, for the same reason — do nothing between the gesture and the
+    // request.
+    var request;
+    try { request = navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { request = Promise.reject(e); }
+
     mic.disabled = true;
-    status.textContent = 'checking the microphone\u2026';
-
-    // Ask what hardware exists before asking to use it. enumerateDevices needs no
-    // permission, and "your browser cannot see a microphone at all" is a different
-    // problem from "you said no" — reported as one, they send the visitor to the
-    // wrong setting. An embedded web view or a browser without the OS microphone
-    // permission reports zero inputs here.
-    var probe = navigator.mediaDevices.enumerateDevices
-      ? navigator.mediaDevices.enumerateDevices()
-      : Promise.resolve(null);
-
-    probe.catch(function () { return null; }).then(function (devices) {
-      if (devices) {
-        var inputs = devices.filter(function (d) { return d.kind === 'audioinput'; });
-        if (!inputs.length) {
-          mic.disabled = false;
-          micIdle('');
-          fail('This browser cannot see a microphone at all (0 audio inputs). That is usually '
-             + 'an embedded browser window, or the browser not having the operating system\u2019s '
-             + 'microphone permission \u2014 on a Mac, System Settings \u203a Privacy &amp; Security '
-             + '\u203a Microphone. <strong>Typing the turn does exactly the same thing</strong>, '
-             + 'including the transcription step being skipped rather than faked.');
-          return null;
-        }
-      }
-      return navigator.mediaDevices.getUserMedia({ audio: true });
-    }).then(function (st) {
-      if (!st) return;
+    request.then(function (st) {
       mic.disabled = false;
-      // The visitor may have clicked again while the permission prompt was up.
       if (cancelled) { st.getTracks().forEach(function (t) { t.stop(); }); micIdle(''); return; }
 
       stream = st; chunks = [];
@@ -373,35 +371,99 @@
       mic.classList.add('rec');
       mic.textContent = '\u25A0';
       mic.title = 'Click to stop and send';
-      var started = Date.now();
+      var began = Date.now();
       status.textContent = 'recording \u2014 click \u25A0 when you are done';
       stopTimer = setInterval(function () {
-        var left = 20 - Math.floor((Date.now() - started) / 1000);
+        var left = 20 - Math.floor((Date.now() - began) / 1000);
         if (left <= 0) { endRecording(); return; }
         status.textContent = 'recording \u2014 click \u25A0 when you are done (' + left + 's)';
       }, 250);
     }).catch(function (err) {
       mic.disabled = false;
       micIdle('');
-      var name = (err && err.name) || 'unknown error';
-      try { console.warn('[ComplaintGuard] microphone unavailable:', name, err && err.message); }
-      catch (e) {}
-      // The button deliberately stays put: permission can be granted on a second
-      // attempt, and hiding the control makes a recoverable state look terminal.
-      var msg;
-      if (name === 'NotAllowedError' || name === 'SecurityError') {
-        msg = 'The microphone was blocked. Allow it from your browser\u2019s address bar and click '
-            + 'the microphone again.';
-      } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
-        msg = 'No microphone is attached to this browser. If you are reading this inside an app\u2019s '
-            + 'built-in browser, open the page in Safari or Chrome instead.';
-      } else if (name === 'NotReadableError' || name === 'TrackStartError') {
-        msg = 'Another application is holding the microphone. Close it and click the microphone again.';
+      explainMicFailure(err);
+    });
+  }
+
+  // Now that the request has failed, enumerateDevices is worth asking: after a
+  // refusal Safari's answer is meaningful, and "zero audio inputs" separates an
+  // embedded web view from a permission the visitor can grant.
+  function explainMicFailure(err) {
+    var name = (err && err.name) || 'unknown';
+    try { console.warn('[ComplaintGuard] microphone unavailable:', name, err && err.message); }
+    catch (e) {}
+
+    var typing = ' <strong>Typing the turn does exactly the same thing</strong> \u2014 same agent, '
+               + 'same voice coming back, same policy checks, same escalation. Only the '
+               + 'transcription step is skipped.';
+
+    if (name === 'NotAllowedError' || name === 'SecurityError') {
+      fail('The microphone was blocked for this site. In Safari: Settings \u203a Websites \u203a '
+         + 'Microphone, set bizalchemists.duckdns.org to Allow, then reload. In Chrome: the '
+         + 'microphone icon at the right of the address bar.' + typing);
+      return;
+    }
+    if (name === 'NotReadableError' || name === 'TrackStartError') {
+      fail('Another application is holding the microphone. Close it and click the microphone '
+         + 'again.' + typing);
+      return;
+    }
+
+    var probe = navigator.mediaDevices && navigator.mediaDevices.enumerateDevices
+      ? navigator.mediaDevices.enumerateDevices() : Promise.reject();
+    probe.then(function (devices) {
+      var inputs = devices.filter(function (d) { return d.kind === 'audioinput'; }).length;
+      if (inputs === 0) {
+        fail('This browser cannot see a microphone at all (0 audio inputs, ' + name + '). On a Mac '
+           + 'that is usually the browser itself lacking permission: System Settings \u203a Privacy '
+           + '&amp; Security \u203a Microphone, and switch on the browser you are using \u2014 then '
+           + 'quit it fully and reopen. It is also what happens inside an app\u2019s built-in '
+           + 'browser window.' + typing);
       } else {
-        msg = 'The microphone could not be started (' + name + ').';
+        fail('The microphone could not be started (' + name + '), although this browser can see '
+           + inputs + '.' + typing);
       }
-      fail(msg + ' <strong>Typing the turn does exactly the same thing</strong> \u2014 the call, the '
-         + 'policy checks and the escalation are all identical, only the transcription step is skipped.');
+    }).catch(function () {
+      fail('The microphone could not be started (' + name + ').' + typing);
+    });
+  }
+
+  // A self-check the visitor can run and paste back. Microphone problems are
+  // almost never in this page — they are the operating system, the browser, or an
+  // embedded web view — and every one of those looks identical from in here. This
+  // turns "it does not work" into something answerable.
+  function diagnose() {
+    var out = document.getElementById('diag');
+    out.hidden = false;
+    out.textContent = 'checking\u2026';
+    var lines = [
+      'user agent     ' + navigator.userAgent,
+      'secure context ' + window.isSecureContext,
+      'mediaDevices   ' + (navigator.mediaDevices ? 'present' : 'MISSING'),
+      'MediaRecorder  ' + (window.MediaRecorder ? 'present' : 'MISSING')
+    ];
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+      lines.push('can record     ' + ['audio/webm', 'audio/mp4', 'audio/ogg'].filter(
+        function (t) { return MediaRecorder.isTypeSupported(t); }).join(', ') || '(none)');
+    }
+    function finish(extra) {
+      out.textContent = lines.concat(extra).join('\n');
+    }
+    if (!navigator.mediaDevices) { finish([]); return; }
+
+    navigator.mediaDevices.enumerateDevices().then(function (d) {
+      var ins = d.filter(function (x) { return x.kind === 'audioinput'; });
+      lines.push('audio inputs   ' + ins.length + (ins.length && !ins[0].label
+        ? ' (unlabelled \u2014 normal before permission is granted)' : ''));
+    }).catch(function (e) {
+      lines.push('audio inputs   could not enumerate (' + (e && e.name) + ')');
+    }).then(function () {
+      return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+        st.getTracks().forEach(function (t) { t.stop(); });
+        finish(['getUserMedia   OK \u2014 the microphone works, click \uD83C\uDF99 to record']);
+      }).catch(function (e) {
+        finish(['getUserMedia   FAILED: ' + (e && e.name) + ' \u2014 ' + (e && e.message)]);
+      });
     });
   }
 
