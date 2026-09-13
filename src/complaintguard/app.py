@@ -111,6 +111,12 @@ def case_view(request: Request, scenario_id: str) -> HTMLResponse:
         if contact.transcript:
             lines[contact.seq] = contact.transcript.utterances
 
+    # The failure chain, as a sequence of links the UI can draw. This is the
+    # concept the whole product rests on, and until now it existed only as
+    # prose. Each link says whether it held or broke, so the drawing shows where
+    # the chain gave way rather than merely listing what happened.
+    chain = _chain(analysis)
+
     # Per-utterance audio, if this scenario has been voiced. Keyed "seq-index"
     # so the template can ask for one line without knowing the filename rules.
     audio = {}
@@ -134,10 +140,58 @@ def case_view(request: Request, scenario_id: str) -> HTMLResponse:
             "scenario_id": scenario_id,
             "all_ids": [p.stem for p in scenarios.list_scenarios()],
             "audio": audio,
+            "chain": chain,
             "category": CATEGORY_EN.get(truth.get("business_category", ""), ""),
             "root_cause": ROOT_CAUSE_EN.get(truth.get("root_cause", ""), ""),
         },
     )
+
+
+def _chain(analysis):
+    """Build the customer-need -> escalation chain for display.
+
+    Deliberately derived from what the pipeline already found rather than from a
+    second pass: if a link shows as broken here, some signal or claim upstream
+    says so, and the panel below it carries the evidence.
+    """
+    case = analysis.case
+    needs = [n for n in case.all_needs()]
+    promises = [p for p in case.all_promises()]
+    unresolved = [n for n in needs if n.status.value in ("unresolved", "partial")]
+    broken = [p for p in promises if p.fulfilled is False or (p.overdue_by_hours or 0) > 0]
+    kinds = {s.kind.value for s in analysis.risk.signals}
+
+    links = [
+        {"label": "Need raised", "note": needs[0].summary if needs else "—", "broke": False},
+        {
+            "label": "Agent acted",
+            "note": "no owner assigned" if "no_owner" in kinds else "handled on the call",
+            "broke": "no_owner" in kinds,
+        },
+        {
+            "label": "Resolved",
+            "note": unresolved[0].summary if unresolved else "nothing outstanding",
+            "broke": bool(unresolved),
+        },
+    ]
+    if promises:
+        links.append({
+            "label": "Promise kept",
+            "note": broken[0].summary if broken else promises[0].summary,
+            "broke": bool(broken),
+        })
+    links.append({
+        "label": "Repeat contact",
+        "note": "{} contacts".format(len(case.contacts)) if len(case.contacts) > 1 else "no repeat",
+        "broke": "repeat_contact" in kinds,
+    })
+    links.append({
+        "label": "Escalation",
+        "note": ("regulator involved" if "regulator_mention" in kinds
+                 else "avoided" if analysis.risk.score < 40 else "at risk"),
+        "broke": analysis.risk.score >= 40,
+    })
+    return links
 
 
 @app.get("/api/case/{scenario_id}")

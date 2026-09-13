@@ -2,8 +2,26 @@
 {% block title %}{{ scenario_id }} — ComplaintGuard{% endblock %}
 {% block body %}
 <style>
+  .chain { display:flex; align-items:stretch; gap:0; margin:2px 0 4px; overflow-x:auto; padding-bottom:2px }
+  .link { flex:1 1 0; min-width:104px; position:relative; padding:11px 13px 11px 16px;
+          background:var(--tint-low); border-top:1px solid #d6e5db; border-bottom:1px solid #d6e5db }
+  .link:first-child { border-left:1px solid #d6e5db; border-radius:8px 0 0 8px }
+  .link:last-child { border-right:1px solid #d6e5db; border-radius:0 8px 8px 0 }
+  .link.broke { background:var(--tint-high); border-color:#e9cbc6 }
+  .link:not(:last-child):after { content:""; position:absolute; right:-9px; top:50%;
+          transform:translateY(-50%) rotate(45deg); width:15px; height:15px; z-index:2;
+          background:inherit; border-top:1px solid #d6e5db; border-right:1px solid #d6e5db }
+  .link.broke:not(:last-child):after { border-color:#e9cbc6 }
+  .link .lab { font-size:11px; text-transform:uppercase; letter-spacing:.07em; font-weight:650;
+               color:var(--low); margin-bottom:3px; display:flex; align-items:center; gap:4px }
+  .link.broke .lab { color:var(--high) }
+  .link .note { font-size:12.2px; color:var(--muted); line-height:1.4;
+                display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
+  .chain-cap { font-size:12.3px; color:var(--muted); margin-top:9px }
+
   .score { display:flex; align-items:baseline; gap:14px; margin-bottom:4px }
-  .score .n { font-size:44px; font-weight:600; letter-spacing:-.03em; line-height:1 }
+  .score .n { font-size:50px; font-weight:640; letter-spacing:-.04em; line-height:1;
+              font-variant-numeric:tabular-nums }
   .score .n.high { color:var(--high) } .score .n.medium { color:var(--med) } .score .n.low { color:var(--low) }
   .score .from { font-size:16px; color:var(--muted) }
   .bar { height:7px; background:#ececeа; background:#ececea; border-radius:4px; overflow:hidden; margin:12px 0 4px }
@@ -20,9 +38,11 @@
   .quote .who { color:var(--muted); font-size:12px; margin-right:6px }
   .quote a { text-decoration:none; border-bottom:1px dotted var(--accent) }
 
-  .intervene { border:1px solid #e8c4c0; background:#fdf5f4; border-radius:9px; padding:18px 20px; margin-bottom:18px }
+  .intervene { border:1px solid #e9cbc6; background:var(--tint-high); border-radius:11px;
+               padding:20px 22px; margin-bottom:16px; box-shadow:var(--shadow) }
   .intervene h2 { color:var(--high) }
-  .intervene .what { font-size:16px; font-weight:500; margin-bottom:8px }
+  .intervene .what { font-size:17.5px; font-weight:560; margin-bottom:8px; letter-spacing:-.012em;
+                     line-height:1.45 }
 
   .tl { border-left:2px solid var(--line); margin-left:7px; padding-left:18px }
   .tl .c { position:relative; padding-bottom:20px }
@@ -76,6 +96,22 @@
   <a href="/">&larr; all cases</a>
   {% for i in all_ids %}{% if i != scenario_id %}<a href="/case/{{ i }}">{{ i }}</a>{% endif %}{% endfor %}
   <a href="/api/case/{{ scenario_id }}">JSON</a>
+</div>
+
+<div class="panel">
+  <h2>The chain</h2>
+  <div class="chain">
+    {% for l in chain %}
+    <div class="link {{ 'broke' if l.broke }}">
+      <div class="lab">{{ '✕' if l.broke else '✓' }} {{ l.label }}</div>
+      <div class="note">{{ l.note }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="chain-cap">
+    Each link is drawn from what the pipeline found, not asserted separately &mdash; where it shows as
+    broken, the evidence for that is below.
+  </div>
 </div>
 
 <div class="panel">
