@@ -28,7 +28,8 @@ during an internship at a large telecommunications contact centre.
 
 ## What it does
 
-Pick a case and ComplaintGuard reads it alongside the customer's earlier contacts and reconstructs
+Pick a case — or paste one of your own at **[/try](https://bizalchemists.duckdns.org/try)** — and
+ComplaintGuard reads it alongside the customer's earlier contacts and reconstructs
 the failure chain:
 
 ```
@@ -70,7 +71,7 @@ Control flow is defined in code, not by a model. If the steps can be listed in a
 beats an agent — predictable, testable, cost-bounded.
 
 ```
-1   audio ingest             replay of voiced scripts; no upload route yet, live mic deferred
+1   input                    prepared cases, or a transcript pasted at /try; live mic deferred
 2   transcribe + diarize     ElevenLabs Scribe, word-level timestamps
 3   structured extraction    needs · promises · deadlines · actions        ← LLM
 3b  citation check           verbatim string match                        ← deterministic
@@ -138,12 +139,22 @@ PYTHONPATH=src .venv/bin/uvicorn complaintguard.app:app --reload
 
 Then open http://localhost:8000. **No API key is needed** to run the prepared cases.
 
-⚠️ **What the deployed site does and does not do.** It serves twelve prepared cases and plays the
-audio for three of them. It runs the deterministic layers only — scoring, timing, signal detection,
-the intervention point — so a case always yields the same result and no page view spends a token.
-**It does not call a model, and there is no upload route.** The LLM extraction runs in the evaluation
-harness; its real numbers are below. Every case page reports `extractor` and `llm calls` in its Run
-panel, so what you see is what actually happened.
+⚠️ **What the deployed site does and does not do.** Two paths, and they are deliberately different:
+
+| | |
+| --- | --- |
+| `/` and `/case/…` | **Twelve prepared cases**, audio on three. Deterministic layers only — scoring, timing, signal detection, the intervention point. A case always yields the same result and **no page view spends a token or calls a model.** |
+| `/try` | **Paste your own transcript.** Extraction (3) and resolution (5) genuinely run against it — two model calls — then the same deterministic code produces the score and the intervention point. |
+
+Every case page reports `extractor` and `llm calls` in its Run panel, so what you see is what
+actually happened: `0` on the prepared cases, `2` on a pasted one.
+
+There is **no audio upload route** — `/try` takes text. Because `/try` costs real credits it is
+capped four ways: a length limit, a per-visitor hourly limit, a global daily ceiling, and a cache so
+identical text is free. When the ceiling is reached the form closes with a message and the twelve
+prepared cases carry on working — it lives in its own module (`live.py`) and its own routes precisely
+so that a model outage, a bad paste or an exhausted budget cannot take the rest of the site down.
+That isolation is covered by tests.
 
 For a real extraction run, put one LLM key in `.env` — either `DEEPSEEK_API_KEY` or
 `ANTHROPIC_API_KEY`; the first one present is used. The pipeline talks to an
@@ -160,6 +171,7 @@ src/complaintguard/
   models.py            the data contract everything shares
   scenarios.py         load scenario files into the model
   app.py               FastAPI routes
+  live.py              the /try path — parsing, limits, cache; isolated on purpose
   templates/           server-rendered views
   pipeline/
     extract.py         layer 3   — LLM extraction (interface + stub)

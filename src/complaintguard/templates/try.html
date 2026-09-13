@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Try it — ComplaintGuard{% endblock %}
+{% block body %}
+<style>
+  .try textarea { width:100%; min-height:210px; font:inherit; font-size:13.5px; line-height:1.55;
+                  padding:12px 13px; border:1px solid var(--line); border-radius:8px;
+                  background:#fff; color:var(--ink); resize:vertical }
+  .try textarea:focus { outline:none; border-color:var(--accent) }
+  .try .row { display:flex; align-items:center; gap:14px; margin-top:12px; flex-wrap:wrap }
+  .try button.go { font:inherit; font-size:14px; font-weight:560; padding:9px 20px; border-radius:7px;
+                   border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer }
+  .try button.go:hover { filter:brightness(1.08) }
+  .try button.go[disabled] { opacity:.45; cursor:not-allowed }
+  .try button.sample { font:inherit; font-size:13px; padding:8px 15px; border-radius:7px;
+                       border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer }
+  .try button.sample:hover { border-color:var(--accent); color:var(--accent) }
+  .try .count { font-size:12.5px; color:var(--muted); margin-left:auto; font-variant-numeric:tabular-nums }
+  .try .count.over { color:var(--high) }
+  .err { border:1px solid #e9cbc6; background:var(--tint-high); border-radius:8px;
+         padding:12px 14px; margin-bottom:14px; font-size:13.5px; color:#7a3b33 }
+  .fmt { font-size:12.5px; color:var(--muted); margin:-4px 0 10px; line-height:1.6 }
+  .fmt code { background:#f2f1ec; padding:1px 5px; border-radius:3px }
+  .limits { font-size:12.3px; color:var(--muted); line-height:1.65; margin-top:4px }
+  #spin { display:none; font-size:13px; color:var(--muted) }
+  @media (max-width: 640px) { .try .count { margin-left:0; width:100% } }
+</style>
+
+<div class="nav" style="margin-bottom:18px;font-size:13px"><a href="/">&larr; all cases</a></div>
+
+<div class="panel try">
+  <h2>Analyse your own transcript</h2>
+  <p class="small muted" style="margin-top:-6px">
+    The twelve cases on the front page are prepared, and they run without a model. This one does not:
+    paste a call and the extraction and resolution layers actually run against it. Everything after
+    that &mdash; the signals, the weights, the score, the intervention point &mdash; is the same
+    deterministic code, so the answer is reproducible even though the reading of the words is not.
+  </p>
+
+  {% if error %}<div class="err">{{ error }}</div>{% endif %}
+
+  <div class="err" style="border-color:#e8d9a8;background:#fff8e6;color:#6b5518">
+    <strong>Please don't paste anything real.</strong> Text you submit here is sent to a model
+    provider and held in memory on this server until it restarts. Everything else on this site is
+    synthetic and stays that way &mdash; make something up, or use the example below.
+  </div>
+
+  <div class="fmt">
+    One line per turn, each starting with <code>customer:</code> or <code>agent:</code>.
+    Up to {{ max_lines }} lines and {{ '{:,}'.format(max_chars) }} characters.
+  </div>
+
+  <form method="post" action="/try" id="f">
+    <textarea name="transcript" id="t" placeholder="customer: I rang last week about a charge I never agreed to&#10;agent: I can see a note on the account&#10;customer: Nobody called me back" {{ 'disabled' if not open_ }}>{{ submitted or '' }}</textarea>
+    <div class="row">
+      <button class="go" type="submit" {{ 'disabled' if not open_ }}>Analyse</button>
+      <button class="sample" type="button" id="s" {{ 'disabled' if not open_ }}>Use an example</button>
+      <span id="spin">Running extraction and resolution&hellip; this takes a few seconds.</span>
+      <span class="count" id="c"></span>
+    </div>
+  </form>
+
+  <div class="limits">
+    {% if open_ %}
+      This endpoint spends real model credits, so it is capped: {{ per_ip }} runs an hour per visitor and
+      {{ total }} a day for everyone. {{ left }} left today. Identical text is answered from cache and
+      costs nothing.
+    {% else %}
+      <strong>Closed for now.</strong> The prepared cases are unaffected &mdash;
+      <a href="/">all twelve</a> still work, and they show the same pipeline from extraction onwards.
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(function () {
+  var t = document.getElementById('t'), c = document.getElementById('c'),
+      f = document.getElementById('f'), s = document.getElementById('s'),
+      spin = document.getElementById('spin'), max = {{ max_chars }};
+  if (!t) return;
+  function count() {
+    c.textContent = t.value.length.toLocaleString() + ' / ' + max.toLocaleString();
+    c.classList.toggle('over', t.value.length > max);
+  }
+  t.addEventListener('input', count); count();
+  s.addEventListener('click', function () { t.value = {{ sample|tojson }}; count(); t.focus(); });
+  f.addEventListener('submit', function () {
+    // Two model calls run server-side; without this the page just sits there and
+    // the visitor reasonably concludes nothing happened.
+    spin.style.display = 'inline';
+    f.querySelector('button.go').disabled = true;
+  });
+})();
+</script>
+{% endblock %}

@@ -82,7 +82,13 @@ class OpenAICompatClient:
         model: str = DEEPSEEK_MODEL,
         base_url: str = DEEPSEEK_BASE,
         env_var: str = "DEEPSEEK_API_KEY",
+        timeout: int = 180,
     ) -> None:
+        # Generous by default, because the evaluation harness would rather wait
+        # than lose a run. The live web path passes something much shorter: a
+        # visitor will not sit through three minutes, and a request held open
+        # that long occupies a worker thread the prepared pages also need.
+        self.timeout = timeout
         self.model = model
         self.base_url = base_url.rstrip("/")
         self.name = "{}:{}".format(self.base_url.split("//")[-1].split(".")[0], model)
@@ -114,7 +120,7 @@ class OpenAICompatClient:
                 # copes with fences and prose regardless.
                 "response_format": {"type": "json_object"},
             },
-            timeout=180,
+            timeout=self.timeout,
         )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"] or ""

@@ -10,18 +10,21 @@ Routes:
     GET  /case/{scenario_id}    full analysis
     GET  /api/case/{id}         the same analysis as JSON
     GET  /health                liveness, for the deploy check
+    GET  /try                   paste a transcript
+    POST /try                   analyse it live  <- the only route that calls a model
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import pipeline, scenarios
+from . import live, pipeline, scenarios
+from .pipeline.extract import LLMExtractor
 
 # The scenario files use the team's working vocabulary, which is Chinese. The
 # site is read by English-speaking judges, so display labels are mapped here
@@ -175,11 +178,18 @@ def _chain(analysis):
         },
     ]
     if promises:
-        links.append({
-            "label": "Promise kept",
-            "note": broken[0].summary if broken else promises[0].summary,
-            "broke": bool(broken),
-        })
+        # Three states, not two. The prepared cases carry a label so a promise is
+        # always kept or broken, but a pasted transcript often ends before anyone
+        # could follow through — and drawing an open promise as "kept" would be
+        # the system asserting something nobody said.
+        if broken:
+            links.append({"label": "Promise kept", "note": broken[0].summary, "broke": True})
+        elif any(p.fulfilled is None for p in promises):
+            open_ = next(p for p in promises if p.fulfilled is None)
+            links.append({"label": "Promise open", "note": open_.summary,
+                          "broke": False, "mark": "○"})
+        else:
+            links.append({"label": "Promise kept", "note": promises[0].summary, "broke": False})
     links.append({
         "label": "Repeat contact",
         "note": "{} contacts".format(len(case.contacts)) if len(case.contacts) > 1 else "no repeat",
@@ -198,3 +208,99 @@ def _chain(analysis):
 def case_api(scenario_id: str) -> JSONResponse:
     analysis, _ = _analyse(scenario_id)
     return JSONResponse(analysis.model_dump(mode="json"))
+
+
+# --------------------------------------------------------------------------
+# The "try it yourself" path.
+#
+# Deliberately quarantined: it imports nothing the four routes above depend on,
+# every failure inside it is caught and rendered as a message, and if it were
+# deleted the prepared cases would behave identically. It is the only place on
+# the site that spends money, so it is also the only place with limits — see
+# live.py for the reasoning behind them.
+# --------------------------------------------------------------------------
+
+
+def _try_context(request: Request, **extra) -> dict:
+    left, total = live.budget_left()
+    ctx = {
+        "request": request,
+        "max_chars": live.MAX_CHARS,
+        "max_lines": live.MAX_LINES,
+        "per_ip": live.PER_IP_PER_HOUR,
+        "left": left,
+        "total": total,
+        "open_": live.configured() and left > 0,
+        "sample": live.SAMPLE,
+        "submitted": "",
+        "error": "",
+    }
+    ctx.update(extra)
+    return ctx
+
+
+@app.get("/try", response_class=HTMLResponse)
+def try_form(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse("try.html", _try_context(request))
+
+
+@app.post("/try", response_class=HTMLResponse)
+def try_run(request: Request, transcript: str = Form("")) -> HTMLResponse:
+    """Parse, budget-check, analyse, render — and return the form on any failure.
+
+    There is no error page and no 500 here on purpose. A visitor who pastes
+    something odd, or arrives after the day's budget is gone, should get a
+    sentence they can act on and a working form, not a stack trace.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+
+    try:
+        case = live.parse_transcript(transcript)
+    except live.LiveError as exc:
+        return templates.TemplateResponse(
+            "try.html", _try_context(request, error=str(exc), submitted=transcript)
+        )
+
+    key = live.cache_key(transcript)
+    analysis = live.cached(key)
+
+    if analysis is None:
+        try:
+            live.check_budget(client_ip)
+            llm = live.client()
+        except live.LiveError as exc:
+            return templates.TemplateResponse(
+                "try.html", _try_context(request, error=str(exc), submitted=transcript)
+            )
+        try:
+            analysis = pipeline.analyse(case, extractor=LLMExtractor(llm), resolver=llm)
+        except Exception:  # noqa: BLE001 — provider errors, timeouts, bad JSON
+            return templates.TemplateResponse(
+                "try.html",
+                _try_context(
+                    request,
+                    error="The model call did not come back cleanly. Try again, or open one of "
+                          "the prepared cases — those run without a model and never fail this way.",
+                    submitted=transcript,
+                ),
+            )
+        live.spend(client_ip)
+        live.remember(key, analysis)
+
+    lines = {c.seq: c.transcript.utterances for c in analysis.case.contacts if c.transcript}
+    return templates.TemplateResponse(
+        "case.html",
+        {
+            "request": request,
+            "a": analysis,
+            "truth": {},
+            "lines": lines,
+            "scenario_id": "your transcript",
+            "all_ids": [],
+            "audio": {},
+            "chain": _chain(analysis),
+            "category": "",
+            "root_cause": "",
+            "live": True,
+        },
+    )

@@ -95,15 +95,29 @@
 <div class="nav">
   <a href="/">&larr; all cases</a>
   {% for i in all_ids %}{% if i != scenario_id %}<a href="/case/{{ i }}">{{ i }}</a>{% endif %}{% endfor %}
-  <a href="/api/case/{{ scenario_id }}">JSON</a>
+  {% if live %}<a href="/try">analyse another transcript</a>
+  {% else %}<a href="/api/case/{{ scenario_id }}">JSON</a>{% endif %}
 </div>
+
+{% if live %}
+<div class="panel" style="border-color:#cfe0ef;background:#f5f9fd">
+  <h2 style="color:var(--accent)">This one was not prepared</h2>
+  <div class="small">
+    You pasted it and the extraction and resolution layers just ran against it &mdash; see
+    <strong>{{ a.telemetry.llm_calls }}</strong> model call{{ '' if a.telemetry.llm_calls == 1 else 's' }}
+    in the Run panel at the bottom. Everything after those calls is the same deterministic code the
+    prepared cases use. Quotes below are checked verbatim against your text; anything that failed that
+    check is marked <span class="chip unsure">uncertain</span> and left out of the score.
+  </div>
+</div>
+{% endif %}
 
 <div class="panel">
   <h2>The chain</h2>
   <div class="chain">
     {% for l in chain %}
     <div class="link {{ 'broke' if l.broke }}">
-      <div class="lab">{{ '✕' if l.broke else '✓' }} {{ l.label }}</div>
+      <div class="lab">{{ l.mark or ('✕' if l.broke else '✓') }} {{ l.label }}</div>
       <div class="note">{{ l.note }}</div>
     </div>
     {% endfor %}

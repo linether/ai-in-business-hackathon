@@ -11,12 +11,23 @@
     .case { display:block; text-decoration:none; color:inherit; border:1px solid var(--line);
             border-radius:8px; padding:14px 16px; background:#fff }
     .case:hover { border-color:var(--accent) }
-    .case .top { display:flex; align-items:center; gap:10px; margin-bottom:5px }
+    .case .top { display:flex; align-items:center; gap:10px; margin-bottom:5px; flex-wrap:wrap }
     .case .id { font-weight:600; font-size:14.5px }
     .pill { font-size:11.5px; padding:2px 9px; border-radius:20px; border:1px solid var(--line) }
     .pill.esc { color:var(--high); border-color:#e8c4c0; background:#fdf4f3 }
     .pill.ok  { color:var(--low);  border-color:#c3ddcd; background:#f4faf6 }
   </style>
+  <a class="case" href="/try" style="border-color:#cfe0ef;background:#f5f9fd;margin-bottom:14px">
+    <div class="top">
+      <span class="id">Analyse your own transcript &rarr;</span>
+      <span class="pill">runs the model live</span>
+    </div>
+    <div class="small muted">
+      Paste any call between a customer and an agent. The cases below are prepared and deterministic;
+      that one is not &mdash; extraction and resolution actually run against what you paste.
+    </div>
+  </a>
+
   <div class="case-list">
     {% for c in cards %}
     <a class="case" href="/case/{{ c.id }}">
