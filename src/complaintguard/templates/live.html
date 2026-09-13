@@ -14,6 +14,9 @@
                   border:1px solid var(--line); background:#fff }
   .turn.cust .bubble { background:#fbf7f1; border-color:#e8ddcc }
   .turn.flagged .bubble { box-shadow:inset 3px 0 0 var(--high) }
+  .turn .bubble.speaking { border-color:var(--accent); box-shadow:0 0 0 3px rgba(58,110,165,.10) }
+  .turn .bubble.speaking:after { content:"  ◗"; color:var(--accent); animation:pulse 1s infinite }
+  @keyframes pulse { 0%,100% { opacity:.25 } 50% { opacity:1 } }
   #tape { max-height:46vh; overflow-y:auto; padding-right:4px }
   #tape:empty:after { content:"The call starts when you do."; color:var(--muted); font-size:13.5px }
 
@@ -25,6 +28,12 @@
         border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff;
         cursor:pointer; white-space:nowrap }
   .compose button[disabled], .bigbtn[disabled] { opacity:.45; cursor:not-allowed }
+  .mic { font-size:17px; line-height:1; width:44px; border-radius:8px; border:1px solid var(--line);
+         background:#fff; cursor:pointer; flex:0 0 auto }
+  .mic:hover { border-color:var(--accent) }
+  .mic[disabled] { opacity:.4; cursor:not-allowed }
+  .mic.rec { border-color:var(--high); background:var(--tint-high);
+             box-shadow:0 0 0 3px rgba(176,64,48,.13) }
   .opener { font:inherit; font-size:12.5px; text-align:left; padding:7px 11px; border-radius:7px;
             border:1px solid var(--line); background:#fff; color:var(--muted); cursor:pointer;
             margin:0 0 6px; display:block; width:100% }
@@ -116,11 +125,13 @@
 
     <div id="pick">
       <div class="small muted" style="margin-bottom:8px">You are the customer. Open with one of these,
-        or say anything you like.</div>
+        type your own, or <strong>hold 🎙 and speak</strong> &mdash; ElevenLabs transcribes it and the
+        agent answers in its own voice.</div>
       {% for o in openers %}<button class="opener" data-o="{{ o }}">{{ o }}</button>{% endfor %}
     </div>
 
     <div class="compose">
+      <button class="mic" id="mic" title="Hold to speak" disabled hidden>🎙</button>
       <input id="say" placeholder="Say something to the agent…" autocomplete="off" disabled>
       <button class="bigbtn" id="send" disabled>Send</button>
     </div>
@@ -139,6 +150,7 @@
     <div class="track low" id="track"><i></i></div>
     <div class="small muted" style="margin-bottom:6px">
       Fixed weights, no model sets the number. Every point below cites a line.
+      <span class="muted">The agent's voice is ElevenLabs; turn your sound on.</span>
     </div>
     <div id="finds"></div>
     <div class="status" id="watch-status"></div>
@@ -153,6 +165,20 @@
       status = document.getElementById('status'), err = document.getElementById('err'),
       pick = document.getElementById('pick'), finds = document.getElementById('finds'),
       alarm = document.getElementById('alarm'), watchStatus = document.getElementById('watch-status');
+
+  // The agent's own voice, from ElevenLabs. Autoplay is blocked until the visitor
+  // has interacted with the page — they have, they pressed a button to get here —
+  // but if a browser refuses anyway the line is still on screen and the call goes
+  // on. Nothing here is allowed to be load-bearing.
+  var player = new Audio();
+  function play(el, url) {
+    var b = el.querySelector('.bubble');
+    b.classList.add('speaking');
+    player.pause();
+    player.src = url;
+    player.onended = player.onerror = function () { b.classList.remove('speaking'); };
+    player.play().catch(function () { b.classList.remove('speaking'); });
+  }
 
   function post(url, data) {
     var body = new FormData();
@@ -180,6 +206,7 @@
       if (!r.ok) { begin.disabled = false; return fail(r.error); }
       sid = r.session;
       say.disabled = false; send.disabled = false; say.focus();
+      if (canRecord) mic.disabled = false;
       status.textContent = r.turns_left + ' turns left in this call · ' +
                            r.calls_left_today + ' calls left today';
     }).catch(function () { begin.disabled = false; fail('Could not start the call.'); });
@@ -212,6 +239,7 @@
       } else {
         thinking.querySelector('.bubble').textContent = r.agent_text;
         status.textContent = r.turns_left + ' turns left in this call';
+        if (r.audio) play(thinking, r.audio);
         watch();
       }
     }).catch(function () {
@@ -224,6 +252,88 @@
   }
   send.addEventListener('click', turn);
   say.addEventListener('keydown', function (e) { if (e.key === 'Enter') turn(); });
+
+  // Push to talk. Hold the button, speak, let go.
+  //
+  // Deliberately not voice-activated: turn-taking, barge-in and end-of-speech
+  // detection are all things we could not make reliable tonight, and each of
+  // them fails visibly. Holding a button is a real interface and it never
+  // guesses wrong about whether you have finished talking.
+  //
+  // The whole feature is optional. If the browser has no MediaRecorder, or the
+  // visitor declines the microphone, the button hides itself and the text box
+  // does everything — which is also the fallback if a venue microphone dies.
+  var mic = document.getElementById('mic');
+  var canRecord = !!(navigator.mediaDevices && window.MediaRecorder);
+  var rec = null, chunks = [], stream = null;
+  if (canRecord) mic.hidden = false;
+
+  function startRec() {
+    if (!sid || busy || rec) return;
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+      stream = s; chunks = [];
+      rec = new MediaRecorder(s);
+      rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+      rec.onstop = sendRec;
+      rec.start();
+      mic.classList.add('rec');
+      status.textContent = 'listening — let go when you are done';
+      // Never hold the microphone open indefinitely: a turn is capped server-side
+      // at about twenty seconds and the recorder should agree.
+      setTimeout(function () { if (rec && rec.state === 'recording') stopRec(); }, 20000);
+    }).catch(function () {
+      mic.hidden = true;
+      fail('No microphone available, so use the box instead — everything else is the same.');
+    });
+  }
+
+  function stopRec() {
+    if (!rec) return;
+    mic.classList.remove('rec');
+    try { rec.stop(); } catch (e) { rec = null; }
+  }
+
+  function sendRec() {
+    var blob = new Blob(chunks, { type: 'audio/webm' });
+    rec = null;
+    if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+    if (blob.size < 2000) { status.textContent = 'that was too short — hold it while you speak'; return; }
+
+    busy = true; clearFail(); pick.style.display = 'none';
+    say.disabled = true; send.disabled = true; mic.disabled = true;
+    var n = tape.children.length;
+    var mine = bubble('customer', '…', n);
+    var thinking = bubble('agent', '…', n + 1);
+
+    var body = new FormData();
+    body.append('session', sid);
+    body.append('audio', blob, 'turn.webm');
+    fetch('/live/hear', { method: 'POST', body: body })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) { mine.remove(); thinking.remove(); fail(r.error); return; }
+        mine.querySelector('.bubble').textContent = r.customer_text;
+        thinking.querySelector('.bubble').textContent = r.agent_text;
+        status.textContent = r.turns_left + ' turns left in this call';
+        if (r.audio) play(thinking, r.audio);
+        watch();
+      })
+      .catch(function () {
+        mine.remove(); thinking.remove();
+        fail('That did not get through. Say it again, or type it.');
+      })
+      .then(function () {
+        busy = false;
+        if (!alarm.classList.contains('on')) {
+          say.disabled = false; send.disabled = false; mic.disabled = false;
+        }
+      });
+  }
+
+  mic.addEventListener('mousedown', startRec);
+  mic.addEventListener('touchstart', function (e) { e.preventDefault(); startRec(); });
+  document.addEventListener('mouseup', stopRec);
+  document.addEventListener('touchend', stopRec);
 
   // The supervisor runs behind the conversation and never blocks it. If it
   // fails, the call carries on — it is additive by design.

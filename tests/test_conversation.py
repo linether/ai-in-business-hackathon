@@ -298,3 +298,40 @@ def test_burning_the_rooms_entire_budget_changes_nothing_else():
 
     r = client.get("/live")
     assert r.status_code == 200 and "room is closed" in r.text
+
+
+# ----------------------------------------------------------------- the voice
+
+def test_speech_is_skipped_when_the_voice_switch_is_off(monkeypatch):
+    monkeypatch.setenv("LIVE_VOICE", "off")
+    assert cv.voice_enabled() is False
+    assert cv.speak("anything at all") is None
+
+
+def test_speech_is_skipped_when_there_is_no_elevenlabs_key(monkeypatch):
+    monkeypatch.setenv("LIVE_VOICE", "on")
+    monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
+    assert cv.speak("anything at all") is None, "no key means no audio, not a crash"
+
+
+def test_a_turn_still_completes_when_speech_fails(monkeypatch):
+    """Audio is never load-bearing. If ElevenLabs is down the line is still on
+    screen and the call goes on."""
+    monkeypatch.setenv("LIVE_VOICE", "on")
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "not-a-real-key")
+
+    def explode(*a, **k):
+        raise RuntimeError("elevenlabs is down")
+
+    monkeypatch.setattr("complaintguard.audio.tts.synth", explode)
+    session = cv.start("1.1.1.1")
+    out = cv.reply(session, "hello", Scripted(["Hi there."]))
+    assert out["agent_text"] == "Hi there."
+    assert out["audio"] is None
+
+
+def test_a_made_up_audio_id_is_refused_rather_than_resolved():
+    """The digest comes back from the browser, so it is checked, not trusted."""
+    for bad in ["../../etc/passwd", "nope", "", "a" * 64, "abc/def"]:
+        assert cv.voice_path(bad) is None
+    assert client.get("/live/say/deadbeef").status_code == 404

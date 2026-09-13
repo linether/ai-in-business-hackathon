@@ -41,10 +41,12 @@ from __future__ import annotations
 
 import hashlib
 import os
+import tempfile
 import time
 import uuid
 from collections import deque
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Deque, Dict, List, Optional, Tuple
 
 from . import knowledge
@@ -286,6 +288,7 @@ def reply(session: Session, customer_text: str, llm) -> Dict[str, Any]:
     return {
         "customer_text": text,
         "agent_text": agent_text,
+        "audio": speak(agent_text),
         "turn": session.turns,
         "turns_left": session.turns_left,
     }
@@ -433,3 +436,99 @@ OPENERS = [
     "My internet has been dropping out every night for two weeks and nothing has been done.",
     "I was told my add-on would be removed and refunded. It is still on my bill.",
 ]
+
+
+# ---------------------------------------------------------------- the voice
+
+VOICE_DIR = Path(tempfile.gettempdir()) / "complaintguard-voice"
+_voice_seen: Deque[str] = deque()
+MAX_VOICE_FILES = 400
+
+
+def speak(text: str) -> Optional[str]:
+    """Synthesise the agent's line. Returns a URL, or None — never raises.
+
+    Cached by the text itself, so a reply the agent has given before costs
+    nothing: the demo scripts get repeated a great many times before a judge sees
+    them, and speech is the expensive half of this route at roughly a credit a
+    character.
+
+    Failure is silent on purpose. If ElevenLabs is slow, out of credits, or
+    simply down, the visitor reads the reply instead of hearing it and the call
+    carries on. Losing the audio is a worse demo; losing the call is a broken one.
+    """
+    if not voice_enabled():
+        return None
+    key = os.environ.get("ELEVENLABS_API_KEY")
+    if not key:
+        return None
+
+    digest = text_hash(text)
+    path = VOICE_DIR / (digest + ".mp3")
+    if path.exists():
+        return "/live/say/" + digest
+
+    try:
+        from .audio import tts
+
+        VOICE_DIR.mkdir(parents=True, exist_ok=True)
+        tts.synth(text, "agent", path, key)
+    except Exception:  # noqa: BLE001 — any failure means "no audio", not "no call"
+        return None
+
+    _voice_seen.append(digest)
+    while len(_voice_seen) > MAX_VOICE_FILES:
+        old = _voice_seen.popleft()
+        try:
+            (VOICE_DIR / (old + ".mp3")).unlink()
+        except OSError:
+            pass
+    return "/live/say/" + digest
+
+
+def voice_path(digest: str) -> Optional[Path]:
+    """Resolve a digest to a file, refusing anything that is not one.
+
+    The digest comes back from the browser, so it is checked rather than trusted:
+    32 hex characters at most and no path separators, resolved inside VOICE_DIR.
+    """
+    if not digest or len(digest) > 32 or not all(c in "0123456789abcdef" for c in digest):
+        return None
+    path = VOICE_DIR / (digest + ".mp3")
+    return path if path.exists() else None
+
+
+# ---------------------------------------------------------------- the ear
+
+MAX_AUDIO_BYTES = 2_000_000   # roughly 20 seconds of Opus at browser defaults
+
+
+def hear(blob: bytes, filename: str = "turn.webm") -> str:
+    """Transcribe one spoken turn. One voice, so no diarisation is needed.
+
+    `audio/stt.py` is reused unchanged — it already caches by file digest and
+    already knows Scribe's word-stream format. Diarisation is off here because a
+    turn is one person speaking; asking for two speakers on a single voice
+    produces a second speaker that does not exist.
+    """
+    if not blob:
+        raise RoomError("Nothing was recorded. Hold the button while you speak.")
+    if len(blob) > MAX_AUDIO_BYTES:
+        raise RoomError("That was too long. Keep a turn under about twenty seconds.")
+    if not os.environ.get("ELEVENLABS_API_KEY"):
+        raise RoomError("Speech input is not configured on this deployment. Type instead.")
+
+    import httpx
+
+    resp = httpx.post(
+        "https://api.elevenlabs.io/v1/speech-to-text",
+        headers={"xi-api-key": os.environ["ELEVENLABS_API_KEY"]},
+        data={"model_id": os.environ.get("EL_STT_MODEL", "scribe_v2"), "diarize": "false"},
+        files={"file": (filename, blob, "application/octet-stream")},
+        timeout=45,
+    )
+    resp.raise_for_status()
+    text = (resp.json().get("text") or "").strip()
+    if not text:
+        raise RoomError("Nothing came through clearly. Try that again, or type it.")
+    return text

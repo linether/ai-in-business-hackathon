@@ -403,3 +403,46 @@ def policy(request: Request, slug: str) -> HTMLResponse:
         "policy.html",
         {"request": request, "chunk": chunk, "all": knowledge.corpus().chunks},
     )
+
+
+@app.get("/live/say/{digest}")
+def room_voice(digest: str):
+    """Serve one synthesised agent line. Cached by its own text, so this is free."""
+    from fastapi.responses import FileResponse
+
+    path = conversation.voice_path(digest)
+    if path is None:
+        raise HTTPException(status_code=404, detail="No such line")
+    return FileResponse(str(path), media_type="audio/mpeg")
+
+
+@app.post("/live/hear")
+async def room_hear(request: Request) -> JSONResponse:
+    """Transcribe one spoken turn and answer it — the whole turn, in one trip.
+
+    Split from /live/turn only by how the visitor's words arrive. Everything
+    after transcription is the same code, so speaking and typing cannot drift
+    apart, and a browser with no microphone loses nothing but the microphone.
+    """
+    form = await request.form()
+    session_id = str(form.get("session") or "")
+    upload = form.get("audio")
+
+    try:
+        sess = conversation.get(session_id)
+        if upload is None or not hasattr(upload, "read"):
+            raise conversation.RoomError("No audio arrived. Type the turn instead.")
+        blob = await upload.read()
+        text = conversation.hear(blob, getattr(upload, "filename", "turn.webm") or "turn.webm")
+        out = conversation.reply(sess, text, live.client(json_mode=False, timeout=30))
+    except conversation.RoomError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=200)
+    except Exception:  # noqa: BLE001
+        return JSONResponse(
+            {"ok": False,
+             "error": "That turn did not get through. Say it again, or type it — "
+                      "it was not counted."},
+            status_code=200,
+        )
+    out["ok"] = True
+    return JSONResponse(out)

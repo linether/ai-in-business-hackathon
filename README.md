@@ -76,7 +76,7 @@ beats an agent — predictable, testable, cost-bounded.
 
 ```
 1   input                    prepared cases · a transcript pasted at /try · a call held at /live
-2   transcribe + diarize     ElevenLabs Scribe, word-level timestamps
+2   transcribe + diarize     ElevenLabs Scribe — word-level offline, per-turn live at /live
 3   structured extraction    needs · promises · deadlines · actions        ← LLM
 3b  citation check           verbatim string match                        ← deterministic
 4   cross-contact state      merge this call with the case history
@@ -84,6 +84,7 @@ beats an agent — predictable, testable, cost-bounded.
 6   rules and timing         deadlines, repeat contact, contradictions    ← deterministic
 7   risk fusion              fixed weights, fixed thresholds              ← deterministic
 8   earliest intervention    walk the timeline to the first unmet duty    ← deterministic
+6b  live-call signals        stated repeat · unowned handover · policy breach  ← deterministic
 9   evidence binding         every claim carries the line behind it
 ```
 
@@ -149,7 +150,7 @@ Then open http://localhost:8000. **No API key is needed** to run the prepared ca
 | --- | --- |
 | `/` and `/case/…` | **Twelve prepared cases**, audio on three. Deterministic layers only. A case always yields the same result and **no page view spends a token or calls a model.** |
 | `/try` | **Paste your own transcript.** Extraction (3) and resolution (5) genuinely run against it — two model calls — then the same deterministic code scores it. |
-| `/live` | **Hold a call.** Talk to an AI support agent and watch ComplaintGuard read the call, check it against the written policy, and stop it when a human is needed. |
+| `/live` | **Hold a call — out loud if you like.** Hold the microphone and speak; ElevenLabs Scribe transcribes the turn, an AI support agent answers in its own ElevenLabs voice, and ComplaintGuard reads the call as it happens, checks it against the written policy, and stops it when a human is needed. Typing does the same thing if you have no microphone. |
 
 Every case page reports `extractor` and `llm calls` in its Run panel: `0` on the prepared cases,
 `2` on a pasted one. There is **no audio upload route** — `/try` takes text.
