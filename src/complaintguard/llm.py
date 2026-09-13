@@ -83,7 +83,13 @@ class OpenAICompatClient:
         base_url: str = DEEPSEEK_BASE,
         env_var: str = "DEEPSEEK_API_KEY",
         timeout: int = 180,
+        json_mode: bool = True,
     ) -> None:
+        # Every extraction prompt in the pipeline asks for a single JSON object,
+        # so JSON mode is the right default. The live agent at /live speaks prose,
+        # and DeepSeek rejects the request outright if JSON is demanded of a
+        # prompt that never mentions it.
+        self.json_mode = json_mode
         # Generous by default, because the evaluation harness would rather wait
         # than lose a run. The live web path passes something much shorter: a
         # visitor will not sit through three minutes, and a request held open
@@ -116,9 +122,7 @@ class OpenAICompatClient:
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
                 ],
-                # Both prompts here ask for a single JSON object, and the parser
-                # copes with fences and prose regardless.
-                "response_format": {"type": "json_object"},
+                **({"response_format": {"type": "json_object"}} if self.json_mode else {}),
             },
             timeout=self.timeout,
         )

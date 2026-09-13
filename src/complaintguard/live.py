@@ -198,19 +198,22 @@ agent: It goes into the queue for them to review. I can't see an individual name
 customer: Then I'll take it to the Ombudsman, and I'll be moving my number once the contract is up."""
 
 
-def client():
+def client(json_mode: bool = True, timeout: int = 45):
     """An LLM client tuned for a person waiting in front of a browser.
 
     45 seconds, not the harness's 180. Two calls run per analysis — extraction
     and resolution — so the worst case a visitor can wait is bounded, and a
     hung provider cannot sit on a worker thread the prepared pages also use.
+
+    ``json_mode=False`` is for the live agent at /live, which speaks prose. The
+    extraction prompts all ask for one JSON object and keep the default.
     """
     import os
 
     from .llm import AnthropicClient, OpenAICompatClient
 
     if os.environ.get("DEEPSEEK_API_KEY"):
-        return OpenAICompatClient(timeout=45)
+        return OpenAICompatClient(timeout=timeout, json_mode=json_mode)
     if os.environ.get("ANTHROPIC_API_KEY"):
         return AnthropicClient()
     raise LiveError(

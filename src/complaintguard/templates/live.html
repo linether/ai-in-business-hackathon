@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% block title %}The live room — ComplaintGuard{% endblock %}
+{% block body %}
+<style>
+  .lede { font-size:17px; line-height:1.5; letter-spacing:-.01em; margin:0 0 6px }
+  .lede b { font-weight:640 }
+  .room { display:grid; grid-template-columns:1fr 400px; gap:16px; align-items:start }
+
+  /* The call is the prop, so it is the quiet half of the page. */
+  .call .who { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted);
+               margin-bottom:3px }
+  .turn { margin-bottom:14px }
+  .turn .bubble { font-size:14.2px; line-height:1.55; padding:10px 13px; border-radius:9px;
+                  border:1px solid var(--line); background:#fff }
+  .turn.cust .bubble { background:#fbf7f1; border-color:#e8ddcc }
+  .turn.flagged .bubble { box-shadow:inset 3px 0 0 var(--high) }
+  #tape { max-height:46vh; overflow-y:auto; padding-right:4px }
+  #tape:empty:after { content:"The call starts when you do."; color:var(--muted); font-size:13.5px }
+
+  .compose { display:flex; gap:9px; margin-top:12px }
+  .compose input { flex:1; font:inherit; font-size:14px; padding:10px 12px; border-radius:8px;
+                   border:1px solid var(--line); background:#fff; color:var(--ink) }
+  .compose input:focus { outline:none; border-color:var(--accent) }
+  .compose button, .bigbtn { font:inherit; font-size:14px; font-weight:560; padding:10px 18px;
+        border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff;
+        cursor:pointer; white-space:nowrap }
+  .compose button[disabled], .bigbtn[disabled] { opacity:.45; cursor:not-allowed }
+  .opener { font:inherit; font-size:12.5px; text-align:left; padding:7px 11px; border-radius:7px;
+            border:1px solid var(--line); background:#fff; color:var(--muted); cursor:pointer;
+            margin:0 0 6px; display:block; width:100% }
+  .opener:hover { border-color:var(--accent); color:var(--accent) }
+
+  /* The supervisor is the product, so it is the loud half. */
+  .sup { position:sticky; top:14px }
+  .meter { display:flex; align-items:baseline; gap:11px }
+  .meter .n { font-size:44px; font-weight:640; letter-spacing:-.04em; line-height:1;
+              font-variant-numeric:tabular-nums; transition:color .3s }
+  .meter .n.high { color:var(--high) } .meter .n.medium { color:var(--med) } .meter .n.low { color:var(--low) }
+  .meter .lbl { font-size:12.5px; color:var(--muted) }
+  .track { height:7px; background:#ececea; border-radius:4px; overflow:hidden; margin:11px 0 3px }
+  .track > i { display:block; height:100%; width:0; background:var(--low); transition:width .5s ease, background .3s }
+  .track.medium > i { background:var(--med) } .track.high > i { background:var(--high) }
+
+  .find { border-top:1px solid var(--line); padding:10px 0; font-size:13px }
+  .find:first-of-type { border-top:0 }
+  .find .h { display:flex; gap:8px; align-items:baseline }
+  .find .w { font-variant-numeric:tabular-nums; color:var(--muted); min-width:30px }
+  .find .k { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted) }
+  .find .q { border-left:2px solid var(--line); margin:6px 0 0 38px; padding-left:10px;
+             color:#3d3d39; font-size:12.8px; cursor:pointer }
+  .find .q:hover { border-color:var(--accent) }
+  .pol { display:inline-block; font-size:11.5px; padding:1px 8px; border-radius:20px;
+         border:1px solid #cfe0ef; background:#f5f9fd; color:var(--accent); text-decoration:none;
+         margin-left:6px }
+
+  .alarm { border:2px solid var(--high); background:var(--tint-high); border-radius:11px;
+           padding:19px 21px; margin-bottom:14px; display:none }
+  .alarm.on { display:block; animation:rise .5s ease-out }
+  @keyframes rise { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:none } }
+  .alarm h2 { color:var(--high); margin-bottom:6px }
+  .alarm .what { font-size:16px; font-weight:560; line-height:1.45; margin-bottom:8px }
+  .alarm .q { border-left:2px solid #e9cbc6; padding-left:11px; margin-top:9px; font-size:13.2px }
+
+  .status { font-size:12.3px; color:var(--muted); margin-top:10px; min-height:17px }
+  .err { border:1px solid #e9cbc6; background:var(--tint-high); border-radius:8px; padding:10px 13px;
+         margin-bottom:12px; font-size:13.3px; color:#7a3b33 }
+  @media (max-width: 880px) { .room { grid-template-columns:1fr } .sup { position:static } }
+</style>
+
+<div class="nav" style="margin-bottom:14px;font-size:13px">
+  <a href="/">&larr; all cases</a><a href="/try" style="margin-left:12px">paste a transcript</a>
+</div>
+
+<div class="panel">
+  <p class="lede"><b>You talk to the agent. ComplaintGuard watches the agent.</b></p>
+  <div class="small muted">
+    The agent on the other end is a model given a front-line agent's constraints &mdash; a year on the
+    job, no policy manual open in front of it, no authority over a refund above $200, and no view of
+    what another team does with a case once it leaves. <strong>Nothing tells it to make mistakes.</strong>
+    What it does is what that person does.
+    <br><br>
+    The panel on the right is the submission. It reads the call as it happens, checks what the agent
+    said against <a href="/policy/case-ownership">the written policy</a>, and stops the call when a
+    human needs to take it. Observe.AI scores a finished call; CallMiner aggregates a quarter of them.
+    Neither interrupts one in progress.
+  </div>
+</div>
+
+{% if not open_ %}
+<div class="panel">
+  <h2>The room is closed</h2>
+  <div class="small">
+    {{ closed_reason or "The live room has used its budget for today — it runs on a hackathon allowance." }}
+    Everything else works and shows the same pipeline:
+    <a href="/try">paste a transcript</a>, or open any of the
+    <a href="/">twelve prepared cases</a>.
+  </div>
+</div>
+{% else %}
+
+<div class="alarm" id="alarm">
+  <h2>A human needs to take this call</h2>
+  <div class="what" id="alarm-what"></div>
+  <div class="small" id="alarm-why"></div>
+  <div id="alarm-quotes"></div>
+  <div class="small muted" style="margin-top:12px">
+    The agent has been stopped. This is the whole product: not a score after the fact, but the moment.
+  </div>
+</div>
+
+<div class="room">
+  <div class="panel call">
+    <h2>The call</h2>
+    <div id="err"></div>
+    <div id="tape"></div>
+
+    <div id="pick">
+      <div class="small muted" style="margin-bottom:8px">You are the customer. Open with one of these,
+        or say anything you like.</div>
+      {% for o in openers %}<button class="opener" data-o="{{ o }}">{{ o }}</button>{% endfor %}
+    </div>
+
+    <div class="compose">
+      <input id="say" placeholder="Say something to the agent…" autocomplete="off" disabled>
+      <button class="bigbtn" id="send" disabled>Send</button>
+    </div>
+    <div class="status" id="status">
+      <button class="bigbtn" id="begin" style="padding:7px 15px;font-size:13px">Start the call</button>
+      <span style="margin-left:9px">{{ left }} of {{ total }} calls left today &middot; {{ max_turns }} turns each</span>
+    </div>
+  </div>
+
+  <div class="panel sup">
+    <h2>ComplaintGuard</h2>
+    <div class="meter">
+      <span class="n low" id="score">—</span>
+      <span class="lbl" id="band">waiting for the call</span>
+    </div>
+    <div class="track low" id="track"><i></i></div>
+    <div class="small muted" style="margin-bottom:6px">
+      Fixed weights, no model sets the number. Every point below cites a line.
+    </div>
+    <div id="finds"></div>
+    <div class="status" id="watch-status"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var sid = null, busy = false;
+  var tape = document.getElementById('tape'), say = document.getElementById('say'),
+      send = document.getElementById('send'), begin = document.getElementById('begin'),
+      status = document.getElementById('status'), err = document.getElementById('err'),
+      pick = document.getElementById('pick'), finds = document.getElementById('finds'),
+      alarm = document.getElementById('alarm'), watchStatus = document.getElementById('watch-status');
+
+  function post(url, data) {
+    var body = new FormData();
+    for (var k in data) body.append(k, data[k]);
+    return fetch(url, { method: 'POST', body: body }).then(function (r) { return r.json(); });
+  }
+  function fail(msg) { err.innerHTML = '<div class="err">' + msg + '</div>'; }
+  function clearFail() { err.innerHTML = ''; }
+
+  function bubble(who, text, index) {
+    var d = document.createElement('div');
+    d.className = 'turn ' + (who === 'customer' ? 'cust' : 'agent');
+    d.id = 'u' + index;
+    d.innerHTML = '<div class="who">' + (who === 'customer' ? 'you' : 'agent') + '</div>' +
+                  '<div class="bubble"></div>';
+    d.querySelector('.bubble').textContent = text;
+    tape.appendChild(d);
+    tape.scrollTop = tape.scrollHeight;
+    return d;
+  }
+
+  begin.addEventListener('click', function () {
+    begin.disabled = true;
+    post('/live/start', {}).then(function (r) {
+      if (!r.ok) { begin.disabled = false; return fail(r.error); }
+      sid = r.session;
+      say.disabled = false; send.disabled = false; say.focus();
+      status.textContent = r.turns_left + ' turns left in this call · ' +
+                           r.calls_left_today + ' calls left today';
+    }).catch(function () { begin.disabled = false; fail('Could not start the call.'); });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.opener'), function (b) {
+    b.addEventListener('click', function () {
+      if (!sid) { begin.click(); setTimeout(function () { say.value = b.dataset.o; turn(); }, 600); }
+      else { say.value = b.dataset.o; turn(); }
+    });
+  });
+
+  function turn() {
+    if (busy || !sid) return;
+    var text = say.value.trim();
+    if (!text) return;
+    busy = true; clearFail();
+    pick.style.display = 'none';
+    say.value = ''; say.disabled = true; send.disabled = true;
+    var n = tape.children.length;
+    bubble('customer', text, n);
+    var thinking = bubble('agent', '…', n + 1);
+
+    post('/live/turn', { session: sid, text: text }).then(function (r) {
+      if (!r.ok) {
+        thinking.remove();
+        tape.lastChild.remove();          // the turn was not counted, so take it back
+        say.value = text;
+        fail(r.error);
+      } else {
+        thinking.querySelector('.bubble').textContent = r.agent_text;
+        status.textContent = r.turns_left + ' turns left in this call';
+        watch();
+      }
+    }).catch(function () {
+      thinking.remove(); tape.lastChild.remove(); say.value = text;
+      fail('That did not get through. Try again.');
+    }).then(function () {
+      busy = false;
+      if (!alarm.classList.contains('on')) { say.disabled = false; send.disabled = false; say.focus(); }
+    });
+  }
+  send.addEventListener('click', turn);
+  say.addEventListener('keydown', function (e) { if (e.key === 'Enter') turn(); });
+
+  // The supervisor runs behind the conversation and never blocks it. If it
+  // fails, the call carries on — it is additive by design.
+  function watch() {
+    watchStatus.textContent = 'reading the call…';
+    post('/live/watch', { session: sid }).then(function (r) {
+      watchStatus.textContent = '';
+      if (!r.ok || !r.ready) return;
+      render(r);
+    }).catch(function () { watchStatus.textContent = 'the supervisor is not responding'; });
+  }
+
+  function render(r) {
+    var n = document.getElementById('score'), track = document.getElementById('track');
+    n.textContent = r.score; n.className = 'n ' + r.band;
+    document.getElementById('band').textContent = r.band + ' · turn ' + r.turn;
+    track.className = 'track ' + r.band;
+    track.querySelector('i').style.width = r.score + '%';
+
+    finds.innerHTML = '';
+    r.signals.forEach(function (s) {
+      var d = document.createElement('div');
+      d.className = 'find';
+      var pol = s.policy ? '<a class="pol" href="/policy/' + s.policy.slug + '">policy ' +
+                            s.policy.ref + '</a>' : '';
+      d.innerHTML = '<div class="h"><span class="w">+' + s.weight + '</span>' +
+                    '<div><span class="k">' + s.kind + '</span>' + pol +
+                    '<div></div></div></div>';
+      d.querySelector('.h div div').textContent = s.detail;
+      s.quotes.forEach(function (q) {
+        var e = document.createElement('div');
+        e.className = 'q'; e.textContent = '“' + q.quote + '”';
+        e.addEventListener('click', function () {
+          var el = document.getElementById('u' + q.index);
+          if (!el) return;
+          Array.prototype.forEach.call(document.querySelectorAll('.turn'),
+            function (t) { t.classList.remove('flagged'); });
+          el.classList.add('flagged');
+          el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        });
+        d.appendChild(e);
+      });
+      finds.appendChild(d);
+    });
+
+    if (r.escalate) {
+      var p = r.intervention;
+      document.getElementById('alarm-what').textContent = p ? p.what :
+        'The call crossed the escalation threshold at turn ' + r.escalated_at_turn + '.';
+      document.getElementById('alarm-why').textContent = p ? p.why :
+        'The findings on the right are what took it there.';
+      var box = document.getElementById('alarm-quotes'); box.innerHTML = '';
+      (p ? p.quotes : []).forEach(function (q) {
+        var e = document.createElement('div'); e.className = 'q';
+        e.textContent = '“' + q.quote + '”'; box.appendChild(e);
+      });
+      alarm.classList.add('on');
+      alarm.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      say.disabled = true; send.disabled = true;
+      status.innerHTML = '<strong>The agent has been stopped.</strong> ' +
+                         '<a href="/live">Start another call</a>';
+    }
+  }
+})();
+</script>
+{% endif %}
+{% endblock %}

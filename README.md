@@ -46,9 +46,13 @@ Every claim links back to the transcript line that justifies it.
 
 ### What it is not
 
-Not a chatbot — it never speaks to a customer. Not an autonomous agent — see *Architecture*.
-It does not issue refunds, change plans or open tickets; it recommends, and a person decides.
-**A score is never used on its own to judge an agent.**
+**Not a chatbot.** There is a bot at `/live`, and it is the *prop*, not the product: it exists so a
+visitor has a call to watch. What we built is the thing watching it. The distinction matters because
+a customer-facing voice bot is a category with a dozen incumbents, and a supervisor that reads a call
+in progress and interrupts it is not.
+
+Not an autonomous agent — see *Architecture*. It does not issue refunds, change plans or open
+tickets; it recommends, and a person decides. **A score is never used on its own to judge an agent.**
 
 ## How it is different
 
@@ -59,8 +63,8 @@ It does not issue refunds, change plans or open tickets; it recommends, and a pe
 | NiCE CXone, Zendesk, Salesforce | transcription, topic and sentiment, QA, routing |
 
 Those produce a **score** (`escalation risk = 0.87`) or an **aggregate trend** ("top three drivers this
-quarter"). Neither tells an operator why **this one** escalated, or **when it could still have been
-caught**.
+quarter"), both of them *after the call is over*. Neither tells an operator why **this one** escalated,
+or **when it could still have been caught** — and neither interrupts a call in progress.
 
 ComplaintGuard outputs a **per-case causal timeline with the intervention point marked**. That is a
 different artefact, and it is the whole claim.
@@ -71,7 +75,7 @@ Control flow is defined in code, not by a model. If the steps can be listed in a
 beats an agent — predictable, testable, cost-bounded.
 
 ```
-1   input                    prepared cases, or a transcript pasted at /try; live mic deferred
+1   input                    prepared cases · a transcript pasted at /try · a call held at /live
 2   transcribe + diarize     ElevenLabs Scribe, word-level timestamps
 3   structured extraction    needs · promises · deadlines · actions        ← LLM
 3b  citation check           verbatim string match                        ← deterministic
@@ -139,22 +143,27 @@ PYTHONPATH=src .venv/bin/uvicorn complaintguard.app:app --reload
 
 Then open http://localhost:8000. **No API key is needed** to run the prepared cases.
 
-⚠️ **What the deployed site does and does not do.** Two paths, and they are deliberately different:
+⚠️ **What the deployed site does and does not do.** Three paths, deliberately different:
 
 | | |
 | --- | --- |
-| `/` and `/case/…` | **Twelve prepared cases**, audio on three. Deterministic layers only — scoring, timing, signal detection, the intervention point. A case always yields the same result and **no page view spends a token or calls a model.** |
-| `/try` | **Paste your own transcript.** Extraction (3) and resolution (5) genuinely run against it — two model calls — then the same deterministic code produces the score and the intervention point. |
+| `/` and `/case/…` | **Twelve prepared cases**, audio on three. Deterministic layers only. A case always yields the same result and **no page view spends a token or calls a model.** |
+| `/try` | **Paste your own transcript.** Extraction (3) and resolution (5) genuinely run against it — two model calls — then the same deterministic code scores it. |
+| `/live` | **Hold a call.** Talk to an AI support agent and watch ComplaintGuard read the call, check it against the written policy, and stop it when a human is needed. |
 
-Every case page reports `extractor` and `llm calls` in its Run panel, so what you see is what
-actually happened: `0` on the prepared cases, `2` on a pasted one.
+Every case page reports `extractor` and `llm calls` in its Run panel: `0` on the prepared cases,
+`2` on a pasted one. There is **no audio upload route** — `/try` takes text.
 
-There is **no audio upload route** — `/try` takes text. Because `/try` costs real credits it is
-capped four ways: a length limit, a per-visitor hourly limit, a global daily ceiling, and a cache so
-identical text is free. When the ceiling is reached the form closes with a message and the twelve
-prepared cases carry on working — it lives in its own module (`live.py`) and its own routes precisely
-so that a model outage, a bad paste or an exhausted budget cannot take the rest of the site down.
-That isolation is covered by tests.
+`/try` and `/live` are the only routes that spend anything, and each is capped independently: length
+and line limits, a per-visitor rate limit, a global daily ceiling, and caching. `/live` additionally
+has a **manual switch** (`LIVE_ROOM=on|off`, flipped with `scripts/room.sh`) because it costs the most
+per interaction — it is opened for judging and while we test, closed otherwise.
+
+When any of those limits bind, the page in question closes with a sentence and **everything else
+keeps working.** Each lives in its own module (`live.py`, `conversation.py`) behind its own routes
+precisely so a model outage, a bad paste or an exhausted budget cannot take the site down. There is a
+test that burns the entire daily budget and then asserts all twelve case pages, the JSON API and
+`/health` still answer with `llm_calls=0`.
 
 For a real extraction run, put one LLM key in `.env` — either `DEEPSEEK_API_KEY` or
 `ANTHROPIC_API_KEY`; the first one present is used. The pipeline talks to an
@@ -172,14 +181,18 @@ src/complaintguard/
   scenarios.py         load scenario files into the model
   app.py               FastAPI routes
   live.py              the /try path — parsing, limits, cache; isolated on purpose
+  conversation.py      the /live room — the call, the watcher, the switch
+  knowledge.py         BM25 retrieval over the policy corpus
   templates/           server-rendered views
   pipeline/
     extract.py         layer 3   — LLM extraction (interface + stub)
     citation.py        layer 3b  — deterministic citation check
     rules.py           layer 6   — timing and signal detection
+    live_rules.py      layer 6b  — signals that only exist inside a live call
     risk.py            layer 7   — fixed-weight fusion
     intervention.py    layer 8   — earliest preventable point
 data/scenarios/        synthetic cases with ground truth
+data/policy/           the fictional telco's written policy — what /live checks against
 notebooks/evaluate.py  the evaluation harness
 docs/                  spec, judging rubric, research, deployment
 ```

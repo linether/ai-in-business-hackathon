@@ -95,7 +95,7 @@
 <div class="nav">
   <a href="/">&larr; all cases</a>
   {% for i in all_ids %}{% if i != scenario_id %}<a href="/case/{{ i }}">{{ i }}</a>{% endif %}{% endfor %}
-  {% if live %}<a href="/try">analyse another transcript</a>
+  {% if live %}<a href="/try">analyse another transcript</a><a href="/live">hold a live call</a>
   {% else %}<a href="/api/case/{{ scenario_id }}">JSON</a>{% endif %}
 </div>
 

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ chunk.title }} — Meridian Mobile policy{% endblock %}
+{% block body %}
+<style>
+  .doc h2 { margin-bottom:2px }
+  .doc .ref { font-size:12.5px; color:var(--muted); margin-bottom:14px }
+  .doc .body { font-size:14px; line-height:1.7 }
+  .doc .body table { border-collapse:collapse; font-size:13.5px; margin:10px 0 }
+  .doc .body td { padding:4px 16px 4px 0; border-bottom:1px solid var(--line) }
+  .idx a { display:inline-block; margin:0 12px 7px 0; font-size:13px }
+</style>
+<div class="nav" style="margin-bottom:18px;font-size:13px">
+  <a href="/live">&larr; the live room</a><a href="/" style="margin-left:12px">all cases</a>
+</div>
+<div class="panel doc">
+  <h2>{{ chunk.title }}</h2>
+  <div class="ref">Meridian Mobile internal policy{% if chunk.ref %} &middot; section {{ chunk.ref }}{% endif %}
+    &middot; <span class="muted">fictional, written by the team</span></div>
+  <div class="body">{{ chunk.body | replace('**','') | replace('\n\n','<br><br>') | safe }}</div>
+</div>
+<div class="panel">
+  <h2>The rest of the policy</h2>
+  <div class="idx">
+    {% for c in all %}{% if c.slug != chunk.slug %}<a href="/policy/{{ c.slug }}">{{ c.ref }} {{ c.title }}</a>{% endif %}{% endfor %}
+  </div>
+  <div class="small muted" style="margin-top:8px">
+    Twelve documents, retrieved with BM25 in plain Python &mdash; no vector store. Over a corpus this
+    size, written in the same register as the questions, lexical matching finds the right rule with no
+    index to build and no service to call mid-conversation. Past a few hundred documents that argument
+    flips; it is one function behind one interface.
+  </div>
+</div>
+{% endblock %}

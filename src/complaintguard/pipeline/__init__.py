@@ -39,6 +39,7 @@ def analyse(
     extractor: Optional[Extractor] = None,
     now: Optional[datetime] = None,
     resolver: Optional[LLMClient] = None,
+    resolve: bool = True,
 ) -> CaseAnalysis:
     """Run the whole pipeline over one case.
 
@@ -49,6 +50,12 @@ def analyse(
     ``resolver`` is only used when the extractor is a real one. The labelled
     scenarios already carry statuses, and asking a model to re-derive what we
     wrote ourselves would cost money and lose information.
+
+    ``resolve=False`` skips layer 5 entirely. Layer 5 reconciles a need raised on
+    one contact against an action taken on another, so on a single contact it has
+    nothing to reconcile — and the live call at /live re-analyses after every
+    turn, where a call per turn that cannot change the answer is pure latency the
+    visitor waits through. Everywhere else it stays on.
     """
     started = time.time()
     extractor = extractor or LabelledExtractor()
@@ -65,7 +72,7 @@ def analyse(
 
     # 5 — resolution matching across contacts. The extractor works one contact at
     # a time and cannot know a Monday request was settled on Thursday.
-    if extractor.name != "labelled-stub":
+    if resolve and extractor.name != "labelled-stub":
         llm_calls += resolution.resolve(case, resolver)
 
     # 3b — citation check, deterministic

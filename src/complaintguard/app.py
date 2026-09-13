@@ -11,7 +11,10 @@ Routes:
     GET  /api/case/{id}         the same analysis as JSON
     GET  /health                liveness, for the deploy check
     GET  /try                   paste a transcript
-    POST /try                   analyse it live  <- the only route that calls a model
+    POST /try                   analyse it live
+    GET  /live                  a call you can hold, watched as it happens
+    POST /live/start|turn|watch the room's API
+    GET  /policy/{slug}         the written rule behind a finding
 """
 
 from __future__ import annotations
@@ -23,7 +26,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import live, pipeline, scenarios
+from . import conversation, knowledge, live, pipeline, scenarios
 from .pipeline.extract import LLMExtractor
 
 # The scenario files use the team's working vocabulary, which is Chinese. The
@@ -303,4 +306,100 @@ def try_run(request: Request, transcript: str = Form("")) -> HTMLResponse:
             "root_cause": "",
             "live": True,
         },
+    )
+
+
+# --------------------------------------------------------------------------
+# The live room.
+#
+# Quarantined like /try, and for the same reason: it is the only other place
+# that spends money, and nothing above imports it. The conversation is a demo
+# prop — what is being submitted is the supervisor watching it. The page says so
+# in as many words, because a bot that talks to customers is a product category
+# with a dozen incumbents and this is not that.
+#
+# The budget is charged at /live/start, never on a page view, so a judge opening
+# the page and reading it costs nothing.
+# --------------------------------------------------------------------------
+
+
+def _room_context(request: Request, **extra) -> dict:
+    left, total = conversation.budget_left()
+    ctx = {
+        "request": request,
+        "open_": conversation.room_open() and left > 0 and live.configured(),
+        "closed_reason": (
+            "" if conversation.room_open()
+            else "The live room is switched off right now. It is opened for judging and while we "
+                 "are testing, because every turn spends transcription and speech credits."
+        ),
+        "left": left,
+        "total": total,
+        "max_turns": conversation.MAX_TURNS,
+        "openers": conversation.OPENERS,
+        "policies": [
+            {"slug": c.slug, "ref": c.ref, "title": c.title}
+            for c in knowledge.corpus().chunks
+        ],
+    }
+    ctx.update(extra)
+    return ctx
+
+
+@app.get("/live", response_class=HTMLResponse)
+def room(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse("live.html", _room_context(request))
+
+
+@app.post("/live/start")
+def room_start(request: Request) -> JSONResponse:
+    ip = request.client.host if request.client else "unknown"
+    try:
+        session = conversation.start(ip)
+    except conversation.RoomError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=200)
+    left, _ = conversation.budget_left()
+    return JSONResponse({"ok": True, "session": session.id, "turns_left": session.turns_left,
+                         "calls_left_today": left})
+
+
+@app.post("/live/turn")
+def room_turn(request: Request, session: str = Form(""), text: str = Form("")) -> JSONResponse:
+    """One turn. Never raises — a failure here must not end the call."""
+    try:
+        sess = conversation.get(session)
+        out = conversation.reply(sess, text, live.client(json_mode=False, timeout=30))
+    except conversation.RoomError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=200)
+    except Exception:  # noqa: BLE001 — provider errors, timeouts, malformed replies
+        return JSONResponse(
+            {"ok": False,
+             "error": "The agent did not answer that one. Say it again — this turn was not counted."},
+            status_code=200,
+        )
+    out["ok"] = True
+    return JSONResponse(out)
+
+
+@app.post("/live/watch")
+def room_watch(request: Request, session: str = Form("")) -> JSONResponse:
+    """The supervisor, a beat behind. Purely additive — if it fails, the call goes on."""
+    try:
+        sess = conversation.get(session)
+        return JSONResponse({"ok": True, **conversation.watch(sess, live.client())})
+    except conversation.RoomError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=200)
+    except Exception:  # noqa: BLE001
+        return JSONResponse({"ok": False, "error": "watch failed"}, status_code=200)
+
+
+@app.get("/policy/{slug}", response_class=HTMLResponse)
+def policy(request: Request, slug: str) -> HTMLResponse:
+    """The rule behind a finding, so a supervisor can disagree with us."""
+    chunk = knowledge.corpus().by_slug(slug)
+    if chunk is None:
+        raise HTTPException(status_code=404, detail="No such policy")
+    return templates.TemplateResponse(
+        "policy.html",
+        {"request": request, "chunk": chunk, "all": knowledge.corpus().chunks},
     )
