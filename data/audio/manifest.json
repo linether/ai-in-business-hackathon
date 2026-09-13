@@ -1,0 +1,335 @@
+[
+  {
+    "case": "demo-001",
+    "contact": 1,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 116,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/1-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 1,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 93,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/1-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 1,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 37,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/1-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 1,
+    "index": 3,
+    "speaker": "agent",
+    "chars": 99,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/1-03-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 1,
+    "index": 4,
+    "speaker": "customer",
+    "chars": 30,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/1-04-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 2,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 75,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/2-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 2,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 81,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/2-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 2,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 33,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/2-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 3,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 130,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/3-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 3,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 49,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/3-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-001",
+    "contact": 3,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 64,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-001/3-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 121,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 49,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 108,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 3,
+    "speaker": "agent",
+    "chars": 144,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-03-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 4,
+    "speaker": "customer",
+    "chars": 64,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-04-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 5,
+    "speaker": "agent",
+    "chars": 140,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-05-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 6,
+    "speaker": "customer",
+    "chars": 55,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-06-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 7,
+    "speaker": "agent",
+    "chars": 132,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-07-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-002",
+    "contact": 1,
+    "index": 8,
+    "speaker": "customer",
+    "chars": 45,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-002/1-08-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 1,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 136,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/1-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 1,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 180,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/1-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 1,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 46,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/1-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 1,
+    "index": 3,
+    "speaker": "agent",
+    "chars": 126,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/1-03-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 1,
+    "index": 4,
+    "speaker": "customer",
+    "chars": 35,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/1-04-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 106,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 193,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 112,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 3,
+    "speaker": "agent",
+    "chars": 152,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-03-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 4,
+    "speaker": "customer",
+    "chars": 96,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-04-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 5,
+    "speaker": "agent",
+    "chars": 148,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-05-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 2,
+    "index": 6,
+    "speaker": "customer",
+    "chars": 42,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/2-06-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 3,
+    "index": 0,
+    "speaker": "customer",
+    "chars": 125,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/3-00-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 3,
+    "index": 1,
+    "speaker": "agent",
+    "chars": 82,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/3-01-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 3,
+    "index": 2,
+    "speaker": "customer",
+    "chars": 181,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/3-02-customer.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 3,
+    "index": 3,
+    "speaker": "agent",
+    "chars": 83,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/3-03-agent.mp3",
+    "exists": false
+  },
+  {
+    "case": "demo-003",
+    "contact": 3,
+    "index": 4,
+    "speaker": "customer",
+    "chars": 138,
+    "out": "/Users/lyx/Project/AI in Business Hackathon/data/audio/demo-003/3-04-customer.mp3",
+    "exists": false
+  }
+]

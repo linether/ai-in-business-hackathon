@@ -18,6 +18,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from . import pipeline, scenarios
@@ -46,6 +47,7 @@ ROOT_CAUSE_EN = {
 }
 
 BASE = Path(__file__).resolve().parent
+AUDIO = Path(__file__).resolve().parents[2] / "data" / "audio"
 templates = Jinja2Templates(directory=str(BASE / "templates"))
 
 app = FastAPI(
@@ -53,6 +55,12 @@ app = FastAPI(
     description="Reconstructs why a complaint escalated, and the earliest point it could have been stopped.",
     version="0.1.0",
 )
+
+
+if AUDIO.is_dir():
+    # Voiced with ElevenLabs from our own scripts. Served so a judge can hear the
+    # calls rather than take our word for what the tone was.
+    app.mount("/audio", StaticFiles(directory=str(AUDIO)), name="audio")
 
 
 @app.get("/health")
@@ -74,6 +82,7 @@ def index(request: Request) -> HTMLResponse:
                 "category": CATEGORY_EN.get(raw.get("business_category", ""), ""),
                 "root_cause": ROOT_CAUSE_EN.get(raw.get("root_cause", ""), ""),
                 "contacts": len(case.contacts),
+                "has_audio": (AUDIO / path.stem).is_dir(),
                 # What the case is about, not why we wrote it — the internal test
                 # rationale in the scenario file is for us, not for a judge.
                 "note": first.summary if first else "",
@@ -102,6 +111,19 @@ def case_view(request: Request, scenario_id: str) -> HTMLResponse:
         if contact.transcript:
             lines[contact.seq] = contact.transcript.utterances
 
+    # Per-utterance audio, if this scenario has been voiced. Keyed "seq-index"
+    # so the template can ask for one line without knowing the filename rules.
+    audio = {}
+    case_audio = AUDIO / scenario_id
+    if case_audio.is_dir():
+        for contact in analysis.case.contacts:
+            if not contact.transcript:
+                continue
+            for i, u in enumerate(contact.transcript.utterances):
+                name = "{}-{:02d}-{}.mp3".format(contact.seq, i, u.speaker.value)
+                if (case_audio / name).exists():
+                    audio["{}-{}".format(contact.seq, i)] = "/audio/{}/{}".format(scenario_id, name)
+
     return templates.TemplateResponse(
         "case.html",
         {
@@ -111,6 +133,7 @@ def case_view(request: Request, scenario_id: str) -> HTMLResponse:
             "lines": lines,
             "scenario_id": scenario_id,
             "all_ids": [p.stem for p in scenarios.list_scenarios()],
+            "audio": audio,
             "category": CATEGORY_EN.get(truth.get("business_category", ""), ""),
             "root_cause": ROOT_CAUSE_EN.get(truth.get("root_cause", ""), ""),
         },

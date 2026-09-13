@@ -1,5 +1,49 @@
 {% extends "base.html" %}
-{% block title %}{{ scenario_id }} — ComplaintGuard{% endblock %}
+{% block title %}{{ scenario_id }} — ComplaintGuard
+<script>
+// Audio playback. The calls are synthetic — we wrote the scripts and ElevenLabs
+// voiced them — so letting a judge hear one costs nothing and proves more than
+// a transcript does. Hearing demo-002 shout while scoring zero, next to
+// demo-003 staying perfectly calm while scoring a hundred, is the argument.
+(function () {
+  var player = new Audio();
+  var queue = [], current = null;
+
+  function clear() {
+    if (current) current.classList.remove('playing');
+    current = null;
+  }
+  function playLine(el) {
+    clear();
+    current = el;
+    el.classList.add('playing');
+    player.src = el.dataset.audio;
+    player.play().catch(function () { clear(); });   // autoplay blocked, fail quietly
+  }
+  function next() {
+    if (!queue.length) { clear(); return; }
+    playLine(queue.shift());
+  }
+  player.addEventListener('ended', next);
+
+  document.addEventListener('click', function (e) {
+    var one = e.target.closest('[data-play]');
+    if (one) {
+      queue = [];
+      playLine(one.closest('.line'));
+      return;
+    }
+    var whole = e.target.closest('[data-play-call]');
+    if (whole) {
+      var seq = whole.dataset.playCall;
+      queue = Array.prototype.slice.call(
+        document.querySelectorAll('.line[id^="c' + seq + 'u"][data-audio]'));
+      next();
+    }
+  });
+})();
+</script>
+{% endblock %}
 {% block body %}
 <style>
   .score { display:flex; align-items:baseline; gap:14px; margin-bottom:4px }
@@ -46,6 +90,15 @@
   .line.cust .who { color:#8a5a2f }
   .line:target { background:#fff3c4; border-radius:3px }
   .line.flash { animation:flash 1.4s ease-out }
+  .line.playing { background:#e8f1fa; border-radius:3px; box-shadow:inset 2px 0 0 var(--accent) }
+  .play { border:0; background:none; cursor:pointer; padding:0 6px 0 0; color:var(--muted);
+          font-size:11px; line-height:1; vertical-align:1px }
+  .play:hover { color:var(--accent) }
+  .callbar { display:flex; align-items:center; gap:10px; margin:6px 0 8px }
+  .callbar button { font:inherit; font-size:12.5px; padding:5px 13px; border-radius:6px;
+                    border:1px solid var(--line); background:#fff; cursor:pointer; color:var(--ink) }
+  .callbar button:hover { border-color:var(--accent); color:var(--accent) }
+  .callbar .hint { font-size:12px; color:var(--muted) }
   @keyframes flash { 0%,35% { background:#ffe89a } 100% { background:transparent } }
 
   @media (max-width: 640px) {
@@ -146,9 +199,19 @@
         {% endfor %}
       {% endif %}
       {% if c.transcript %}
-      <details class="tx"><summary>transcript</summary>
+      <details class="tx"><summary>transcript{% if audio %} &amp; audio{% endif %}</summary>
+        {% if audio %}
+        <div class="callbar">
+          <button type="button" data-play-call="{{ c.seq }}">▶ Play this call</button>
+          <span class="hint">Voiced with ElevenLabs from our own script &mdash; two voices, so
+            diarisation has something real to separate.</span>
+        </div>
+        {% endif %}
         {% for u in c.transcript.utterances %}
-          <div class="line {{ 'cust' if u.speaker.value == 'customer' else '' }}" id="c{{ c.seq }}u{{ loop.index0 }}">
+          <div class="line {{ 'cust' if u.speaker.value == 'customer' else '' }}" id="c{{ c.seq }}u{{ loop.index0 }}"
+               {% if audio.get(c.seq ~ '-' ~ loop.index0) %}data-audio="{{ audio[c.seq ~ '-' ~ loop.index0] }}"{% endif %}>
+            {% if audio.get(c.seq ~ '-' ~ loop.index0) %}<button class="play" type="button"
+               data-play="{{ audio[c.seq ~ '-' ~ loop.index0] }}" title="play this line">▶</button>{% endif %}
             <span class="who">{{ u.speaker.value }}</span>{{ u.text }}
           </div>
         {% endfor %}
@@ -185,4 +248,48 @@
     <tr><td>elapsed</td><td>{{ a.telemetry.elapsed_ms }} ms</td></tr>
   </table>
 </div>
+
+<script>
+// Audio playback. The calls are synthetic — we wrote the scripts and ElevenLabs
+// voiced them — so letting a judge hear one costs nothing and proves more than
+// a transcript does. Hearing demo-002 shout while scoring zero, next to
+// demo-003 staying perfectly calm while scoring a hundred, is the argument.
+(function () {
+  var player = new Audio();
+  var queue = [], current = null;
+
+  function clear() {
+    if (current) current.classList.remove('playing');
+    current = null;
+  }
+  function playLine(el) {
+    clear();
+    current = el;
+    el.classList.add('playing');
+    player.src = el.dataset.audio;
+    player.play().catch(function () { clear(); });   // autoplay blocked, fail quietly
+  }
+  function next() {
+    if (!queue.length) { clear(); return; }
+    playLine(queue.shift());
+  }
+  player.addEventListener('ended', next);
+
+  document.addEventListener('click', function (e) {
+    var one = e.target.closest('[data-play]');
+    if (one) {
+      queue = [];
+      playLine(one.closest('.line'));
+      return;
+    }
+    var whole = e.target.closest('[data-play-call]');
+    if (whole) {
+      var seq = whole.dataset.playCall;
+      queue = Array.prototype.slice.call(
+        document.querySelectorAll('.line[id^="c' + seq + 'u"][data-audio]'));
+      next();
+    }
+  });
+})();
+</script>
 {% endblock %}

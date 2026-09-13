@@ -35,7 +35,10 @@ data/raw/
 # venv
 .venv/
 
-# Generated audio and cached transcripts — regenerable, and they cost credits,
-# so they stay out of git rather than being re-downloaded by everyone.
-data/audio/
+# Cached Scribe responses — regenerable, and they cost credits.
 data/transcripts/
+
+# Generated audio IS committed. It is small (a few MB), it costs credits to
+# regenerate, and the deployed site serves it so judges can hear the calls —
+# hearing the angry-but-resolved caller next to the calm-but-escalating one
+# lands harder than reading either.
