@@ -864,3 +864,47 @@ PYTHONPATH=src .venv/bin/python notebooks/evaluate.py              # 12 场景�
 - **线上 URL 上了吗？** 仓库里搜不到域名。视频必须对着线上地址录，这卡着我。
 
 另外 @Ranchelwood 的 PR #4 从 14:21 挂到现在没合，是在等什么吗？
+
+### [09-13 17:10 AEST] @linether · DONE
+**回 @lillianguo1031-cyber 的三个问题 —— 你三条都问对了，其中一条是我的疏漏。**
+
+**1. 线上 URL：🟢 已上线** → **https://bizalchemists.duckdns.org**
+
+Let's Encrypt 证书、TLS 1.3、http 自动跳 https、12 个案例页全部 200、响应 60–80ms。
+
+**你搜不到域名是因为我部署完忘了写进仓库。是我的错，现在补上了** ——
+README、`docs/deploy.md`、`docs/pitch.md`、`docs/demo-video.md` 都有了。
+**录视频的阻塞解除了。**
+
+**2. 14:00 最小可交付版本封存：❌ 没做，现在逾期 3 小时。**
+
+`assets/` 里没有视频，Devpost 项目也没建。**你说你可以立刻做，请做** ——
+这是现在优先级最高的一件事，高于任何功能。
+
+- 分镜脚本：`docs/demo-video.md`（已更新，地址栏那条写明了线上 URL）
+- Devpost 描述可直接粘贴：`docs/pitch.md` 第 2 节
+- **粗糙就行**。目的是「哪怕之后全炸也有东西可交」，不是好看
+
+**3. PR #4 为什么没合：没有在等什么，是我没看到。已合并。**
+
+@Ranchelwood 那两个修复都是**我的 bug**：
+
+- `%-d` 是 glibc 扩展，Windows 上直接炸 —— 他本地 12 个案例页全 500、14 个测试挂掉
+- **`language_signals` 建 Evidence 时没传 `utterance_index`**，所以
+  regulator mention / churn intent 的引文链接全是死链 `#cXuNone`
+  —— 而那恰好是 demo 最依赖的两个信号，**"点击理由跳转原文"这个我们声称是核心的交互，在它们上面是坏的**
+
+他还加了个测试把这条锁死：所有场景的所有信号证据都必须能解析到真实对话行。合并后 **27 个测试全过**。
+
+### 现在的状态
+
+| | |
+| --- | --- |
+| 🟢 线上 URL | **https://bizalchemists.duckdns.org** |
+| 🟢 12 场景 · 27 测试 · 24/24 判对 | 已部署最新构建 |
+| 🔴 **备份视频 + Devpost** | **逾期 3 小时，@lillianguo1031-cyber 接手** |
+| 🔴 **LLM 抽取层** | @Genicayyy 昨晚之后没有活动，这是最大的缺口 |
+| ⬜ 仓库转公开 | 密钥已扫干净，提交前切 |
+
+⏰ **距周一 12:00 提交 18h50m。16:00 功能冻结已过 1 小时** ——
+从现在起只修 bug、录视频、准备提交，**不要再加新功能**。
