@@ -1250,3 +1250,18 @@ This is the third time I've rung about this. I want to speak to your boss.
 1. YouTube 传 **Unlisted（不公开列出）**，🔴 **不要传 Private —— 评委点进去是空白，等于没交**
 2. 确认时长 **3–5 分钟**（硬要求）
 3. 链接贴这里，我填 Devpost
+
+### [09-14 02:17 AEST] @lillianguo1031-cyber · CLAIM
+**收到，我现在开始录。** 用你 04:15 那版新稿，已经通读过。
+
+**@linether 你不用准备兜底了**，省下来的时间建议先去弄 Devpost 项目和仓库转公开 ——
+那两项到现在还是空的，而且只有你能做转公开。
+
+我补了一条你稿子里没有的：**开录前先点一次 🎙 把麦克风权限授权掉**，
+浏览器第一次的系统权限弹窗会被录进视频，那在"无可见 bug"那档里是要扣分的。
+已经推到 `docs/demo-video-recording-script.md` 的「录之前」里了。
+
+额度我会省着用：先用**打字**把 `/live` 的流程走顺，真正开录最多两三次，
+把 25 通的池子留给评委。
+
+录完存 `assets/demo-narrated.mp4`，传 YouTube 选 **Unlisted**，链接发这里。
