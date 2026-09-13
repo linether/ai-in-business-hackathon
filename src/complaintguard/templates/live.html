@@ -325,19 +325,45 @@
     if (!sid || busy) return;
     cancelled = false;
     mic.disabled = true;
-    status.textContent = 'asking for the microphone\u2026';
+    status.textContent = 'checking the microphone\u2026';
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+    // Ask what hardware exists before asking to use it. enumerateDevices needs no
+    // permission, and "your browser cannot see a microphone at all" is a different
+    // problem from "you said no" — reported as one, they send the visitor to the
+    // wrong setting. An embedded web view or a browser without the OS microphone
+    // permission reports zero inputs here.
+    var probe = navigator.mediaDevices.enumerateDevices
+      ? navigator.mediaDevices.enumerateDevices()
+      : Promise.resolve(null);
+
+    probe.catch(function () { return null; }).then(function (devices) {
+      if (devices) {
+        var inputs = devices.filter(function (d) { return d.kind === 'audioinput'; });
+        if (!inputs.length) {
+          mic.disabled = false;
+          micIdle('');
+          fail('This browser cannot see a microphone at all (0 audio inputs). That is usually '
+             + 'an embedded browser window, or the browser not having the operating system\u2019s '
+             + 'microphone permission \u2014 on a Mac, System Settings \u203a Privacy &amp; Security '
+             + '\u203a Microphone. <strong>Typing the turn does exactly the same thing</strong>, '
+             + 'including the transcription step being skipped rather than faked.');
+          return null;
+        }
+      }
+      return navigator.mediaDevices.getUserMedia({ audio: true });
+    }).then(function (st) {
+      if (!st) return;
       mic.disabled = false;
       // The visitor may have clicked again while the permission prompt was up.
       if (cancelled) { st.getTracks().forEach(function (t) { t.stop(); }); micIdle(''); return; }
 
       stream = st; chunks = [];
-      try { rec = new MediaRecorder(st); }
+      try { rec = pickRecorder(st); }
       catch (e) {
         st.getTracks().forEach(function (t) { t.stop(); });
         micIdle('');
-        fail('This browser cannot record audio. Type the turn instead \u2014 everything else is the same.');
+        fail('This browser cannot record audio (' + (e && e.name) + '). Type the turn instead '
+           + '\u2014 everything else is the same.');
         return;
       }
       rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
@@ -349,8 +375,6 @@
       mic.title = 'Click to stop and send';
       var started = Date.now();
       status.textContent = 'recording \u2014 click \u25A0 when you are done';
-      // A turn is capped server-side at about twenty seconds; stop ourselves
-      // rather than leave the microphone open and have the upload refused.
       stopTimer = setInterval(function () {
         var left = 20 - Math.floor((Date.now() - started) / 1000);
         if (left <= 0) { endRecording(); return; }
@@ -359,20 +383,39 @@
     }).catch(function (err) {
       mic.disabled = false;
       micIdle('');
-      // Named in the console, not on the page: a visitor needs to know what to do,
-      // but when someone reports "the microphone does not work" the name of the
-      // DOMException is the difference between a permission problem, a missing
-      // device and an insecure origin.
-      try { console.warn('[ComplaintGuard] microphone unavailable:', err && err.name, err && err.message); }
+      var name = (err && err.name) || 'unknown error';
+      try { console.warn('[ComplaintGuard] microphone unavailable:', name, err && err.message); }
       catch (e) {}
       // The button deliberately stays put: permission can be granted on a second
       // attempt, and hiding the control makes a recoverable state look terminal.
-      var denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
-      fail(denied
-        ? 'The microphone was blocked. Allow it from your browser address bar and click the '
-          + 'microphone again \u2014 or just type the turn, which does exactly the same thing.'
-        : 'No microphone was found. Type the turn instead \u2014 everything else is the same.');
+      var msg;
+      if (name === 'NotAllowedError' || name === 'SecurityError') {
+        msg = 'The microphone was blocked. Allow it from your browser\u2019s address bar and click '
+            + 'the microphone again.';
+      } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+        msg = 'No microphone is attached to this browser. If you are reading this inside an app\u2019s '
+            + 'built-in browser, open the page in Safari or Chrome instead.';
+      } else if (name === 'NotReadableError' || name === 'TrackStartError') {
+        msg = 'Another application is holding the microphone. Close it and click the microphone again.';
+      } else {
+        msg = 'The microphone could not be started (' + name + ').';
+      }
+      fail(msg + ' <strong>Typing the turn does exactly the same thing</strong> \u2014 the call, the '
+         + 'policy checks and the escalation are all identical, only the transcription step is skipped.');
     });
+  }
+
+  // Safari records MP4, everything else WebM. Picking explicitly means the blob
+  // and the filename agree, rather than sending MP4 bytes named .webm and hoping
+  // the far end sniffs it.
+  function pickRecorder(st) {
+    var types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+      for (var i = 0; i < types.length; i++) {
+        if (MediaRecorder.isTypeSupported(types[i])) return new MediaRecorder(st, { mimeType: types[i] });
+      }
+    }
+    return new MediaRecorder(st);
   }
 
   function endRecording() {
