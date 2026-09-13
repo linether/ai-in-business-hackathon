@@ -14,7 +14,7 @@ Pulled 12 Sep 2026, 14:35 AEST. Re-check the site before submitting — they say
 | Hackathon Discord | https://discord.gg/KBq3tdZaF |
 | ElevenLabs credits Discord | https://discord.com/invite/VnBvbbcdEC |
 | ElevenLabs hacker guide | https://docs.google.com/document/d/1mCh5MtOzBw0aJpurQVUmIVFfPMAHW3MjNemE-LNiMto/edit |
-| Host (Nathan Luo) | nathanluo13@gmail.com |
+| Host (Nathan Luo) | 见 Luma 活动页 |
 | Event page | https://luma.com/qmvfa2nk |
 
 ## Timeline (Melbourne, AEST)

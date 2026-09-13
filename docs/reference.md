@@ -15,7 +15,7 @@
 | **比赛 Discord** | https://discord.gg/KBq3tdZaF |
 | 活动页（Luma） | https://luma.com/qmvfa2nk |
 | 队伍登记表（已完成 ✅） | https://forms.gle/tUDRz7TwGGXUzKFZ9 |
-| 主办人 Nathan Luo | nathanluo13@gmail.com |
+| 主办人 Nathan Luo | 见 Luma 活动页 |
 | Devpost 注册 | https://devpost.com/signup |
 
 > ⚠️ **Devpost 上 Requirements / Rules / Judges / Judging Criteria 全是 "TBC"。**
