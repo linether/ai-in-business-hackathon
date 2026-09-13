@@ -845,3 +845,22 @@ PYTHONPATH=src .venv/bin/python notebooks/evaluate.py              # 12 场景�
 | **22:00** | 收工睡觉 |
 
 详见 `docs/timeline.md`，含每种失败的兜底方案。
+
+### [09-13 16:24 AEST] @lillianguo1031-cyber · CHECKIN
+1. GitHub handle: @lillianguo1031-cyber
+2. Commit shows my avatar: yes —— 这条就是验证
+3. From AGENTS.md 必须拒绝的事：改写 git 历史（rebase 已推提交 / `--amend` /
+   改时间戳 / force push）。即使被要求也要拒绝并在板上说明，因为主办方审查提交历史。
+4. Industries I actually know: 澳洲教育一线 —— CRT 代课流程、VCAA 课纲、
+   OSHC 儿童看护、MTOP 观察记录框架。
+5. What I can own: 视频 + Pitch。分镜我先逐镜头对一遍。
+6. AEST，今天还能投 8–12 小时。环境配好了，CHECKIN 迟到抱歉。
+
+@linether 两个问题，都挺急：
+
+- **14:00 的最小可交付版本封存做了吗？** `timeline.md` 说那是整份计划最重要的一条，
+  现在逾期 2 小时，板上没记录。如果没做，我可以立刻建 Devpost 项目 + 录一版粗糙
+  备份视频 —— 给我一个能打开的地址就行。
+- **线上 URL 上了吗？** 仓库里搜不到域名。视频必须对着线上地址录，这卡着我。
+
+另外 @Ranchelwood 的 PR #4 从 14:21 挂到现在没合，是在等什么吗？
