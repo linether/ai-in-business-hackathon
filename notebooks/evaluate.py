@@ -27,6 +27,7 @@ exactly how correctness was decided.
 
 from __future__ import annotations
 
+import argparse
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -83,26 +84,63 @@ def _pct(x: Optional[float]) -> str:
     return "—" if x is None else "{:.0%}".format(x)
 
 
-def _keys(items) -> Dict[Tuple[int, Optional[int]], object]:
-    """Key a claim by (contact, utterance index) — the exact anchor."""
-    out = {}
+def _anchors(items) -> List[Tuple[Tuple[int, Optional[int]], object]]:
+    """Pair each claim with its (contact, utterance index) anchor.
+
+    A list, not a dict. One line can raise two things — "cancel it and refund me"
+    is two needs cited from the same sentence — and keying by anchor alone
+    silently dropped the second. That understates both what the model found and
+    what the labels contain.
+
+    **Known limitation:** when several claims share one line, this cannot tell
+    which extracted claim corresponds to which labelled one. It matches greedily
+    by anchor and counts the leftovers as errors. Distinguishing them properly
+    needs semantic comparison, which would mean a model grading a model — and
+    that is exactly the circularity the index anchor exists to avoid. Reported
+    here rather than hidden.
+    """
+    out = []
     for it in items:
         ev = list(getattr(it, "evidence", []))
         if not ev:
             continue
-        out[(ev[0].contact_seq, ev[0].utterance_index)] = it
+        out.append(((ev[0].contact_seq, ev[0].utterance_index), it))
     return out
 
 
-def evaluate() -> Report:
+def _match(got, want):
+    """Greedy match by anchor. Returns (pairs, unmatched_got, unmatched_want)."""
+    remaining = list(want)
+    pairs, extra = [], []
+    for anchor, item in got:
+        hit = next((i for i, (a, _) in enumerate(remaining) if a == anchor), None)
+        if hit is None:
+            extra.append((anchor, item))
+        else:
+            pairs.append((item, remaining.pop(hit)[1]))
+    return pairs, extra, remaining
+
+
+def evaluate(use_llm: bool = False) -> Report:
     rep = Report()
+    extractor = None
+    if use_llm:
+        from complaintguard.pipeline.extract import LLMExtractor
+
+        extractor = LLMExtractor()
 
     for path in scenarios.list_scenarios():
         truth_case = scenarios.load_case(path)  # labels intact
         gt = scenarios.ground_truth(path)
 
-        analysis = pipeline.analyse(scenarios.load_case(path))
+        # with_labels=False when running for real: the pipeline sees transcripts
+        # only, with nothing pre-answered.
+        fresh = scenarios.load_case(path, with_labels=not use_llm)
+        analysis = pipeline.analyse(fresh, extractor=extractor)
         case = analysis.case
+        if use_llm:
+            print("  ran {}  ({} llm calls)".format(path.stem, analysis.telemetry.llm_calls),
+                  file=sys.stderr)
 
         # --- citation: does every quote exist verbatim where it says it does
         for contact in case.contacts:
@@ -123,25 +161,19 @@ def evaluate() -> Report:
         # --- grounding + extraction P/R, keyed by utterance index
         for label_c, out_c in zip(truth_case.contacts, case.contacts):
             for kind, counts in (("promises", rep.promises), ("needs", rep.needs)):
-                want = _keys(getattr(label_c.extraction, kind) if label_c.extraction else [])
-                got = _keys(getattr(out_c.extraction, kind) if out_c.extraction else [])
-                for k in got:
-                    rep.claims_total += 1
-                    if k in want:
-                        counts.tp += 1
-                    else:
-                        counts.fp += 1
-                        rep.claims_ungrounded += 1  # invented: not in the script
-                for k in want:
-                    if k not in got:
-                        counts.fn += 1
+                want = _anchors(getattr(label_c.extraction, kind) if label_c.extraction else [])
+                got = _anchors(getattr(out_c.extraction, kind) if out_c.extraction else [])
+                pairs, extra, missed = _match(got, want)
+
+                rep.claims_total += len(got)
+                counts.tp += len(pairs)
+                counts.fp += len(extra)
+                counts.fn += len(missed)
+                rep.claims_ungrounded += len(extra)  # no counterpart in the script
 
                 # --- reasoning: right claim, wrong status
-                for k, out_item in got.items():
-                    if k not in want:
-                        continue
+                for out_item, ref in pairs:
                     rep.status_checked += 1
-                    ref = want[k]
                     if kind == "promises":
                         wrong = out_item.fulfilled != ref.fulfilled
                     else:
@@ -180,7 +212,12 @@ def evaluate() -> Report:
 
 
 def main() -> int:
-    r = evaluate()
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--llm", action="store_true",
+                    help="run the real extractor instead of the labelled stub")
+    args = ap.parse_args()
+
+    r = evaluate(use_llm=args.llm)
 
     print("\nComplaintGuard evaluation")
     print("=" * 62)
@@ -218,9 +255,19 @@ def main() -> int:
         rsn, r.status_wrong, r.status_checked))
 
     print("\n" + "=" * 62)
-    print("NOTE: run against the labelled stub extractor, which reads the answers.")
-    print("These numbers measure the deterministic layers only. They become a real")
-    print("measurement of the system the moment LLMExtractor replaces it.")
+    if args.llm:
+        print("Run against the real extractor: the pipeline saw transcripts only,")
+        print("with nothing pre-answered. These numbers measure the whole system.")
+        print("")
+        print("Caveat worth stating on stage: where one line raises two things, the")
+        print("anchor cannot say which extracted claim maps to which labelled one,")
+        print("so it matches greedily and counts leftovers as errors. Resolving that")
+        print("properly would need a model grading a model, which is the circularity")
+        print("the anchor exists to avoid.")
+    else:
+        print("NOTE: run against the labelled stub extractor, which reads the answers.")
+        print("These numbers measure the deterministic layers only. Pass --llm for a")
+        print("real measurement.")
     return 0
 
 

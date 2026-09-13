@@ -65,10 +65,15 @@ Rules, in order of importance:
    0-based position in the list you were given.
 3. When in doubt, leave it out. A missed promise costs us recall. An invented \
    promise blames a person who did nothing wrong. Those are not equally bad.
-4. A promise is a specific commitment to a future act — "I'll have someone call you \
+4. Split compound requests. "Cancel it and refund me" is two needs, not one, and \
+   they are cited from different lines if the customer said them separately. This \
+   matters more than it looks: one half often gets handled while the other is \
+   forgotten, and a merged need cannot show that. One need per distinct thing the \
+   customer wants done.
+5. A promise is a specific commitment to a future act — "I'll have someone call you \
    back within 24 hours", "I'll raise a ticket". Sympathy is not a promise. \
    "I understand how frustrating that is" commits to nothing.
-5. Deadlines only when stated. "within 24 hours" is a deadline. "as soon as \
+6. Deadlines only when stated. "within 24 hours" is a deadline. "as soon as \
    possible" is not — leave due_at null.
 
 Return one JSON object and nothing else:
