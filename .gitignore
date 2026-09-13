@@ -42,3 +42,6 @@ data/transcripts/
 # regenerate, and the deployed site serves it so judges can hear the calls —
 # hearing the angry-but-resolved caller next to the calm-but-escalating one
 # lands harder than reading either.
+
+# Intermediate video artefacts. The finished assets/demo.mp4 is committed.
+build/
