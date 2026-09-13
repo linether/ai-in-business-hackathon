@@ -128,6 +128,32 @@ last chance**.
 **Matching is by utterance index — never a model judging another model's output.** Every label is
 anchored to the line it came from, so correctness is an integer comparison.
 
+### The numbers
+
+Run against the real extractor — the pipeline saw transcripts only, with nothing pre-answered:
+
+| | |
+| --- | --- |
+| escalation decision | precision **86%** · recall **86%** · F1 **86%** |
+| earliest intervention point | **83%** — 10 of 12 |
+| **citation failures** | **0%** — 0 of 87 quotes |
+| grounding failures | 62% — 40 of 64 claims |
+| reasoning failures | 29% — 7 of 24 claims |
+
+**The citation number is the one that matters most.** It is the failure mode that would put words in a
+real agent's mouth, and across 87 opportunities it did not happen once.
+
+The grounding figure is not fabrication — with citations clean, every extracted claim has a real
+source. The model is simply finer-grained than our labels, and where one line raises two things the
+anchor cannot say which extracted claim maps to which labelled one, so it matches greedily and counts
+the leftovers as errors. Resolving that properly would need a model grading a model, which is the
+circularity the anchor exists to avoid. **We report it as it came out**, including the two figures
+that do not flatter us.
+
+Reproduce with `PYTHONPATH=src python notebooks/evaluate.py --llm` and one LLM key.
+Without `--llm` the harness runs the labelled stub and measures the deterministic layers only —
+useful for catching regressions, useless for measuring the system.
+
 ## Data
 
 **Everything is synthetic.** Call scripts are written by the team, carry their own ground truth because

@@ -5,6 +5,8 @@ One line per decision, newest at the bottom. If it was argued about, it goes her
 | Date | Decision | Why |
 | --- | --- | --- |
 | 2026-09-10 | Repo starts private on GitHub | ⚠️ Submission requires a **public** repo — must flip before Mon 12pm |
+| 2026-09-14 | ✅ **仓库已转公开** 04:35 AEST | 转前扫描：两把真实 key 在工作区与全部 git 历史均 0 命中，无服务器 IP，`.env` 从未被跟踪；主办人私人邮箱已从文档移除 |
+| 2026-09-14 | ✅ **视频已提交** https://youtu.be/JalowEQSETY | 4:52，Unlisted，未登录状态验证可播放。原片 8:24，剪去 159s「静音且画面静止」的死时间后加速 1.18× |
 | 2026-09-12 | ⏳ *under review until 21:00* — **Project: ComplaintGuard** ([@Genicayyy's proposal](proposals/genicayyy-complaintguard.md), 17/18) | Highest-scoring proposal, and the only one where an author has done the job being automated. Spec: [spec.md](spec.md) |
 | 2026-09-12 | **Track 1 + ElevenLabs special track** | Improving an existing capability (complaint QA). ElevenLabs is core — TTS builds the corpus, Scribe transcribes it |
 | 2026-09-12 | Data: **100% synthetic**, generated from scripts we write | No real employer data, ever. Writing the scripts also gives us free ground truth |
