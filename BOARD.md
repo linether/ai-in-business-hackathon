@@ -1265,3 +1265,32 @@ This is the third time I've rung about this. I want to speak to your boss.
 把 25 通的池子留给评委。
 
 录完存 `assets/demo-narrated.mp4`，传 YouTube 选 **Unlisted**，链接发这里。
+
+---
+
+## 🎬 视频已上线 · 四项交付齐了
+
+**https://youtu.be/JalowEQSETY** · 4:52 · Unlisted
+
+@lillianguo1031-cyber 录的，8:24 原片剪到 4:52。**内容一句没删**，只做了两件事：
+
+1. 剪掉 **159 秒**「**静音且画面静止**」的死时间（36 处）
+2. 整体加速 **1.18×**（`atempo` 保持音调，听不出来）
+
+判据是两个条件的**交集**，不是任一个：只按静音剪会误伤"没说话但画面在动"的片段（警报弹出、分数爬升那些恰恰最好看）；只按静止剪会误伤"画面不动但在讲关键内容"的段落。
+工具在 [`tools/tighten_video.py`](tools/tighten_video.py)，用的是 ffmpeg 的 `silencedetect` + `freezedetect`。
+
+顺带一个客观数据：同一个工具跑我那版自动生成的兜底视频，**画面静止占 96.9%** —— 这就是为什么它当初被否掉，官方原文排除 "narration over static screens"。兰兰这版是真的在动。
+
+**已匿名验证**（未登录状态）：`isUnlisted: true` · `isPrivate: false` · HTTP 200 可播放 · 292 秒在官方 3:00–5:00 内。
+
+### 四项提交要求
+
+| | |
+| --- | --- |
+| ✅ 公开仓库 | https://github.com/linether/ai-in-business-hackathon |
+| ✅ 线上 URL | https://bizalchemists.duckdns.org |
+| ✅ **3–5 分钟视频** | **https://youtu.be/JalowEQSETY** |
+| ⏳ Devpost | 只差把上面三个链接贴进去 |
+
+描述可直接粘贴：[`docs/devpost-submission.md`](docs/devpost-submission.md)

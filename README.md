@@ -3,6 +3,7 @@
 **Why a complaint escalated — and the earliest point it could have been stopped.**
 
 ### 🟢 Live: **https://bizalchemists.duckdns.org**
+### 🎬 Demo video (4:52): **https://youtu.be/JalowEQSETY**
 
 By **BizAlchemists** · built for [Forward: AI in Business Hackathon](https://forward.devpost.com/) ·
 DSCubed × RAID, University of Melbourne · September 2026

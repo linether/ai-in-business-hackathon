@@ -13,8 +13,8 @@
 
 ## 提交前必须先做完的两件事
 
-- [ ] **视频传到 YouTube 或 Vimeo**（Devpost 只收**链接**，不收文件上传）
-      → 设为 **Unlisted（不公开但有链接可看）**，不要设成 Private，评委打不开
+- [x] ~~**视频传到 YouTube**~~ ✅ **已完成** → https://youtu.be/JalowEQSETY
+      （Unlisted 已匿名验证；4:52；原片 8:24，剪掉 159 秒「静音且画面静止」的死时间后加速 1.18×）
 - [x] ~~**仓库转为 public**~~ ✅ **09-14 04:35 已完成**，匿名访问已验证
       （两把真实 key 在工作区和全部 git 历史里均 0 命中；无服务器 IP；`.env` 从未被跟踪）
 
@@ -48,8 +48,10 @@ https://github.com/linether/ai-in-business-hackathon
 
 ### Video demo link
 ```
-（视频上传后填这里）
+https://youtu.be/JalowEQSETY
 ```
+✅ **09-14 已上传并匿名验证**：`isUnlisted: true` · `isPrivate: false` · 时长 **4:52**（292 秒，
+在官方 3:00–5:00 内）· 未登录状态 HTTP 200 可播放。
 
 ### Team
 ```
