@@ -1,9 +1,9 @@
-# 备份视频录制清单（90 秒，一遍过）
+# 备份视频录制清单（100 秒，一遍过）
 
 > **这不是正式视频。** 目的只有一个：**先让我们有东西可交。**
 > 粗糙、朴素、没有剪辑 —— 都可以。`assets/` 是空的，这比什么都糟。
 >
-> 下面每一个画面我都在线上站点亲眼验证过能用（09-13 22:07 AEST）。
+> 下面每一个画面我都在线上站点亲眼验证过能用（09-13 22:50 AEST 复核，站点新增 THE CHAIN 区块后重新确认）。
 
 ---
 
@@ -30,13 +30,17 @@
 > we wrote the call scripts ourselves and voiced them with ElevenLabs text to speech.
 > No real customer recordings are used anywhere.
 
-### ② 0:15–0:35 · 点开 demo-001
+### ② 0:15–0:40 · 点开 demo-001 ★ 页面顶部现在有 THE CHAIN
 
-**画面**：点 **demo-001** → 页面加载 → 停在大号分数上。
+**画面**：点 **demo-001** → 页面加载 → **先停在顶部的 THE CHAIN 上两秒**，再往下滚到大号分数。
+
+> 22:44 新增的区块。六个环节带 ✓／✕，把因果链直接画出来了 ——
+> demo-001 是 `✓ 提出诉求 → ✓ 客服处理 → ✕ 解决 → ✕ 承诺兑现 → ✕ 重复联系 → ✕ 升级`
 
 > This customer asked to cancel an add-on they never authorised, and to be refunded.
+> You can see where the chain breaks — the need was raised, the agent acted,
+> but it was never resolved and the promise was never kept.
 > The escalation risk is one hundred, up from eighty-nine on the previous contact.
-> But the score isn't the point.
 
 ### ③ 0:35–0:55 · 最早阻断点 ★ 主角
 
@@ -57,12 +61,12 @@
 
 ### ⑤ 1:10–1:30 · 不是情绪分析 ★★ 最值钱的一段
 
-**画面**：点左上角 **← all cases** 回首页 → 点 **demo-002** → 停在分数 **0**。
+**画面**：点左上角 **← all cases** 回首页 → 点 **demo-002** → **停在 THE CHAIN 上**（六个环节全是 ✓）→ 再滚到分数 **0**。
 
-> This customer is furious about a double charge. Risk score: zero —
-> because the agent fixed it during the call. Nothing is outstanding.
+> This customer is furious about a double charge. But look at the chain —
+> every link holds. Risk score: zero, because the agent fixed it during the call.
 
-**画面**：回首页 → 点 **demo-003** → 停在分数 **100**。
+**画面**：回首页 → 点 **demo-003** → **停在 THE CHAIN 上**（四个 ✕）→ 再滚到分数 **100**。
 
 > This customer never raises their voice. Risk score: one hundred —
 > they got two contradictory answers and have already gone to the Ombudsman.
