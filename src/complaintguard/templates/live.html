@@ -480,6 +480,55 @@
     return new MediaRecorder(st);
   }
 
+  // MediaRecorder's onstop handler: package what was captured and send it.
+  function finishRecording() {
+    var type = (rec && rec.mimeType) || 'audio/webm';
+    var blob = new Blob(chunks, { type: type });
+    rec = null;
+    if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+    micIdle();
+
+    if (blob.size < 2000) {
+      status.textContent = 'that was too short \u2014 click \uD83C\uDF99, speak, then click \u25A0';
+      return;
+    }
+
+    busy = true; clearFail(); pick.style.display = 'none';
+    say.disabled = true; send.disabled = true; mic.disabled = true;
+    var n = tape.children.length;
+    var mine = bubble('customer', '\u2026', n);
+    var thinking = bubble('agent', '\u2026', n + 1);
+
+    // The filename has to agree with what was actually recorded — Safari gives
+    // MP4, everyone else WebM.
+    var ext = type.indexOf('mp4') > -1 ? 'mp4' : type.indexOf('ogg') > -1 ? 'ogg' : 'webm';
+    var body = new FormData();
+    body.append('session', sid);
+    body.append('audio', blob, 'turn.' + ext);
+
+    fetch('/live/hear', { method: 'POST', body: body })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) { mine.remove(); thinking.remove(); fail(r.error); return; }
+        mine.querySelector('.bubble').textContent = r.customer_text;
+        thinking.querySelector('.bubble').textContent = r.agent_text;
+        status.textContent = r.turns_left + ' turns left in this call';
+        if (r.audio) play(thinking, r.audio);
+        watch();
+      })
+      .catch(function () {
+        mine.remove(); thinking.remove();
+        fail('That did not get through. Say it again, or type it \u2014 it was not counted.');
+      })
+      .then(function () {
+        busy = false;
+        if (!alarm.classList.contains('on')) {
+          say.disabled = false; send.disabled = false;
+          if (canRecord) mic.disabled = false;
+        }
+      });
+  }
+
   function endRecording() {
     if (stopTimer) { clearInterval(stopTimer); stopTimer = null; }
     micIdle('sending\u2026');
