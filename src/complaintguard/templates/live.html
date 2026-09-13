@@ -70,7 +70,8 @@
   .alarm .what { font-size:16px; font-weight:560; line-height:1.45; margin-bottom:8px }
   .alarm .q { border-left:2px solid #e9cbc6; padding-left:11px; margin-top:9px; font-size:13.2px }
 
-  .status { font-size:12.3px; color:var(--muted); margin-top:10px; min-height:17px }
+  .startbar { margin-top:12px }
+  .status { font-size:12.3px; color:var(--muted); margin-top:8px; min-height:17px }
   .err { border:1px solid #e9cbc6; background:var(--tint-high); border-radius:8px; padding:10px 13px;
          margin-bottom:12px; font-size:13.3px; color:#7a3b33 }
   @media (max-width: 880px) { .room { grid-template-columns:1fr } .sup { position:static } }
@@ -134,14 +135,17 @@
     </div>
 
     <div class="compose">
-      <button class="mic" id="mic" title="Hold to speak" disabled hidden>🎙</button>
+      <button class="mic" id="mic" type="button" title="Click to record" disabled hidden>🎙</button>
       <input id="say" placeholder="Say something to the agent…" autocomplete="off" disabled>
       <button class="bigbtn" id="send" disabled>Send</button>
     </div>
-    <div class="status" id="status">
-      <button class="bigbtn" id="begin" style="padding:7px 15px;font-size:13px">Start the call</button>
-      <span style="margin-left:9px">{{ left }} of {{ total }} calls left today &middot; {{ max_turns }} turns each</span>
+    <div class="startbar" id="startbar">
+      <button class="bigbtn" id="begin" type="button"
+              style="padding:7px 15px;font-size:13px">Start the call</button>
+      <span class="small muted" style="margin-left:9px">{{ left }} of {{ total }} calls left today
+        &middot; {{ max_turns }} turns each</span>
     </div>
+    <div class="status" id="status"></div>
   </div>
 
   <div class="panel sup">
@@ -162,17 +166,23 @@
 
 <script>
 (function () {
-  var sid = null, busy = false;
+  var sid = null, busy = false, starting = false;
   var tape = document.getElementById('tape'), say = document.getElementById('say'),
       send = document.getElementById('send'), begin = document.getElementById('begin'),
       status = document.getElementById('status'), err = document.getElementById('err'),
       pick = document.getElementById('pick'), finds = document.getElementById('finds'),
-      alarm = document.getElementById('alarm'), watchStatus = document.getElementById('watch-status');
+      alarm = document.getElementById('alarm'), watchStatus = document.getElementById('watch-status'),
+      startbar = document.getElementById('startbar');
 
   // The agent's own voice, from ElevenLabs. Autoplay is blocked until the visitor
   // has interacted with the page — they have, they pressed a button to get here —
   // but if a browser refuses anyway the line is still on screen and the call goes
   // on. Nothing here is allowed to be load-bearing.
+  var mic = document.getElementById('mic');
+  var canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+                     && window.MediaRecorder);
+  var rec = null, chunks = [], stream = null, stopTimer = null, cancelled = false;
+
   var player = new Audio();
   function play(el, url) {
     var b = el.querySelector('.bubble');
@@ -203,23 +213,49 @@
     return d;
   }
 
-  begin.addEventListener('click', function () {
+  function start() {
+    if (sid || starting) return Promise.resolve(true);
+    starting = true;
     begin.disabled = true;
-    post('/live/start', {}).then(function (r) {
-      if (!r.ok) { begin.disabled = false; return fail(r.error); }
+    return post('/live/start', {}).then(function (r) {
+      starting = false;
+      if (!r.ok) { begin.disabled = false; fail(r.error); return false; }
       sid = r.session;
-      say.disabled = false; send.disabled = false; say.focus();
+      startbar.hidden = true;
+      say.disabled = false; send.disabled = false;
       if (canRecord) mic.disabled = false;
+      say.focus();
       status.textContent = r.turns_left + ' turns left in this call · ' +
                            r.calls_left_today + ' calls left today';
-    }).catch(function () { begin.disabled = false; fail('Could not start the call.'); });
-  });
-
-  Array.prototype.forEach.call(document.querySelectorAll('.opener'), function (b) {
-    b.addEventListener('click', function () {
-      if (!sid) { begin.click(); setTimeout(function () { say.value = b.dataset.o; turn(); }, 600); }
-      else { say.value = b.dataset.o; turn(); }
+      return true;
+    }).catch(function () {
+      starting = false; begin.disabled = false;
+      fail('Could not start the call. Try again.');
+      return false;
     });
+  }
+
+  // One delegated listener rather than a reference per control.
+  //
+  // The first version bound straight to the elements, and "Start the call" lived
+  // inside the same box the status line writes into — so the first status update
+  // replaced the button's DOM node and silently unbound it. Nothing threw; the
+  // button simply stopped working, which is the worst way for a demo to fail.
+  // Delegation makes the markup free to change underneath.
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest('.opener');
+    if (opener) {
+      e.preventDefault();
+      start().then(function (ok) { if (ok) { say.value = opener.dataset.o; turn(); } });
+      return;
+    }
+    if (e.target.closest('#begin')) { e.preventDefault(); start(); return; }
+    if (e.target.closest('#send'))  { e.preventDefault(); turn(); return; }
+    if (e.target.closest('#mic')) {
+      e.preventDefault();
+      if (rec && rec.state === 'recording') endRecording();
+      else beginRecording();
+    }
   });
 
   function turn() {
@@ -253,90 +289,100 @@
       if (!alarm.classList.contains('on')) { say.disabled = false; send.disabled = false; say.focus(); }
     });
   }
-  send.addEventListener('click', turn);
   say.addEventListener('keydown', function (e) { if (e.key === 'Enter') turn(); });
 
-  // Push to talk. Hold the button, speak, let go.
+  // Click to record, click again to send.
   //
-  // Deliberately not voice-activated: turn-taking, barge-in and end-of-speech
-  // detection are all things we could not make reliable tonight, and each of
-  // them fails visibly. Holding a button is a real interface and it never
-  // guesses wrong about whether you have finished talking.
+  // This was press-and-hold and it was broken, in a way worth writing down.
+  // getUserMedia is asynchronous and the first call waits on a permission
+  // prompt, so a visitor who *clicks* rather than holds releases the button long
+  // before the promise resolves: the stop handler ran while `rec` was still null,
+  // did nothing, and then recording started with nothing left to stop it. On a
+  // phone, where touchstart and touchend are milliseconds apart, it happened
+  // every time.
   //
-  // The whole feature is optional. If the browser has no MediaRecorder, or the
-  // visitor declines the microphone, the button hides itself and the text box
-  // does everything — which is also the fallback if a venue microphone dies.
-  var mic = document.getElementById('mic');
-  var canRecord = !!(navigator.mediaDevices && window.MediaRecorder);
-  var rec = null, chunks = [], stream = null;
-  if (canRecord) mic.hidden = false;
+  // A toggle has no "is the button still down" state to keep in sync with an
+  // async permission grant, behaves the same on a phone, and shows the visitor
+  // what it is doing. For something a judge uses unaided and that has to survive
+  // being filmed, legible beats intuitive.
+  if (canRecord) {
+    mic.hidden = false;
+  } else if (!window.isSecureContext) {
+    // getUserMedia only exists on a secure origin. Ours is HTTPS, but say it
+    // rather than silently offering no microphone if that ever changes.
+    fail('Recording needs a secure connection, so the microphone is off here. '
+         + 'Type the turn instead — it does exactly the same thing.');
+  }
 
-  function startRec() {
-    if (!sid || busy || rec) return;
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
-      stream = s; chunks = [];
-      rec = new MediaRecorder(s);
-      rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
-      rec.onstop = sendRec;
+  function micIdle(label) {
+    mic.classList.remove('rec');
+    mic.textContent = '\uD83C\uDF99';
+    mic.title = 'Click to record';
+    if (label !== undefined) status.textContent = label;
+  }
+
+  function beginRecording() {
+    if (!sid || busy) return;
+    cancelled = false;
+    mic.disabled = true;
+    status.textContent = 'asking for the microphone\u2026';
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+      mic.disabled = false;
+      // The visitor may have clicked again while the permission prompt was up.
+      if (cancelled) { st.getTracks().forEach(function (t) { t.stop(); }); micIdle(''); return; }
+
+      stream = st; chunks = [];
+      try { rec = new MediaRecorder(st); }
+      catch (e) {
+        st.getTracks().forEach(function (t) { t.stop(); });
+        micIdle('');
+        fail('This browser cannot record audio. Type the turn instead \u2014 everything else is the same.');
+        return;
+      }
+      rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      rec.onstop = finishRecording;
       rec.start();
+
       mic.classList.add('rec');
-      status.textContent = 'listening — let go when you are done';
-      // Never hold the microphone open indefinitely: a turn is capped server-side
-      // at about twenty seconds and the recorder should agree.
-      setTimeout(function () { if (rec && rec.state === 'recording') stopRec(); }, 20000);
-    }).catch(function () {
-      mic.hidden = true;
-      fail('No microphone available, so use the box instead — everything else is the same.');
+      mic.textContent = '\u25A0';
+      mic.title = 'Click to stop and send';
+      var started = Date.now();
+      status.textContent = 'recording \u2014 click \u25A0 when you are done';
+      // A turn is capped server-side at about twenty seconds; stop ourselves
+      // rather than leave the microphone open and have the upload refused.
+      stopTimer = setInterval(function () {
+        var left = 20 - Math.floor((Date.now() - started) / 1000);
+        if (left <= 0) { endRecording(); return; }
+        status.textContent = 'recording \u2014 click \u25A0 when you are done (' + left + 's)';
+      }, 250);
+    }).catch(function (err) {
+      mic.disabled = false;
+      micIdle('');
+      // Named in the console, not on the page: a visitor needs to know what to do,
+      // but when someone reports "the microphone does not work" the name of the
+      // DOMException is the difference between a permission problem, a missing
+      // device and an insecure origin.
+      try { console.warn('[ComplaintGuard] microphone unavailable:', err && err.name, err && err.message); }
+      catch (e) {}
+      // The button deliberately stays put: permission can be granted on a second
+      // attempt, and hiding the control makes a recoverable state look terminal.
+      var denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
+      fail(denied
+        ? 'The microphone was blocked. Allow it from your browser address bar and click the '
+          + 'microphone again \u2014 or just type the turn, which does exactly the same thing.'
+        : 'No microphone was found. Type the turn instead \u2014 everything else is the same.');
     });
   }
 
-  function stopRec() {
-    if (!rec) return;
-    mic.classList.remove('rec');
-    try { rec.stop(); } catch (e) { rec = null; }
+  function endRecording() {
+    if (stopTimer) { clearInterval(stopTimer); stopTimer = null; }
+    micIdle('sending\u2026');
+    if (!rec) { cancelled = true; return; }
+    try { rec.stop(); } catch (e) { rec = null; micIdle(''); }
   }
 
-  function sendRec() {
-    var blob = new Blob(chunks, { type: 'audio/webm' });
-    rec = null;
-    if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
-    if (blob.size < 2000) { status.textContent = 'that was too short — hold it while you speak'; return; }
 
-    busy = true; clearFail(); pick.style.display = 'none';
-    say.disabled = true; send.disabled = true; mic.disabled = true;
-    var n = tape.children.length;
-    var mine = bubble('customer', '…', n);
-    var thinking = bubble('agent', '…', n + 1);
-
-    var body = new FormData();
-    body.append('session', sid);
-    body.append('audio', blob, 'turn.webm');
-    fetch('/live/hear', { method: 'POST', body: body })
-      .then(function (r) { return r.json(); })
-      .then(function (r) {
-        if (!r.ok) { mine.remove(); thinking.remove(); fail(r.error); return; }
-        mine.querySelector('.bubble').textContent = r.customer_text;
-        thinking.querySelector('.bubble').textContent = r.agent_text;
-        status.textContent = r.turns_left + ' turns left in this call';
-        if (r.audio) play(thinking, r.audio);
-        watch();
-      })
-      .catch(function () {
-        mine.remove(); thinking.remove();
-        fail('That did not get through. Say it again, or type it.');
-      })
-      .then(function () {
-        busy = false;
-        if (!alarm.classList.contains('on')) {
-          say.disabled = false; send.disabled = false; mic.disabled = false;
-        }
-      });
-  }
-
-  mic.addEventListener('mousedown', startRec);
-  mic.addEventListener('touchstart', function (e) { e.preventDefault(); startRec(); });
-  document.addEventListener('mouseup', stopRec);
-  document.addEventListener('touchend', stopRec);
 
   // The supervisor runs behind the conversation and never blocks it. If it
   // fails, the call carries on — it is additive by design.

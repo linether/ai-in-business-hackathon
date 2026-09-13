@@ -54,7 +54,11 @@ from .models import Case, Channel, Contact, SignalKind, Speaker, Transcript, Utt
 
 MAX_TURNS = 8
 MAX_CHARS_PER_TURN = 600
-PER_IP_PER_HOUR = 3
+# Six, not three. Judges share a campus network, so several of them arrive from
+# one address and a tight per-address limit has them knocking each other out.
+# The daily ceiling is the real protection; this one only stops a single visitor
+# sitting on it. (It also caught me testing, which is how the number got looked at.)
+PER_IP_PER_HOUR = 6
 GLOBAL_PER_DAY = 25
 SESSION_TTL_S = 3600
 MAX_SESSIONS = 60
@@ -232,9 +236,11 @@ def start(ip: str) -> Session:
     while hits and now - hits[0] > 3600:
         hits.popleft()
     if len(hits) >= PER_IP_PER_HOUR:
+        wait = int((3600 - (now - hits[0])) / 60) + 1
         raise RoomError(
-            "That is {} calls in an hour from here, which is the limit. Try again later, or "
-            "paste a transcript at /try.".format(PER_IP_PER_HOUR)
+            "That is {} calls in an hour from this address, which is the limit. Another one frees "
+            "up in about {} minutes. In the meantime you can paste a transcript at /try, or open "
+            "any of the twelve prepared cases.".format(PER_IP_PER_HOUR, wait)
         )
 
     hits.append(now)
