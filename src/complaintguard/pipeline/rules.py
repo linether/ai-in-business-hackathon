@@ -47,7 +47,15 @@ CHURN_TERMS = [
     "shop around", "转网", "销户", "换运营商", "不用你们了",
 ]
 ESCALATION_TERMS = [
-    "supervisor", "manager", "escalate", "someone senior",
+    # People do not ask for "a supervisor". They ask for your boss, or whoever is
+    # in charge, or someone who can actually do something. The first version of
+    # this list was written in the vocabulary of the org chart rather than the
+    # vocabulary of an annoyed customer, and missed the most common phrasing of
+    # all.
+    "supervisor", "manager", "escalate", "someone senior", "boss",
+    "higher up", "someone higher", "in charge", "team leader", "team lead",
+    "someone else", "someone who can", "above you", "your superior",
+    "make a complaint", "formal complaint", "put in a complaint",
     "主管", "上级", "投诉你",
 ]
 

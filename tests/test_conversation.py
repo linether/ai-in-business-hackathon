@@ -387,3 +387,72 @@ def test_the_paste_route_refuses_the_same_thing():
 def test_both_pages_say_so_before_you_try_it():
     assert "In English" in client.get("/live").text
     assert "English only" in client.get("/try").text
+
+
+# ------------------------------------------------ asking for a human
+
+@pytest.mark.parametrize("said", [
+    "I want to speak to your boss",
+    "Can I talk to someone higher up",
+    "put me through to a team leader",
+    "Is there someone who can actually approve this",
+    "I want to make a complaint",
+    "get me your supervisor",
+    "who is in charge there",
+])
+def test_asking_for_a_human_is_recognised_however_it_is_phrased(said):
+    """The first list was written in the vocabulary of an org chart. People do
+    not ask for "a supervisor", they ask for your boss."""
+    from complaintguard.pipeline.rules import ESCALATION_TERMS, _match
+    assert _match(said, ESCALATION_TERMS), said
+
+
+def test_asking_for_a_human_calls_one_immediately(monkeypatch):
+    """Policy 5.2 is ours and it is unambiguous: a customer who asks for a
+    supervisor must be given one, and it is not the agent's call. A system whose
+    whole claim is knowing when a human is needed cannot then demand sixty more
+    points of evidence after the customer has said it out loud."""
+    session = cv.start("1.1.1.1")
+    cv.reply(session, "I want to speak to your boss about this.",
+             Scripted(["I can put you through to a team leader."]))
+    out = cv.watch(session, Scripted(['{"needs":[],"promises":[],"actions":[]}']))
+    assert out["asked_for_human"] is True
+    assert out["escalate"] is True
+    assert out["score"] < out["threshold"], "it must fire on the request, not on the score"
+
+
+def test_it_fires_even_when_the_agent_said_the_right_thing():
+    """"I'll see if I can find a team leader" is not a team leader. The gap
+    between what is said on a call and what happens after it is the entire
+    failure mode this project exists to catch."""
+    session = cv.start("2.2.2.2")
+    cv.reply(session, "Get me your manager please.",
+             Scripted(["Absolutely, I'll get a team leader on the line for you right now."]))
+    out = cv.watch(session, Scripted(['{"needs":[],"promises":[],"actions":[]}']))
+    assert out["escalate"] is True
+
+
+def test_the_alarm_says_they_asked_rather_than_quoting_a_threshold():
+    session = cv.start("3.3.3.3")
+    cv.reply(session, "I'd like to speak to your boss.", Scripted(["Let me see."]))
+    out = cv.watch(session, Scripted(['{"needs":[],"promises":[],"actions":[]}']))
+    assert "asked for you by name" in out["intervention"]["what"]
+    assert "5.2" in out["intervention"]["what"]
+
+
+def test_an_ordinary_complaint_does_not_call_a_human_on_its_own():
+    """The counterweight. If every call escalated the feature would be useless."""
+    session = cv.start("4.4.4.4")
+    cv.reply(session, "My bill looks higher than I expected this month.",
+             Scripted(["Let me take a look at that for you now."]))
+    out = cv.watch(session, Scripted(['{"needs":[],"promises":[],"actions":[]}']))
+    assert out["asked_for_human"] is False
+    assert out["escalate"] is False
+
+
+def test_the_panel_tells_you_how_far_off_it_is():
+    """The original panel showed a number with no scale, so a visitor who said
+    something serious and saw 40 had no way to know whether that was close."""
+    page = client.get("/live").text
+    assert 'id="gap"' in page
+    assert "A human is called at" in page

@@ -343,7 +343,24 @@ def watch(session: Session, llm) -> Dict[str, Any]:
     session.analysis = analysis
 
     point = analysis.earliest_intervention
-    escalate = point is not None or analysis.risk.score >= 70
+
+    # Asking for a human is not a signal to be weighed against other signals. It
+    # is the answer.
+    #
+    # Policy 5.2, which we wrote: "A customer who asks for a supervisor, a manager
+    # or a complaint to be raised must be given one. This is not subject to the
+    # agent's assessment of whether it is warranted." If that is not the agent's
+    # call, it is not ours either — and a system whose entire claim is knowing
+    # when a human is needed should not require ten more points of evidence after
+    # the customer has said the word out loud.
+    #
+    # Note this fires even when the agent said the right thing. "I'll see if I can
+    # get a team leader" is not a team leader; the whole failure mode we exist to
+    # catch is the gap between what was said on a call and what happened after it.
+    asked_for_human = any(
+        sig.kind is SignalKind.ESCALATION_REQUEST for sig in analysis.risk.signals
+    )
+    escalate = point is not None or analysis.risk.score >= 70 or asked_for_human
     if escalate and not session.escalated:
         session.escalated = True
         session.escalated_at_turn = session.turns
@@ -368,7 +385,13 @@ def watch(session: Session, llm) -> Dict[str, Any]:
     # the call over instead of quoting a threshold at the supervisor. The heaviest
     # signal is the honest answer: it is the one that moved the number most.
     if point is None and session.escalated and analysis.risk.signals:
-        top = max(analysis.risk.signals, key=lambda s: s.weight)
+        # A request for a human outranks the heaviest signal: it is why we
+        # stopped the call, so it is what the supervisor should be told.
+        top = next(
+            (sig for sig in analysis.risk.signals if sig.kind is SignalKind.ESCALATION_REQUEST),
+            None,
+        ) if asked_for_human else None
+        top = top or max(analysis.risk.signals, key=lambda s: s.weight)
         fallback = {
             "what": _WHAT_TO_DO.get(
                 top.kind.value,
@@ -391,6 +414,8 @@ def watch(session: Session, llm) -> Dict[str, Any]:
         "signals": signals,
         "escalate": session.escalated,
         "escalated_at_turn": session.escalated_at_turn,
+        "threshold": 70,
+        "asked_for_human": asked_for_human,
         "turn": session.turns,
         "telemetry": {
             "llm_calls": analysis.telemetry.llm_calls,
@@ -430,8 +455,10 @@ _WHAT_TO_DO = {
     "service_loss": "Take the call. The customer is paying for a service they cannot currently use.",
     "contradictory_answer": "Take the call. This customer has been told two different things and is "
                             "being asked to prove which.",
-    "escalation_request": "Take the call. The customer asked for a team leader, which is not a "
-                          "request the agent gets to assess.",
+    "escalation_request": "Take the call now \u2014 they asked for you by name. Policy 5.2: a "
+                          "customer who asks for a supervisor must be given one, and that is not "
+                          "the agent\u2019s call to make. Saying one will be found is not the same "
+                          "as one arriving.",
 }
 
 

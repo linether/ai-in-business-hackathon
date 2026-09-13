@@ -47,7 +47,10 @@
   .meter .n.high { color:var(--high) } .meter .n.medium { color:var(--med) } .meter .n.low { color:var(--low) }
   .meter .lbl { font-size:12.5px; color:var(--muted) }
   .track { height:7px; background:#ececea; border-radius:4px; overflow:hidden; margin:11px 0 3px }
+  .track { position:relative }
   .track > i { display:block; height:100%; width:0; background:var(--low); transition:width .5s ease, background .3s }
+  .track > .mark { position:absolute; top:-3px; left:70%; width:2px; height:13px;
+                   background:var(--high); opacity:.55; border-radius:1px }
   .track.medium > i { background:var(--med) } .track.high > i { background:var(--high) }
 
   .find { border-top:1px solid var(--line); padding:10px 0; font-size:13px }
@@ -130,7 +133,11 @@
         agent answers in its own voice.
         <strong>In English</strong>: the agent would answer in any language, but the supervisor
         matches against English policy wording, so anything else would score zero and tell you
-        nothing.</div>
+        nothing.
+        <br><br>
+        Two ways to see it fire: say <em>&ldquo;I want to speak to your boss&rdquo;</em>, which calls a
+        human immediately, or let the call go wrong &mdash; an unmet promise, a third contact, the
+        Ombudsman &mdash; and watch the number climb to 70.</div>
       {% for o in openers %}<button class="opener" data-o="{{ o }}">{{ o }}</button>{% endfor %}
     </div>
 
@@ -160,10 +167,12 @@
       <span class="n low" id="score">—</span>
       <span class="lbl" id="band">waiting for the call</span>
     </div>
-    <div class="track low" id="track"><i></i></div>
+    <div class="track low" id="track"><i></i><b class="mark" title="a human is called at 70"></b></div>
     <div class="small muted" style="margin-bottom:6px">
-      Fixed weights, no model sets the number. Every point below cites a line.
-      <span class="muted">The agent's voice is ElevenLabs; turn your sound on.</span>
+      <span id="gap">Nothing outstanding yet.</span>
+      Fixed weights, no model sets the number &mdash; every point below cites a line.
+      A human is called at <strong>70</strong>, or the moment the customer asks for one.
+      <span class="muted">The agent&rsquo;s voice is ElevenLabs; turn your sound on.</span>
     </div>
     <div id="finds"></div>
     <div class="status" id="watch-status"></div>
@@ -556,6 +565,16 @@
     track.className = 'track ' + r.band;
     track.querySelector('i').style.width = r.score + '%';
 
+    var gap = document.getElementById('gap');
+    if (r.escalate) {
+      gap.innerHTML = '<strong>A human has been called.</strong>';
+    } else if (r.signals.length) {
+      var short = (r.threshold || 70) - r.score;
+      gap.innerHTML = '<strong>' + short + ' more points</strong> would call a human.';
+    } else {
+      gap.textContent = 'Nothing outstanding yet.';
+    }
+
     finds.innerHTML = '';
     r.signals.forEach(function (s) {
       var d = document.createElement('div');
@@ -585,7 +604,11 @@
     if (r.escalate) {
       var p = r.intervention;
       document.getElementById('alarm-what').textContent = p ? p.what :
-        'The call crossed the escalation threshold at turn ' + r.escalated_at_turn + '.';
+        'The call crossed the threshold at turn ' + r.escalated_at_turn + '.';
+      var head = alarm.querySelector('h2');
+      head.textContent = r.asked_for_human
+        ? 'The customer asked for a human'
+        : 'A human needs to take this call';
       document.getElementById('alarm-why').textContent = p ? p.why :
         'The findings below are what took it there.';
       var box = document.getElementById('alarm-quotes'); box.innerHTML = '';
