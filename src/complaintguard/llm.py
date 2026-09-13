@@ -14,6 +14,8 @@ import re
 from typing import Any, Dict, List, Optional, Protocol
 
 DEFAULT_MODEL = "claude-sonnet-5"
+DEEPSEEK_BASE = "https://api.deepseek.com"
+DEEPSEEK_MODEL = "deepseek-chat"
 
 
 class LLMClient(Protocol):
@@ -57,6 +59,80 @@ class AnthropicClient:
             messages=[{"role": "user", "content": user}],
         )
         return "".join(block.text for block in resp.content if block.type == "text")
+
+
+class OpenAICompatClient:
+    """Any OpenAI-compatible chat-completions endpoint — DeepSeek, and others.
+
+    Written against httpx rather than the openai SDK: the request is one POST,
+    and the server has 1.6 GB of memory, so there is no reason to install a
+    client library for it.
+
+    The organisers place no restriction on models — "any technology can be used"
+    — and the rubric rewards architectural depth, not a vendor. DeepSeek is
+    markedly cheaper, which matters when the extraction runs over every contact
+    in every scenario during tuning.
+
+    ⚠️ Like every other client here, never exercised against the live API.
+    """
+
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model: str = DEEPSEEK_MODEL,
+        base_url: str = DEEPSEEK_BASE,
+        env_var: str = "DEEPSEEK_API_KEY",
+    ) -> None:
+        self.model = model
+        self.base_url = base_url.rstrip("/")
+        self.name = "{}:{}".format(self.base_url.split("//")[-1].split(".")[0], model)
+        self._env_var = env_var
+        self._key = api_key or os.environ.get(env_var)
+
+    def complete(self, system: str, user: str, max_tokens: int = 2000) -> str:
+        if not self._key:
+            raise RuntimeError(
+                "{} is not set. Put it in .env (gitignored) or export it.".format(self._env_var)
+            )
+        import httpx
+
+        resp = httpx.post(
+            self.base_url + "/chat/completions",
+            headers={
+                "Authorization": "Bearer {}".format(self._key),
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": self.model,
+                "max_tokens": max_tokens,
+                "temperature": 0,  # extraction should be reproducible
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+                # Both prompts here ask for a single JSON object, and the parser
+                # copes with fences and prose regardless.
+                "response_format": {"type": "json_object"},
+            },
+            timeout=180,
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"] or ""
+
+
+def default_client() -> LLMClient:
+    """Pick a client from whatever key is actually available.
+
+    Checked in order so a team member with only one of them can just run it.
+    """
+    if os.environ.get("DEEPSEEK_API_KEY"):
+        return OpenAICompatClient()
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return AnthropicClient()
+    raise RuntimeError(
+        "No LLM key found. Set DEEPSEEK_API_KEY or ANTHROPIC_API_KEY in .env "
+        "(gitignored), or run with the labelled extractor, which needs neither."
+    )
 
 
 class FakeLLM:

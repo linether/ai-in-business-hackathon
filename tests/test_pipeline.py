@@ -278,3 +278,30 @@ def test_scribe_folding_survives_an_empty_response():
     from complaintguard.audio.stt import to_transcript
 
     assert to_transcript({"words": []}).utterances == []
+
+
+# ------------------------------------------------------------ client selection
+
+def test_client_selection_prefers_deepseek_then_anthropic(monkeypatch):
+    from complaintguard import llm
+
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "x")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    assert llm.default_client().name.startswith("api")
+
+    monkeypatch.delenv("DEEPSEEK_API_KEY")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
+    assert llm.default_client().name.startswith("anthropic")
+
+
+def test_client_selection_says_what_to_do_when_no_key_is_set(monkeypatch):
+    from complaintguard import llm
+
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    try:
+        llm.default_client()
+    except RuntimeError as exc:
+        assert "DEEPSEEK_API_KEY" in str(exc) and "labelled extractor" in str(exc)
+    else:
+        raise AssertionError("expected a RuntimeError naming the missing keys")

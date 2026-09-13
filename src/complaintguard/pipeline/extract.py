@@ -22,7 +22,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import List, Optional, Protocol
 
-from ..llm import AnthropicClient, LLMClient, parse_json_object
+from ..llm import LLMClient, default_client, parse_json_object
 from ..models import Case, Extraction
 
 
@@ -128,7 +128,7 @@ class LLMExtractor:
     name = "llm"
 
     def __init__(self, client: Optional[LLMClient] = None) -> None:
-        self.client = client or AnthropicClient()
+        self.client = client or default_client()
         self.name = "llm:{}".format(self.client.name)
 
     def extract(self, case: Case, contact_seq: int) -> Optional[Extraction]:

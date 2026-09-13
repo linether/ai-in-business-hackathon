@@ -27,7 +27,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from ..llm import AnthropicClient, LLMClient, parse_json_object
+from ..llm import LLMClient, default_client, parse_json_object
 from ..models import Case, Confidence, NeedStatus
 
 SYSTEM = """You are given everything that happened across a customer's contacts with \
@@ -91,7 +91,7 @@ def resolve(case: Case, client: Optional[LLMClient] = None) -> int:
     if not any(c.extraction for c in case.contacts):
         return 0
 
-    client = client or AnthropicClient()
+    client = client or default_client()
     raw = client.complete(SYSTEM, _case_digest(case), max_tokens=1500)
     parsed = parse_json_object(raw)
     if parsed is None:

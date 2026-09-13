@@ -136,7 +136,11 @@ python -m venv .venv && .venv/bin/pip install -r requirements.txt
 PYTHONPATH=src .venv/bin/uvicorn complaintguard.app:app --reload
 ```
 
-Then open http://localhost:8000. No API key is needed to run the prepared cases.
+Then open http://localhost:8000. **No API key is needed** to run the prepared cases.
+
+For a real extraction run, put one LLM key in `.env` — either `DEEPSEEK_API_KEY` or
+`ANTHROPIC_API_KEY`; the first one present is used. The pipeline talks to an
+`LLMClient` protocol, so swapping providers is a class, not a refactor.
 
 **Deployed at https://bizalchemists.duckdns.org** — Docker + Caddy with automatic HTTPS on our own server.
 Redeploy with `SITE_DOMAIN=bizalchemists.duckdns.org ./deploy.sh`.
