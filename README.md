@@ -2,7 +2,7 @@
 
 **Why a complaint escalated — and the earliest point it could have been stopped.**
 
-Built for [Forward: AI in Business Hackathon](https://forward.devpost.com/) ·
+By **BizAlchemists** · built for [Forward: AI in Business Hackathon](https://forward.devpost.com/) ·
 DSCubed × RAID, University of Melbourne · September 2026
 **Track 1 — Improve an Existing Business Capability** · also entered in **Built With ElevenLabs**
 
@@ -157,7 +157,7 @@ notebooks/evaluate.py  the evaluation harness
 docs/                  spec, judging rubric, research, deployment
 ```
 
-## Team
+## Team — BizAlchemists
 
 | | | |
 | --- | --- | --- |

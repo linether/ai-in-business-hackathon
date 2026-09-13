@@ -141,7 +141,7 @@
 > What's real: the pipeline, the scoring, the evaluation. What isn't: the phone network — we take
 > uploaded audio, not live calls.
 >
-> Built for Track One, and entered in Built With ElevenLabs.
+> We're BizAlchemists. Built for Track One, and entered in Built With ElevenLabs.
 
 ---
 
