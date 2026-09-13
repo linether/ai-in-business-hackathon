@@ -126,7 +126,10 @@
     <div id="pick">
       <div class="small muted" style="margin-bottom:8px">You are the customer. Open with one of these,
         type your own, or <strong>hold 🎙 and speak</strong> &mdash; ElevenLabs transcribes it and the
-        agent answers in its own voice.</div>
+        agent answers in its own voice.
+        <strong>In English</strong>: the agent would answer in any language, but the supervisor
+        matches against English policy wording, so anything else would score zero and tell you
+        nothing.</div>
       {% for o in openers %}<button class="opener" data-o="{{ o }}">{{ o }}</button>{% endfor %}
     </div>
 

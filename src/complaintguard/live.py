@@ -109,6 +109,17 @@ def parse_transcript(text: str) -> Case:
 
     if len(utterances) < 2:
         raise LiveError("That is only one line. Paste at least a short exchange.")
+
+    # Same reason as the live room: the extraction would work on Chinese and the
+    # scoring would not, so a pasted Chinese transcript produces a confident
+    # analysis with every signal at zero. See conversation.looks_english.
+    from .conversation import looks_english
+    if not looks_english(" ".join(u.text for u in utterances)):
+        raise LiveError(
+            "This demo reads English only. Extraction would cope with other languages, but the "
+            "signals and policy checks are English-language and would score everything at zero — "
+            "a confident-looking analysis that found nothing. Paste an English call instead."
+        )
     if len(utterances) > MAX_LINES:
         raise LiveError("That is {} lines; the limit is {}.".format(len(utterances), MAX_LINES))
 

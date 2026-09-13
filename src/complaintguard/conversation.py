@@ -265,6 +265,8 @@ def reply(session: Session, customer_text: str, llm) -> Dict[str, Any]:
         )
     if session.escalated:
         raise RoomError("This call has been handed to a human. Start a new one to go again.")
+    if not looks_english(text):
+        raise RoomError(ENGLISH_ONLY)
 
     session.add(Speaker.CUSTOMER, text)
 
@@ -532,3 +534,55 @@ def hear(blob: bytes, filename: str = "turn.webm") -> str:
     if not text:
         raise RoomError("Nothing came through clearly. Try that again, or type it.")
     return text
+
+
+# ---------------------------------------------------------------- language
+
+# Scripts the supervisor cannot read. Not an exhaustive list of the world's
+# writing systems — just the ones a visitor to this site is likely to type.
+_NON_LATIN = (
+    (0x4E00, 0x9FFF),    # CJK unified ideographs
+    (0x3400, 0x4DBF),    # CJK extension A
+    (0x3040, 0x30FF),    # hiragana + katakana
+    (0xAC00, 0xD7AF),    # hangul syllables
+    (0x0400, 0x04FF),    # cyrillic
+    (0x0590, 0x05FF),    # hebrew
+    (0x0600, 0x06FF),    # arabic
+    (0x0E00, 0x0E7F),    # thai
+)
+
+
+def non_latin_count(text: str) -> int:
+    total = 0
+    for ch in text:
+        code = ord(ch)
+        for lo, hi in _NON_LATIN:
+            if lo <= code <= hi:
+                total += 1
+                break
+    return total
+
+
+def looks_english(text: str) -> bool:
+    """Whether the supervisor can actually read this.
+
+    Counts characters in scripts the rules cannot match, rather than anything
+    cleverer — accented Latin is fine (``café``, a name like ``Ruairí``), two
+    CJK characters are not.
+
+    The check exists because failing silently here would be worse than not
+    supporting the language at all. The three layers of the *conversation* —
+    Scribe, the model, ElevenLabs — all handle Chinese perfectly well, so a
+    visitor typing Chinese gets a fluent agent and a supervisor panel frozen at
+    zero: the product looks broken in exactly the place it is meant to be good.
+    Saying so plainly costs one sentence and is the honest answer.
+    """
+    return non_latin_count(text) < 2
+
+
+ENGLISH_ONLY = (
+    "This demo reads English only. The agent would answer you in any language — but the part "
+    "we built, the supervisor, matches against English policy wording and would sit at zero "
+    "and tell you nothing, which would be worse than saying this. Try:  "
+    "“I rang last week about a charge I never signed up for and nobody called me back.”"
+)

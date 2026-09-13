@@ -335,3 +335,55 @@ def test_a_made_up_audio_id_is_refused_rather_than_resolved():
     for bad in ["../../etc/passwd", "nope", "", "a" * 64, "abc/def"]:
         assert cv.voice_path(bad) is None
     assert client.get("/live/say/deadbeef").status_code == 404
+
+
+# -------------------------------------------------------------- the language
+
+@pytest.mark.parametrize("text", [
+    "I rang last week about a charge I never signed up for",
+    "My name is Ruairí and the café was already closed",
+    "naïve résumé Ångström",              # accented Latin is still English enough
+])
+def test_english_passes(text):
+    assert cv.looks_english(text)
+
+
+@pytest.mark.parametrize("text", [
+    "我上周打过电话说有一笔费用",
+    "こんにちは、料金について聞きたいです",
+    "안녕하세요",
+    "Здравствуйте, у меня вопрос",
+    "I rang 上周 about a charge",          # mixed is still unreadable to the rules
+])
+def test_other_scripts_are_refused(text):
+    assert not cv.looks_english(text)
+
+
+def test_the_room_explains_itself_rather_than_failing_silently():
+    """The whole point of the check.
+
+    Scribe, the model and ElevenLabs all handle Chinese well, so without this a
+    visitor gets a fluent agent and a supervisor frozen at zero — the product
+    looking broken in exactly the place it is meant to be good.
+    """
+    session = cv.start("1.1.1.1")
+    with pytest.raises(cv.RoomError) as e:
+        cv.reply(session, "我上周打过电话，没有人回我", Scripted(["好的"]))
+    assert "English only" in str(e.value)
+    assert "supervisor" in str(e.value), "say which half cannot read it, not just 'unsupported'"
+    assert session.turns == 0, "a refused turn must not be charged"
+
+
+def test_the_paste_route_refuses_the_same_thing():
+    from complaintguard import live as live_mod
+
+    with pytest.raises(live_mod.LiveError) as e:
+        live_mod.parse_transcript(
+            "customer: 我上周打过电话说有一笔我没有同意过的费用\nagent: 我帮您查一下"
+        )
+    assert "English only" in str(e.value)
+
+
+def test_both_pages_say_so_before_you_try_it():
+    assert "In English" in client.get("/live").text
+    assert "English only" in client.get("/try").text

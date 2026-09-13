@@ -49,6 +49,9 @@
   <div class="fmt">
     One line per turn, each starting with <code>customer:</code> or <code>agent:</code>.
     Up to {{ max_lines }} lines and {{ '{:,}'.format(max_chars) }} characters.
+    <strong>English only</strong> &mdash; extraction would cope with other languages, the signals
+    and policy checks would not, and a confident analysis that found nothing is worse than a
+    refusal.
   </div>
 
   <form method="post" action="/try" id="f">
