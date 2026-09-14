@@ -1294,3 +1294,54 @@ This is the third time I've rung about this. I want to speak to your boss.
 | ⏳ Devpost | 只差把上面三个链接贴进去 |
 
 描述可直接粘贴：[`docs/devpost-submission.md`](docs/devpost-submission.md)
+
+---
+
+## [09-14 16:30 AEST] 决赛名单公布 —— 我们没有入围
+
+入围的八支队伍：GreenScreened · TurnTable · Motif · Placer · Retention Router · Cairo · Callflag · ClientPulse。
+
+主办方原话值得抄在这里：
+
+> Just because you didn't place did not mean you didn't build a good project. At the end of the day,
+> this is just one marking criteria with one set of judges.
+
+### 我们交出去的东西
+
+四项要求全部完成，而且每一项都独立验证过，不是"应该没问题"：
+
+| | |
+| --- | --- |
+| 公开仓库 | 115 个测试，git 历史合规（截止线前只有文档），0 次改写 |
+| 线上 URL | 20/20 路由 200，自建服务器 + 自动 HTTPS |
+| 演示视频 | 4:52，Unlisted 已匿名验证 |
+| Devpost | 描述、链接、赛道、队员齐全 |
+
+### 具体是谁做成了什么
+
+- **@Genicayyy** 把问题本身带进来了 —— 电信客服投诉质检是她真做过的工作。评审里她加的
+  「无人负责 / 答复矛盾 / 问题影响」三个风险信号，其中 `no_owner` 后来是 12 个案例里最常触发的
+  之一。**这种东西靠查资料写不出来。**
+- **@Ranchelwood** 的 [PR #4](https://github.com/linether/ai-in-business-hackathon/pull/4) 修了我两个 bug：
+  Windows 上 `%-d` 让 12 个案例页全部 500，以及 `language_signals` 漏 `utterance_index` 造成的死链 ——
+  而那些死链正好落在演示里最常被点的两个信号上。**没有这个 PR，演示当场就穿帮。**
+- **@lillianguo1031-cyber** 指出线上站点根本没调用 LLM，而我写的旁白稿却说 "an LLM does it"；
+  又指出 README 写着 "Upload a call" 但根本没有上传路由。**两条都是我们差点说出口的虚假陈述。**
+  最终那版视频也是她录的，而且她补的那条「开录前先把麦克风权限弹窗清掉」只有真录过的人写得出来。
+
+### 一件值得记住的事
+
+周日夜里给演示客服接上政策检索之后，客服**不再犯错了** —— 它引用责任归属规则、第三次来电时升级、
+尊重监管机构提及。这是个真发现：**一个手里握着正确条款的客服，确实能把电话处理好。**
+但一线客服手里没有那份条款，而那个落差正是我们整个项目要解决的问题。把它建模掉，
+等于让演示往对自己有利的方向失真。所以检索移到了监督层，客服改回凭记忆工作。
+
+**我们发现了这件事，然后选了更难看但更诚实的那条路。** 这件事和名次无关。
+
+### 接下来
+
+- 线上站点先保持可访问（Devpost 项目页链向它）
+- `/live` 会关掉 —— 它每轮都真的花 ElevenLabs 和模型额度，评审结束就没必要开着了
+- 仓库保持公开
+
+辛苦各位。
