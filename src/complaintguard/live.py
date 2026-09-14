@@ -177,6 +177,30 @@ def spend(ip: str) -> None:
     _ip_hits.setdefault(ip, deque()).append(time.time())
 
 
+def visitor_ip(request) -> str:
+    """The visitor's address, from behind the reverse proxy.
+
+    ``request.client.host`` is the Caddy container, not the visitor. Everything
+    arrives from one Docker-internal address, so a per-visitor rate limit keyed
+    on it is really a site-wide one — and the seventh judge to open /live gets
+    told they have already made six calls this hour.
+
+    Caddy sets X-Forwarded-For, and the app is only reachable through Caddy
+    (``expose``, not ``ports``), so the header cannot be spoofed by anyone who
+    is not already inside the compose network. The leftmost entry is the
+    original client.
+    """
+    fwd = request.headers.get("x-forwarded-for", "")
+    if fwd:
+        first = fwd.split(",")[0].strip()
+        if first:
+            return first
+    real = request.headers.get("x-real-ip", "").strip()
+    if real:
+        return real
+    return request.client.host if request.client else "unknown"
+
+
 def cache_key(text: str) -> str:
     return hashlib.sha256(" ".join(text.split()).lower().encode("utf-8")).hexdigest()[:24]
 

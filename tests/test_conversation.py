@@ -456,3 +456,46 @@ def test_the_panel_tells_you_how_far_off_it_is():
     page = client.get("/live").text
     assert 'id="gap"' in page
     assert "A human is called at" in page
+
+
+# --------------------------------------------------- behind a reverse proxy
+
+class _Req:
+    def __init__(self, headers=None, host="172.18.0.3"):
+        self.headers = headers or {}
+        self.client = type("C", (), {"host": host})()
+
+
+def test_the_visitor_ip_comes_from_the_proxy_header_not_the_socket():
+    """Caught in production during judging.
+
+    Behind Caddy every request arrives from one Docker-internal address, so a
+    per-visitor rate limit keyed on request.client.host is really a site-wide
+    one — the seventh judge to open /live would be told they had already made
+    six calls this hour, having made none.
+    """
+    from complaintguard import live as live_mod
+    r = _Req({"x-forwarded-for": "203.0.113.7"})
+    assert live_mod.visitor_ip(r) == "203.0.113.7"
+
+
+def test_the_leftmost_entry_wins_when_there_is_a_chain():
+    from complaintguard import live as live_mod
+    r = _Req({"x-forwarded-for": "203.0.113.7, 70.41.3.18, 172.18.0.3"})
+    assert live_mod.visitor_ip(r) == "203.0.113.7"
+
+
+def test_it_falls_back_sensibly():
+    from complaintguard import live as live_mod
+    assert live_mod.visitor_ip(_Req({"x-real-ip": "198.51.100.4"})) == "198.51.100.4"
+    assert live_mod.visitor_ip(_Req({})) == "172.18.0.3"          # direct, no proxy
+    assert live_mod.visitor_ip(_Req({"x-forwarded-for": "  "})) == "172.18.0.3"
+
+
+def test_two_visitors_behind_the_proxy_get_their_own_budgets():
+    """The actual consequence, asserted end to end."""
+    for _ in range(cv.PER_IP_PER_HOUR):
+        cv.start("203.0.113.7")
+    with pytest.raises(cv.RoomError):
+        cv.start("203.0.113.7")
+    cv.start("198.51.100.4")   # a different judge, unaffected

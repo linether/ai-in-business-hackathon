@@ -3,5 +3,17 @@
 # which is why port 80 has to be open in the Aliyun security group.
 {$SITE_DOMAIN:localhost} {
 	encode gzip
+
+	# Who actually visited. Without this the only record is the app's own log,
+	# which sees every request coming from Caddy's container address and can
+	# therefore tell us nothing about visitors.
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 10MiB
+			roll_keep 3
+		}
+		format json
+	}
+
 	reverse_proxy app:8000
 }

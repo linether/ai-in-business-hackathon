@@ -255,7 +255,7 @@ def try_run(request: Request, transcript: str = Form("")) -> HTMLResponse:
     something odd, or arrives after the day's budget is gone, should get a
     sentence they can act on and a working form, not a stack trace.
     """
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = live.visitor_ip(request)
 
     try:
         case = live.parse_transcript(transcript)
@@ -353,7 +353,7 @@ def room(request: Request) -> HTMLResponse:
 
 @app.post("/live/start")
 def room_start(request: Request) -> JSONResponse:
-    ip = request.client.host if request.client else "unknown"
+    ip = live.visitor_ip(request)
     try:
         session = conversation.start(ip)
     except conversation.RoomError as exc:
